@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if current_user.is_authenticated %}
+        <h2>Welcome back!</h2>
+        <p>You are successfully logged in.</p>
+        <p>Email: {{ current_user.email }}</p>
+    {% else %}
+        <h2>Welcome to Muscle Hustle</h2>
+        <p>Your fitness tracking companion. Please <a href="{{ url_for('auth.login') }}">login</a> or <a href="{{ url_for('auth.signup') }}">sign up</a> to continue.</p>
+    {% endif %}
+</div>
+{% endblock %}

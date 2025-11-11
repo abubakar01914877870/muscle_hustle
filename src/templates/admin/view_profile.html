@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile - {{ user.email }}{% endblock %}
+
+{% block content %}
+<div class="container profile-container">
+    <div class="profile-header">
+        <h2>User Profile: {{ user.email }}</h2>
+        <div class="profile-actions">
+            <a href="{{ url_for('admin.edit_user_profile', user_id=user.id) }}" class="btn btn-primary">Edit Profile</a>
+            <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-secondary">Edit Account</a>
+            <a href="{{ url_for('admin.user_list') }}" class="btn btn-secondary">Back to Users</a>
+        </div>
+    </div>
+
+    <div class="profile-section">
+        <h3>Account Information</h3>
+        <div class="profile-grid">
+            <div class="profile-item">
+                <label>User ID:</label>
+                <span>{{ user.id }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Email:</label>
+                <span>{{ user.email }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Role:</label>
+                <span>
+                    {% if user.is_admin %}
+                        <span class="badge badge-admin">Admin</span>
+                    {% else %}
+                        <span class="badge badge-user">User</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="profile-item">
+                <label>Member Since:</label>
+                <span>{{ user.created_at.strftime('%B %d, %Y') if user.created_at else 'N/A' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-section">
+        <h3>Personal Information</h3>
+        <div class="profile-grid">
+            <div class="profile-item">
+                <label>Full Name:</label>
+                <span>{{ user.full_name or 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Date of Birth:</label>
+                <span>{{ user.date_of_birth.strftime('%B %d, %Y') if user.date_of_birth else 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Age:</label>
+                <span>{{ user.calculate_age() or 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Gender:</label>
+                <span>{{ user.gender or 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Phone:</label>
+                <span>{{ user.phone or 'Not set' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-section">
+        <h3>Physical Measurements</h3>
+        <div class="profile-grid">
+            <div class="profile-item">
+                <label>Height:</label>
+                <span>{{ user.height ~ ' cm' if user.height else 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Weight:</label>
+                <span>{{ user.weight ~ ' kg' if user.weight else 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Target Weight:</label>
+                <span>{{ user.target_weight ~ ' kg' if user.target_weight else 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>BMI:</label>
+                <span>{{ user.calculate_bmi() or 'Not set' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-section">
+        <h3>Fitness Information</h3>
+        <div class="profile-grid">
+            <div class="profile-item">
+                <label>Fitness Level:</label>
+                <span>{{ user.fitness_level.replace('_', ' ').title() if user.fitness_level else 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Fitness Goal:</label>
+                <span>{{ user.fitness_goal.replace('_', ' ').title() if user.fitness_goal else 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Activity Level:</label>
+                <span>{{ user.activity_level.replace('_', ' ').title() if user.activity_level else 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Workout Frequency:</label>
+                <span>{{ user.workout_frequency ~ ' days/week' if user.workout_frequency else 'Not set' }}</span>
+            </div>
+            <div class="profile-item">
+                <label>Preferred Workout Time:</label>
+                <span>{{ user.preferred_workout_time.title() if user.preferred_workout_time else 'Not set' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-section">
+        <h3>Health Information</h3>
+        <div class="profile-item-full">
+            <label>Medical Conditions:</label>
+            <p>{{ user.medical_conditions or 'None specified' }}</p>
+        </div>
+        <div class="profile-item-full">
+            <label>Dietary Restrictions:</label>
+            <p>{{ user.dietary_restrictions or 'None specified' }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
