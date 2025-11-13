@@ -7,14 +7,40 @@ IMPORTANT: This is safe to run in production - it will NOT delete any data!
 import sqlite3
 import os
 
-def migrate_database():
-    db_path = 'src/instance/users.db'
+def find_database():
+    """Find the database file in common locations"""
+    possible_paths = [
+        'src/instance/users.db',
+        'instance/users.db', 
+        'users.db',
+        'src/users.db',
+    ]
     
-    # Check if database exists
-    if not os.path.exists(db_path):
-        print(f"✗ Database not found at {db_path}")
-        print("  Run init_db.py to create the database first.")
+    for path in possible_paths:
+        if os.path.exists(path):
+            return path
+    
+    return None
+
+def migrate_database():
+    # Try to find the database
+    db_path = find_database()
+    
+    if not db_path:
+        print("✗ Database not found!")
+        print()
+        print("Tried these locations:")
+        print("  - src/instance/users.db")
+        print("  - instance/users.db")
+        print("  - users.db")
+        print()
+        print("Please run: python find_database.py")
+        print("Or create database: python init_db.py")
         return False
+    
+    print(f"Found database at: {db_path}")
+    print(f"Absolute path: {os.path.abspath(db_path)}")
+    print()
     
     # Connect to database
     conn = sqlite3.connect(db_path)

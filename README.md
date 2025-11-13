@@ -145,9 +145,13 @@ MIT License
 
 ### PythonAnywhere Deployment
 
-This app is ready to deploy on PythonAnywhere. See detailed instructions:
-- **Full Guide**: [PYTHONANYWHERE_DEPLOYMENT.md](PYTHONANYWHERE_DEPLOYMENT.md)
-- **Quick Checklist**: [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)
+This app is ready to deploy on PythonAnywhere.
+
+**📚 Deployment Guides:**
+- **[PYTHONANYWHERE_GUIDE.md](PYTHONANYWHERE_GUIDE.md)** - Complete PythonAnywhere deployment guide
+- **[PYTHONANYWHERE_DEPLOYMENT.md](PYTHONANYWHERE_DEPLOYMENT.md)** - Initial setup guide
+- **[PRODUCTION_DEPLOYMENT.md](PRODUCTION_DEPLOYMENT.md)** - Safe update procedures
+- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Quick checklist
 
 #### Quick Start
 1. Create account at https://www.pythonanywhere.com/
@@ -158,6 +162,20 @@ This app is ready to deploy on PythonAnywhere. See detailed instructions:
 6. Reload and test
 
 Your app will be live at: `https://yourusername.pythonanywhere.com`
+
+#### Updating Production
+```bash
+# 1. Find database location
+python find_database.py
+
+# 2. Backup database
+cp instance/users.db instance/users_backup_$(date +%Y%m%d).db
+
+# 3. Run migration
+python migrate_add_profile_picture.py
+
+# 4. Reload web app from Web tab
+```
 
 ### Default Admin Account
 - Email: `super@admin.com`

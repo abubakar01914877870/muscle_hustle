@@ -46,27 +46,40 @@ python run.py
 
 ## PythonAnywhere Deployment
 
-### 1. Backup Database
-1. Go to **Files** tab
-2. Navigate to `muscle_hustle/src/instance/`
-3. Download `users.db` to your computer
+**See [PYTHONANYWHERE_GUIDE.md](PYTHONANYWHERE_GUIDE.md) for detailed instructions.**
 
-### 2. Update Code
+### Quick Steps
+
+### 1. Find Database Location
 ```bash
-# In Bash console
+cd ~/muscle_hustle
+python find_database.py
+```
+
+### 2. Backup Database
+```bash
+cd ~/muscle_hustle
+
+# Backup (adjust path based on find_database.py output)
+cp instance/users.db instance/users_backup_$(date +%Y%m%d).db
+# OR if in src/instance:
+cp src/instance/users.db src/instance/users_backup_$(date +%Y%m%d).db
+```
+
+### 3. Update Code
+```bash
 cd ~/muscle_hustle
 git pull origin main
 ```
 
-### 3. Run Migration
+### 4. Run Migration
 ```bash
-# In Bash console
 cd ~/muscle_hustle
 source venv/bin/activate
 python migrate_add_profile_picture.py
 ```
 
-### 4. Reload Web App
+### 5. Reload Web App
 1. Go to **Web** tab
 2. Click green **"Reload"** button
 3. Check error log if issues occur
