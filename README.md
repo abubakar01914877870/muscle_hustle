@@ -115,3 +115,45 @@ Set environment variables for production:
 ## License
 
 MIT License
+
+
+## Deployment
+
+### PythonAnywhere Deployment
+
+This app is ready to deploy on PythonAnywhere. See detailed instructions:
+- **Full Guide**: [PYTHONANYWHERE_DEPLOYMENT.md](PYTHONANYWHERE_DEPLOYMENT.md)
+- **Quick Checklist**: [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)
+
+#### Quick Start
+1. Create account at https://www.pythonanywhere.com/
+2. Upload code or clone from Git
+3. Set up virtual environment and install dependencies
+4. Configure WSGI file (template provided in `wsgi.py`)
+5. Set virtualenv path and static files
+6. Reload and test
+
+Your app will be live at: `https://yourusername.pythonanywhere.com`
+
+### Default Admin Account
+- Email: `super@admin.com`
+- Password: `1234qa`
+- **⚠️ CHANGE PASSWORD IMMEDIATELY AFTER DEPLOYMENT**
+
+## Files Included
+
+- `PYTHONANYWHERE_DEPLOYMENT.md` - Complete deployment guide
+- `DEPLOYMENT_CHECKLIST.md` - Step-by-step checklist
+- `wsgi.py` - WSGI configuration template for PythonAnywhere
+- `ADMIN_GUIDE.md` - Admin features documentation
+- `PROFILE_GUIDE.md` - User profile documentation
+
+## Contributing
+
+Feel free to submit issues and enhancement requests!
+
+## Support
+
+For deployment issues, check:
+- PythonAnywhere Help: https://help.pythonanywhere.com/
+- PythonAnywhere Forums: https://www.pythonanywhere.com/forums/

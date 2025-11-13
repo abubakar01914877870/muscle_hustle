@@ -2,11 +2,10 @@
 Database initialization script
 Run this to create the database tables if they don't exist
 """
-from src.app import create_app
+from src.app import app
 from src.models.user import db, User
 
 def init_database():
-    app = create_app()
     with app.app_context():
         # Create tables only if they don't exist (preserves existing data)
         db.create_all()

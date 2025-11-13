@@ -3,11 +3,10 @@ Database reset script
 WARNING: This will DELETE ALL DATA and recreate the database
 Use this only when you need to completely reset the database
 """
-from src.app import create_app
+from src.app import app
 from src.models.user import db, User
 
 def reset_database():
-    app = create_app()
     with app.app_context():
         print("WARNING: This will delete all existing data!")
         confirm = input("Are you sure you want to reset the database? (yes/no): ")
