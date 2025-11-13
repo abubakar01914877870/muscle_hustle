@@ -33,6 +33,8 @@ A comprehensive Flask-based fitness tracking application with user authenticatio
 
 ## Setup Instructions
 
+### First Time Setup (Development)
+
 1. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
@@ -42,17 +44,39 @@ A comprehensive Flask-based fitness tracking application with user authenticatio
    ```bash
    python init_db.py
    ```
-   Note: This creates tables if they don't exist and preserves existing data.
 
 3. **Run the application:**
    ```bash
    python run.py
    ```
 
+### Production Deployment
+
+⚠️ **IMPORTANT**: See [PRODUCTION_DEPLOYMENT.md](PRODUCTION_DEPLOYMENT.md) for safe deployment procedures.
+
+**Quick steps:**
+1. Backup database first!
+2. Run migration: `python migrate_add_profile_picture.py`
+3. Update code: `git pull`
+4. Restart application
+
+**Never use `reset_db.py` in production!**
+
 ## Database Management
 
-- **Initialize/Update Database**: `python init_db.py` - Creates tables and admin user if needed (preserves existing data)
-- **Reset Database**: `python reset_db.py` - WARNING: Deletes all data and recreates database (requires confirmation)
+### For Development
+- **Initialize Database**: `python init_db.py` - Creates tables and admin user if needed (preserves existing data)
+- **Reset Database**: `python reset_db.py` - ⚠️ WARNING: Deletes all data (development only!)
+
+### For Production
+- **Migrate Database**: `python migrate_add_profile_picture.py` - Safely adds new columns without data loss
+- **Never use reset_db.py in production!** - See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)
+
+### Database Backup
+```bash
+# Always backup before changes
+cp src/instance/users.db src/instance/users_backup_$(date +%Y%m%d).db
+```
 
 4. **Access the app:**
    Open your browser and navigate to `http://127.0.0.1:5000`

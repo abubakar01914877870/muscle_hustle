@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Edit Profile{% endblock %}
+{% block title %}Edit Profile - Muscle Hustle{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Edit Profile</h2>
-    
-    <form method="POST" action="{{ url_for('profile.edit_profile') }}" class="profile-form">
-        <div class="form-section">
-            <h3>Personal Information</h3>
+<form method="POST" action="{{ url_for('profile.edit_profile') }}">
+    <!-- Personal Information -->
+    <section class="form-section">
+        <div class="section-header">
+            <span class="section-icon">👤</span>
+            <h2>Personal Information</h2>
+        </div>
             
             <div class="form-group">
                 <label for="full_name">Full Name</label>

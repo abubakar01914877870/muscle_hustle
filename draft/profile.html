@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Muscle Hustle - Profile</title>
+  <style>
+    /* Design System Variables */
+    :root {
+      --color-white: rgba(255, 255, 255, 1);
+      --color-black: rgba(0, 0, 0, 1);
+      --color-cream-50: rgba(252, 252, 249, 1);
+      --color-cream-100: rgba(255, 255, 253, 1);
+      --color-gray-200: rgba(245, 245, 245, 1);
+      --color-gray-300: rgba(167, 169, 169, 1);
+      --color-gray-400: rgba(119, 124, 124, 1);
+      --color-slate-500: rgba(98, 108, 113, 1);
+      --color-brown-600: rgba(94, 82, 64, 1);
+      --color-charcoal-700: rgba(31, 33, 33, 1);
+      --color-charcoal-800: rgba(38, 40, 40, 1);
+      --color-slate-900: rgba(19, 52, 59, 1);
+      --color-teal-300: rgba(50, 184, 198, 1);
+      --color-teal-400: rgba(45, 166, 178, 1);
+      --color-teal-500: rgba(33, 128, 141, 1);
+      --color-teal-600: rgba(29, 116, 128, 1);
+      --color-teal-700: rgba(26, 104, 115, 1);
+      --color-teal-800: rgba(41, 150, 161, 1);
+      --color-red-400: rgba(255, 84, 89, 1);
+      --color-red-500: rgba(192, 21, 47, 1);
+      --color-orange-400: rgba(230, 129, 97, 1);
+      --color-orange-500: rgba(168, 75, 47, 1);
+      --color-brown-600-rgb: 94, 82, 64;
+      --color-teal-500-rgb: 33, 128, 141;
+      --color-slate-900-rgb: 19, 52, 59;
+      --color-slate-500-rgb: 98, 108, 113;
+      --color-red-500-rgb: 192, 21, 47;
+      --color-red-400-rgb: 255, 84, 89;
+      --color-orange-500-rgb: 168, 75, 47;
+      --color-orange-400-rgb: 230, 129, 97;
+      --color-bg-1: rgba(59, 130, 246, 0.08);
+      --color-bg-2: rgba(245, 158, 11, 0.08);
+      --color-bg-3: rgba(34, 197, 94, 0.08);
+      --color-bg-4: rgba(239, 68, 68, 0.08);
+      --color-bg-5: rgba(147, 51, 234, 0.08);
+      --color-bg-6: rgba(249, 115, 22, 0.08);
+      --color-bg-7: rgba(236, 72, 153, 0.08);
+      --color-bg-8: rgba(6, 182, 212, 0.08);
+      --color-background: var(--color-cream-50);
+      --color-surface: var(--color-cream-100);
+      --color-text: var(--color-slate-900);
+      --color-text-secondary: var(--color-slate-500);
+      --color-primary: var(--color-teal-500);
+      --color-primary-hover: var(--color-teal-600);
+      --color-primary-active: var(--color-teal-700);
+      --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+      --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
+      --color-secondary-active: rgba(var(--color-brown-600-rgb), 0.25);
+      --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+      --color-btn-primary-text: var(--color-cream-50);
+      --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+      --color-card-border-inner: rgba(var(--color-brown-600-rgb), 0.12);
+      --color-error: var(--color-red-500);
+      --color-success: var(--color-teal-500);
+      --color-warning: var(--color-orange-500);
+      --color-info: var(--color-slate-500);
+      --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
+      --color-select-caret: rgba(var(--color-slate-900-rgb), 0.8);
+      --focus-ring: 0 0 0 3px var(--color-focus-ring);
+      --focus-outline: 2px solid var(--color-primary);
+      --status-bg-opacity: 0.15;
+      --status-border-opacity: 0.25;
+      --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 14px;
+      --font-size-lg: 16px;
+      --font-size-xl: 18px;
+      --font-size-2xl: 20px;
+      --font-size-3xl: 24px;
+      --font-size-4xl: 30px;
+      --font-weight-normal: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 550;
+      --font-weight-bold: 600;
+      --line-height-tight: 1.2;
+      --line-height-normal: 1.5;
+      --letter-spacing-tight: -0.01em;
+      --space-0: 0;
+      --space-1: 1px;
+      --space-2: 2px;
+      --space-4: 4px;
+      --space-6: 6px;
+      --space-8: 8px;
+      --space-10: 10px;
+      --space-12: 12px;
+      --space-16: 16px;
+      --space-20: 20px;
+      --space-24: 24px;
+      --space-32: 32px;
+      --radius-sm: 6px;
+      --radius-base: 8px;
+      --radius-md: 10px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+      --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+      --duration-fast: 150ms;
+      --duration-normal: 250ms;
+      --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+      --container-sm: 640px;
+      --container-md: 768px;
+      --container-lg: 1024px;
+      --container-xl: 1280px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-gray-400-rgb: 119, 124, 124;
+        --color-teal-300-rgb: 50, 184, 198;
+        --color-gray-300-rgb: 167, 169, 169;
+        --color-gray-200-rgb: 245, 245, 245;
+        --color-bg-1: rgba(29, 78, 216, 0.15);
+        --color-bg-2: rgba(180, 83, 9, 0.15);
+        --color-bg-3: rgba(21, 128, 61, 0.15);
+        --color-bg-4: rgba(185, 28, 28, 0.15);
+        --color-bg-5: rgba(107, 33, 168, 0.15);
+        --color-bg-6: rgba(194, 65, 12, 0.15);
+        --color-bg-7: rgba(190, 24, 93, 0.15);
+        --color-bg-8: rgba(8, 145, 178, 0.15);
+        --color-background: var(--color-charcoal-700);
+        --color-surface: var(--color-charcoal-800);
+        --color-text: var(--color-gray-200);
+        --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+        --color-primary: var(--color-teal-300);
+        --color-primary-hover: var(--color-teal-400);
+        --color-primary-active: var(--color-teal-800);
+        --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+        --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
+        --color-secondary-active: rgba(var(--color-gray-400-rgb), 0.3);
+        --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+        --color-error: var(--color-red-400);
+        --color-success: var(--color-teal-300);
+        --color-warning: var(--color-orange-400);
+        --color-info: var(--color-gray-300);
+        --color-focus-ring: rgba(var(--color-teal-300-rgb), 0.4);
+        --color-btn-primary-text: var(--color-slate-900);
+        --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
+        --color-card-border-inner: rgba(var(--color-gray-400-rgb), 0.15);
+        --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+        --color-select-caret: rgba(var(--color-gray-200-rgb), 0.8);
+      }
+    }
+
+    @font-face {
+      font-family: 'FKGroteskNeue';
+      src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2') format('woff2');
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: var(--font-size-base);
+      font-family: var(--font-family-base);
+      line-height: var(--line-height-normal);
+      color: var(--color-text);
+      background-color: var(--color-background);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-teal-700) 100%);
+      border-bottom: 1px solid var(--color-card-border);
+      padding: var(--space-24) var(--space-16);
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    }
+
+    .app-logo {
+      font-size: var(--font-size-4xl);
+    }
+
+    .app-name {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-cream-50);
+      margin: 0;
+      letter-spacing: var(--letter-spacing-tight);
+    }
+
+    .header-profile-image {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-full);
+      border: 3px solid var(--color-cream-50);
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform var(--duration-normal) var(--ease-standard);
+      background-color: var(--color-cream-50);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+    }
+
+    .header-profile-image:hover {
+      transform: scale(1.05);
+    }
+
+    .header-profile-image img {
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-24) var(--space-16);
+    }
+
+    /* Profile Section */
+    .profile-hero {
+      background-color: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-card-border);
+      padding: var(--space-32);
+      margin-bottom: var(--space-24);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+    }
+
+    .profile-image-large {
+      width: 120px;
+      height: 120px;
+      border-radius: var(--radius-full);
+      border: 4px solid var(--color-primary);
+      margin: 0 auto var(--space-16);
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform var(--duration-normal) var(--ease-standard);
+      background-color: var(--color-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-4xl);
+      color: var(--color-text-secondary);
+    }
+
+    .profile-image-large:hover {
+      transform: scale(1.05);
+    }
+
+    .profile-image-large img {
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+    }
+
+    .upload-hint {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-top: var(--space-8);
+    }
+
+    /* Form Section */
+    .form-section {
+      background-color: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-card-border);
+      padding: var(--space-24);
+      margin-bottom: var(--space-24);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+      margin-bottom: var(--space-20);
+    }
+
+    .section-icon {
+      font-size: var(--font-size-2xl);
+    }
+
+    .form-section h2 {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-16);
+    }
+
+    @media (min-width: 768px) {
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .form-grid.grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: var(--space-8);
+      font-weight: var(--font-weight-medium);
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+    }
+
+    .form-control {
+      display: block;
+      width: 100%;
+      padding: var(--space-10) var(--space-12);
+      font-size: var(--font-size-md);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-base);
+      transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+      font-family: var(--font-family-base);
+    }
+
+    select.form-control {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: var(--select-caret-light);
+      background-repeat: no-repeat;
+      background-position: right var(--space-12) center;
+      background-size: 16px;
+      padding-right: var(--space-32);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      select.form-control {
+        background-image: var(--select-caret-dark);
+      }
+    }
+
+    .form-control:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    /* Toggle Switch */
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-12);
+      background-color: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-base);
+    }
+
+    .toggle-label {
+      font-size: var(--font-size-md);
+      color: var(--color-text);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--color-secondary);
+      border-radius: var(--radius-full);
+      transition: background-color var(--duration-normal) var(--ease-standard);
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--color-cream-50);
+      border-radius: var(--radius-full);
+      transition: transform var(--duration-normal) var(--ease-standard);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: var(--color-primary);
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+
+    /* Checkbox Group */
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: var(--space-12);
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--color-primary);
+    }
+
+    .checkbox-item label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      cursor: pointer;
+    }
+
+    /* BMI Display */
+    .bmi-display {
+      padding: var(--space-16);
+      background-color: var(--color-bg-3);
+      border-radius: var(--radius-base);
+      text-align: center;
+    }
+
+    .bmi-value {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      margin-bottom: var(--space-4);
+    }
+
+    .bmi-category {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-12) var(--space-24);
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-standard);
+      border: none;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-btn-primary-text);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-primary:active {
+      background: var(--color-primary-active);
+    }
+
+    .btn-secondary {
+      background: var(--color-secondary);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--color-secondary-hover);
+    }
+
+    .btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .button-group {
+      display: flex;
+      gap: var(--space-12);
+      margin-top: var(--space-24);
+    }
+
+    .button-group .btn {
+      flex: 1;
+    }
+
+    /* Hidden Input */
+    .hidden-input {
+      display: none;
+    }
+
+
+
+    /* Success Message */
+    .success-message {
+      background-color: rgba(var(--color-teal-500-rgb), 0.1);
+      border: 1px solid var(--color-primary);
+      color: var(--color-text);
+      padding: var(--space-12) var(--space-16);
+      border-radius: var(--radius-base);
+      margin-bottom: var(--space-20);
+      display: none;
+      align-items: center;
+      gap: var(--space-8);
+    }
+
+    .success-message.show {
+      display: flex;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .app-name {
+        font-size: var(--font-size-xl);
+      }
+
+      .header-profile-image {
+        width: 50px;
+        height: 50px;
+      }
+
+      .profile-hero,
+      .form-section {
+        padding: var(--space-16);
+      }
+
+      .container {
+        padding: var(--space-16);
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-8);
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="app-logo">💪</div>
+        <h1 class="app-name">Muscle Hustle</h1>
+      </div>
+      <div class="header-profile-image" id="headerProfileImage" onclick="document.getElementById('profilePhotoInput').click()">
+        <span id="headerInitials">JD</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Profile Hero Section -->
+    <section class="profile-hero">
+      <div class="profile-image-large" onclick="document.getElementById('profilePhotoInput').click()">
+        <span id="profileInitials">JD</span>
+      </div>
+      <input type="file" id="profilePhotoInput" class="hidden-input" accept="image/*">
+      <p class="upload-hint">Click to change profile photo</p>
+    </section>
+
+    <!-- Personal Information -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">👤</span>
+        <h2>Personal Information</h2>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="fullName">Full Name</label>
+          <input type="text" id="fullName" class="form-control" placeholder="Enter your full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="age">Age</label>
+          <input type="number" id="age" class="form-control" min="1" max="120" placeholder="Enter your age">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="gender">Gender</label>
+          <select id="gender" class="form-control">
+            <option value="">Select gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="dob">Date of Birth</label>
+          <input type="date" id="dob" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" id="email" class="form-control" placeholder="your.email@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone">Phone Number</label>
+          <input type="tel" id="phone" class="form-control" placeholder="+1234567890">
+        </div>
+      </div>
+    </section>
+
+    <!-- Physical Stats -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">📊</span>
+        <h2>Physical Stats</h2>
+      </div>
+      <div class="form-grid grid-3">
+        <div class="form-group">
+          <label class="form-label" for="currentWeight">Current Weight (kg)</label>
+          <input type="number" id="currentWeight" class="form-control" step="0.1" placeholder="75.0">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="height">Height (cm)</label>
+          <input type="number" id="height" class="form-control" step="0.1" placeholder="175">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="bodyFatPercent">Body Fat Percentage (%)</label>
+          <input type="number" id="bodyFatPercent" class="form-control" step="0.1" min="0" max="100" placeholder="18.0">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="muscleMass">Muscle Mass (%)</label>
+          <input type="number" id="muscleMass" class="form-control" step="0.1" min="0" max="100" placeholder="42.0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">BMI</label>
+          <div class="bmi-display">
+            <div class="bmi-value" id="bmiValue">-</div>
+            <div class="bmi-category" id="bmiCategory">Enter height &amp; weight</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fitness Goals -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">🎯</span>
+        <h2>Fitness Goals</h2>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="goalType">Goal Type</label>
+          <select id="goalType" class="form-control">
+            <option value="">Select your goal</option>
+            <option value="Weight Loss">Weight Loss</option>
+            <option value="Muscle Gain">Muscle Gain</option>
+            <option value="Maintenance">Maintenance</option>
+            <option value="Athletic Performance">Athletic Performance</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="targetWeight">Target Weight (kg)</label>
+          <input type="number" id="targetWeight" class="form-control" step="0.1" placeholder="80.0">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="weeklyGoal">Weekly Goal</label>
+          <select id="weeklyGoal" class="form-control">
+            <option value="">Select weekly goal</option>
+            <option value="Lose 1kg">Lose 1kg</option>
+            <option value="Lose 0.5kg">Lose 0.5kg</option>
+            <option value="Maintain">Maintain</option>
+            <option value="Gain 0.5kg">Gain 0.5kg</option>
+            <option value="Gain 1kg">Gain 1kg</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="targetDate">Target Date</label>
+          <input type="date" id="targetDate" class="form-control">
+        </div>
+      </div>
+    </section>
+
+    <!-- Activity Level -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">🏃</span>
+        <h2>Activity Level</h2>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="activityLevel">Current Activity Level</label>
+          <select id="activityLevel" class="form-control">
+            <option value="">Select activity level</option>
+            <option value="Sedentary">Sedentary (little or no exercise)</option>
+            <option value="Lightly Active">Lightly Active (1-3 days/week)</option>
+            <option value="Moderately Active">Moderately Active (3-5 days/week)</option>
+            <option value="Very Active">Very Active (6-7 days/week)</option>
+            <option value="Extremely Active">Extremely Active (athlete level)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="workoutFrequency">Workout Frequency (days/week)</label>
+          <input type="number" id="workoutFrequency" class="form-control" min="0" max="7" placeholder="5">
+        </div>
+        <div class="form-group full-width">
+          <label class="form-label">Preferred Workout Types</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="cardio" value="Cardio">
+              <label for="cardio">Cardio</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="strength" value="Strength Training">
+              <label for="strength">Strength Training</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="hiit" value="HIIT">
+              <label for="hiit">HIIT</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="yoga" value="Yoga">
+              <label for="yoga">Yoga</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="pilates" value="Pilates">
+              <label for="pilates">Pilates</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sports" value="Sports">
+              <label for="sports">Sports</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="cycling" value="Cycling">
+              <label for="cycling">Cycling</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="swimming" value="Swimming">
+              <label for="swimming">Swimming</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Health Information -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">🏥</span>
+        <h2>Health Information</h2>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="bloodType">Blood Type</label>
+          <select id="bloodType" class="form-control">
+            <option value="">Select blood type</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="dietaryPreference">Dietary Preferences</label>
+          <select id="dietaryPreference" class="form-control">
+            <option value="">Select dietary preference</option>
+            <option value="No Preference">No Preference</option>
+            <option value="Vegetarian">Vegetarian</option>
+            <option value="Vegan">Vegan</option>
+            <option value="Keto">Keto</option>
+            <option value="Paleo">Paleo</option>
+            <option value="Mediterranean">Mediterranean</option>
+            <option value="Pescatarian">Pescatarian</option>
+            <option value="Gluten-Free">Gluten-Free</option>
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label class="form-label" for="injuries">Injuries or Health Conditions</label>
+          <textarea id="injuries" class="form-control" rows="3" placeholder="Describe any injuries, health conditions, or limitations..."></textarea>
+        </div>
+        <div class="form-group full-width">
+          <label class="form-label" for="allergies">Allergies</label>
+          <textarea id="allergies" class="form-control" rows="2" placeholder="List any allergies..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Measurements -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">📏</span>
+        <h2>Body Measurements</h2>
+      </div>
+      <div class="form-grid grid-3">
+        <div class="form-group">
+          <label class="form-label" for="chest">Chest (cm)</label>
+          <input type="number" id="chest" class="form-control" step="0.1" placeholder="95">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="waist">Waist (cm)</label>
+          <input type="number" id="waist" class="form-control" step="0.1" placeholder="80">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="hips">Hips (cm)</label>
+          <input type="number" id="hips" class="form-control" step="0.1" placeholder="95">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="biceps">Biceps (cm)</label>
+          <input type="number" id="biceps" class="form-control" step="0.1" placeholder="35">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="thighs">Thighs (cm)</label>
+          <input type="number" id="thighs" class="form-control" step="0.1" placeholder="55">
+        </div>
+      </div>
+    </section>
+
+    <!-- Preferences -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">⚙️</span>
+        <h2>Preferences</h2>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Preferred Units</label>
+          <div class="toggle-group">
+            <span class="toggle-label" id="unitsLabel">Metric</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="unitsToggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Workout Reminders</label>
+          <div class="toggle-group">
+            <span class="toggle-label">Notifications</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="workoutReminders" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Progress Updates</label>
+          <div class="toggle-group">
+            <span class="toggle-label">Weekly Email</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="progressUpdates" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Meal Reminders</label>
+          <div class="toggle-group">
+            <span class="toggle-label">Notifications</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="mealReminders">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Success Message -->
+    <div class="success-message" id="successMessage">
+      <span>✓</span>
+      <span>Profile saved successfully!</span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="button-group">
+      <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+      <button type="button" class="btn btn-primary" id="saveBtn">Save Changes</button>
+    </div>
+  </div>
+
+  <script>
+    // In-memory profile data
+    let profileData = {
+      photo: null,
+      fullName: 'John Doe',
+      age: 28,
+      gender: 'Male',
+      dob: '',
+      email: 'john@example.com',
+      phone: '+1234567890',
+      currentWeight: 75,
+      height: 175,
+      bodyFatPercent: 18,
+      muscleMass: 42,
+      goalType: 'Muscle Gain',
+      targetWeight: 80,
+      weeklyGoal: 'Gain 0.5kg',
+      targetDate: '',
+      activityLevel: 'Moderately Active',
+      workoutFrequency: 5,
+      workoutTypes: [],
+      bloodType: '',
+      dietaryPreference: 'No Preference',
+      injuries: '',
+      allergies: '',
+      chest: 95,
+      waist: 80,
+      hips: 95,
+      biceps: 35,
+      thighs: 55,
+      unitsMetric: true,
+      workoutReminders: true,
+      progressUpdates: true,
+      mealReminders: false
+    };
+
+    // Load profile data into form
+    function loadProfile() {
+      document.getElementById('fullName').value = profileData.fullName || '';
+      document.getElementById('age').value = profileData.age || '';
+      document.getElementById('gender').value = profileData.gender || '';
+      document.getElementById('dob').value = profileData.dob || '';
+      document.getElementById('email').value = profileData.email || '';
+      document.getElementById('phone').value = profileData.phone || '';
+      document.getElementById('currentWeight').value = profileData.currentWeight || '';
+      document.getElementById('height').value = profileData.height || '';
+      document.getElementById('bodyFatPercent').value = profileData.bodyFatPercent || '';
+      document.getElementById('muscleMass').value = profileData.muscleMass || '';
+      document.getElementById('goalType').value = profileData.goalType || '';
+      document.getElementById('targetWeight').value = profileData.targetWeight || '';
+      document.getElementById('weeklyGoal').value = profileData.weeklyGoal || '';
+      document.getElementById('targetDate').value = profileData.targetDate || '';
+      document.getElementById('activityLevel').value = profileData.activityLevel || '';
+      document.getElementById('workoutFrequency').value = profileData.workoutFrequency || '';
+      document.getElementById('bloodType').value = profileData.bloodType || '';
+      document.getElementById('dietaryPreference').value = profileData.dietaryPreference || '';
+      document.getElementById('injuries').value = profileData.injuries || '';
+      document.getElementById('allergies').value = profileData.allergies || '';
+      document.getElementById('chest').value = profileData.chest || '';
+      document.getElementById('waist').value = profileData.waist || '';
+      document.getElementById('hips').value = profileData.hips || '';
+      document.getElementById('biceps').value = profileData.biceps || '';
+      document.getElementById('thighs').value = profileData.thighs || '';
+      document.getElementById('unitsToggle').checked = !profileData.unitsMetric;
+      document.getElementById('workoutReminders').checked = profileData.workoutReminders;
+      document.getElementById('progressUpdates').checked = profileData.progressUpdates;
+      document.getElementById('mealReminders').checked = profileData.mealReminders;
+
+      updateUnitsLabel();
+      updateInitials();
+      calculateBMI();
+
+      if (profileData.photo) {
+        updateProfileImage(profileData.photo);
+      }
+    }
+
+    // Update initials in profile images
+    function updateInitials() {
+      const name = document.getElementById('fullName').value || 'User';
+      const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+      document.getElementById('headerInitials').textContent = initials;
+      document.getElementById('profileInitials').textContent = initials;
+    }
+
+    // Calculate BMI
+    function calculateBMI() {
+      const weight = parseFloat(document.getElementById('currentWeight').value);
+      const height = parseFloat(document.getElementById('height').value);
+
+      if (weight && height) {
+        const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+        document.getElementById('bmiValue').textContent = bmi;
+
+        let category = '';
+        if (bmi < 18.5) category = 'Underweight';
+        else if (bmi < 25) category = 'Normal weight';
+        else if (bmi < 30) category = 'Overweight';
+        else category = 'Obese';
+
+        document.getElementById('bmiCategory').textContent = category;
+      } else {
+        document.getElementById('bmiValue').textContent = '-';
+        document.getElementById('bmiCategory').textContent = 'Enter height & weight';
+      }
+    }
+
+    // Update units label
+    function updateUnitsLabel() {
+      const isMetric = !document.getElementById('unitsToggle').checked;
+      document.getElementById('unitsLabel').textContent = isMetric ? 'Metric' : 'Imperial';
+    }
+
+    // Update profile image
+    function updateProfileImage(dataUrl) {
+      const headerImage = document.getElementById('headerProfileImage');
+      const profileImage = document.getElementById('profileInitials').parentElement;
+
+      headerImage.innerHTML = `<img src="${dataUrl}" alt="Profile">`;
+      profileImage.innerHTML = `<img src="${dataUrl}" alt="Profile">`;
+    }
+
+    // Handle profile photo upload
+    document.getElementById('profilePhotoInput').addEventListener('change', async function(e) {
+      if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const dataUrl = event.target.result;
+          profileData.photo = dataUrl;
+          updateProfileImage(dataUrl);
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+
+    // Save profile
+    document.getElementById('saveBtn').addEventListener('click', function() {
+      // Collect all form data
+      profileData.fullName = document.getElementById('fullName').value;
+      profileData.age = parseInt(document.getElementById('age').value) || null;
+      profileData.gender = document.getElementById('gender').value;
+      profileData.dob = document.getElementById('dob').value;
+      profileData.email = document.getElementById('email').value;
+      profileData.phone = document.getElementById('phone').value;
+      profileData.currentWeight = parseFloat(document.getElementById('currentWeight').value) || null;
+      profileData.height = parseFloat(document.getElementById('height').value) || null;
+      profileData.bodyFatPercent = parseFloat(document.getElementById('bodyFatPercent').value) || null;
+      profileData.muscleMass = parseFloat(document.getElementById('muscleMass').value) || null;
+      profileData.goalType = document.getElementById('goalType').value;
+      profileData.targetWeight = parseFloat(document.getElementById('targetWeight').value) || null;
+      profileData.weeklyGoal = document.getElementById('weeklyGoal').value;
+      profileData.targetDate = document.getElementById('targetDate').value;
+      profileData.activityLevel = document.getElementById('activityLevel').value;
+      profileData.workoutFrequency = parseInt(document.getElementById('workoutFrequency').value) || null;
+      profileData.bloodType = document.getElementById('bloodType').value;
+      profileData.dietaryPreference = document.getElementById('dietaryPreference').value;
+      profileData.injuries = document.getElementById('injuries').value;
+      profileData.allergies = document.getElementById('allergies').value;
+      profileData.chest = parseFloat(document.getElementById('chest').value) || null;
+      profileData.waist = parseFloat(document.getElementById('waist').value) || null;
+      profileData.hips = parseFloat(document.getElementById('hips').value) || null;
+      profileData.biceps = parseFloat(document.getElementById('biceps').value) || null;
+      profileData.thighs = parseFloat(document.getElementById('thighs').value) || null;
+      profileData.unitsMetric = !document.getElementById('unitsToggle').checked;
+      profileData.workoutReminders = document.getElementById('workoutReminders').checked;
+      profileData.progressUpdates = document.getElementById('progressUpdates').checked;
+      profileData.mealReminders = document.getElementById('mealReminders').checked;
+
+      // Collect workout types
+      profileData.workoutTypes = [];
+      const workoutCheckboxes = ['cardio', 'strength', 'hiit', 'yoga', 'pilates', 'sports', 'cycling', 'swimming'];
+      workoutCheckboxes.forEach(id => {
+        if (document.getElementById(id).checked) {
+          profileData.workoutTypes.push(document.getElementById(id).value);
+        }
+      });
+
+      // Show success message
+      const successMessage = document.getElementById('successMessage');
+      successMessage.classList.add('show');
+      setTimeout(() => {
+        successMessage.classList.remove('show');
+      }, 3000);
+
+      console.log('Profile saved:', profileData);
+    });
+
+    // Cancel changes
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+      if (confirm('Are you sure you want to discard changes?')) {
+        loadProfile();
+      }
+    });
+
+    // Update units label on toggle
+    document.getElementById('unitsToggle').addEventListener('change', updateUnitsLabel);
+
+    // Update initials on name change
+    document.getElementById('fullName').addEventListener('input', updateInitials);
+
+    // Calculate BMI on weight/height change
+    document.getElementById('currentWeight').addEventListener('input', calculateBMI);
+    document.getElementById('height').addEventListener('input', calculateBMI);
+
+    // Initialize app
+    loadProfile();
+  </script>
+</body>
+</html>
+    </section>
+
+    <!-- Success Message -->
+    <div class="success-message" id="successMessage">
+      <span>✓</span>
+      <span>Profile saved successfully!</span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="button-group">
+      <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+      <button type="button" class="btn btn-primary" id="saveBtn">Save Changes</button>
+    </div>
+  </div>
+
+  <script>
+  </script>
+</body>
+</html>

@@ -9,9 +9,27 @@
 </head>
 <body>
     <header class="header">
-        <div class="header-content">
-            <h1>Muscle Hustle</h1>
-            <p>Your fitness tracking companion</p>
+        <div class="header-wrapper">
+            <div class="header-left">
+                <div class="app-logo">💪</div>
+                <div class="header-content">
+                    <h1>Muscle Hustle</h1>
+                    <p>Your fitness tracking companion</p>
+                </div>
+            </div>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile.view_profile') }}" class="header-profile-link">
+                <div class="header-profile-image">
+                    {% if current_user.profile_picture %}
+                        <img src="{{ url_for('static', filename='uploads/profiles/' + current_user.profile_picture) }}" alt="Profile">
+                    {% elif current_user.full_name %}
+                        <span>{{ current_user.full_name.split()[0][0] }}{{ current_user.full_name.split()[-1][0] if current_user.full_name.split()|length > 1 else '' }}</span>
+                    {% else %}
+                        <span>{{ current_user.email[0]|upper }}</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% endif %}
         </div>
         <nav class="header-nav">
             <a href="{{ url_for('main.home') }}" class="nav-link">Home</a>
@@ -21,7 +39,6 @@
                 {% if current_user.is_admin %}
                     <a href="{{ url_for('admin.user_list') }}" class="nav-link">User Management</a>
                 {% endif %}
-                <span class="nav-link" style="cursor: default;">{{ current_user.email }}</span>
                 <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
             {% else %}
                 <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>

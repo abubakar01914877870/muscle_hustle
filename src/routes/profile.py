@@ -1,14 +1,80 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
 from datetime import datetime
+import os
 from ..models.user import User, db
 
 profile = Blueprint('profile', __name__, url_prefix='/profile')
+
+UPLOAD_FOLDER = 'src/static/uploads/profiles'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @profile.route('/')
 @login_required
 def view_profile():
     return render_template('profile/view.html', user=current_user)
+
+@profile.route('/upload-picture', methods=['POST'])
+@login_required
+def upload_picture():
+    if 'profile_picture' not in request.files:
+        flash('No file selected', 'error')
+        return redirect(url_for('profile.view_profile'))
+    
+    file = request.files['profile_picture']
+    
+    if file.filename == '':
+        flash('No file selected', 'error')
+        return redirect(url_for('profile.view_profile'))
+    
+    if file and allowed_file(file.filename):
+        # Create upload directory if it doesn't exist
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        
+        # Delete old profile picture if exists
+        if current_user.profile_picture:
+            old_path = os.path.join(UPLOAD_FOLDER, current_user.profile_picture)
+            if os.path.exists(old_path):
+                os.remove(old_path)
+        
+        # Generate unique filename
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = secure_filename(file.filename)
+        unique_filename = f"{current_user.id}_{timestamp}_{filename}"
+        
+        # Save file
+        file.save(os.path.join(UPLOAD_FOLDER, unique_filename))
+        
+        # Update user profile
+        current_user.profile_picture = unique_filename
+        db.session.commit()
+        
+        flash('Profile picture updated successfully!', 'success')
+    else:
+        flash('Invalid file type. Please upload an image file (PNG, JPG, JPEG, GIF, WEBP)', 'error')
+    
+    return redirect(url_for('profile.view_profile'))
+
+@profile.route('/remove-picture', methods=['POST'])
+@login_required
+def remove_picture():
+    if current_user.profile_picture:
+        # Delete file
+        file_path = os.path.join(UPLOAD_FOLDER, current_user.profile_picture)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        
+        # Update database
+        current_user.profile_picture = None
+        db.session.commit()
+        
+        flash('Profile picture removed successfully!', 'success')
+    
+    return redirect(url_for('profile.view_profile'))
 
 @profile.route('/edit', methods=['GET', 'POST'])
 @login_required
