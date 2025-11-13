@@ -1,26 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Login - Muscle Hustle{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Login</h2>
+<section class="form-section" style="max-width: 500px; margin-left: auto; margin-right: auto;">
+    <h2>Login to Your Account</h2>
     <form method="POST" action="{{ url_for('auth.login') }}">
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
+        <div class="form-grid" style="grid-template-columns: 1fr;">
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required placeholder="Enter your password">
+            </div>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: var(--space-8); cursor: pointer;">
+                    <input type="checkbox" name="remember" value="true" style="width: auto;">
+                    <span style="font-size: var(--font-size-sm);">Remember me</span>
+                </label>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <div class="form-group">
-            <label>
-                <input type="checkbox" name="remember" value="true"> Remember me
-            </label>
-        </div>
-        <button type="submit">Login</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
     </form>
-    <p>Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign up here</a></p>
-</div>
+    <p style="text-align: center; margin-top: var(--space-20); color: var(--color-text-secondary); font-size: var(--font-size-sm);">
+        Don't have an account? <a href="{{ url_for('auth.signup') }}" style="color: var(--color-primary); font-weight: var(--font-weight-medium);">Sign up here</a>
+    </p>
+</section>
 {% endblock %}

@@ -1,16 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Home - Muscle Hustle{% endblock %}
 
 {% block content %}
-<div class="container">
+<section class="card">
     {% if current_user.is_authenticated %}
-        <h2>Welcome back!</h2>
-        <p>You are successfully logged in.</p>
-        <p>Email: {{ current_user.email }}</p>
+        <h2>Welcome back, {{ current_user.full_name or current_user.email }}!</h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: var(--space-24);">You are successfully logged in and ready to track your fitness journey.</p>
+        
+        <div class="form-grid">
+            <div class="card" style="margin-bottom: 0;">
+                <h3 style="border: none; padding: 0; margin-bottom: var(--space-12);">📊 Progress Tracker</h3>
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--space-16); font-size: var(--font-size-sm);">Track your weight, measurements, and progress photos</p>
+                <a href="{{ url_for('progress.index') }}" class="btn btn-primary">Go to Progress Tracker</a>
+            </div>
+            
+            <div class="card" style="margin-bottom: 0;">
+                <h3 style="border: none; padding: 0; margin-bottom: var(--space-12);">👤 Your Profile</h3>
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--space-16); font-size: var(--font-size-sm);">View and update your fitness profile and goals</p>
+                <a href="{{ url_for('profile.view_profile') }}" class="btn btn-secondary">View Profile</a>
+            </div>
+        </div>
     {% else %}
         <h2>Welcome to Muscle Hustle</h2>
-        <p>Your fitness tracking companion. Please <a href="{{ url_for('auth.login') }}">login</a> or <a href="{{ url_for('auth.signup') }}">sign up</a> to continue.</p>
+        <p style="color: var(--color-text-secondary); margin-bottom: var(--space-24); font-size: var(--font-size-lg);">Your comprehensive fitness tracking companion. Track your progress, set goals, and achieve your fitness dreams.</p>
+        
+        <div class="form-grid">
+            <div>
+                <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-8);">✨ Track Progress</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">Log your weight, body measurements, and progress photos with timestamps</p>
+            </div>
+            
+            <div>
+                <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-8);">📈 Visualize Growth</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">See your progress with interactive charts and timeline views</p>
+            </div>
+            
+            <div>
+                <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-8);">🎯 Set Goals</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">Define your fitness goals and track your journey towards them</p>
+            </div>
+            
+            <div>
+                <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-8);">📝 Take Notes</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">Record your workouts, nutrition, and how you feel each day</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: var(--space-32); display: flex; gap: var(--space-16); flex-wrap: wrap; justify-content: center;">
+            <a href="{{ url_for('auth.signup') }}" class="btn btn-primary" style="width: auto;">Sign Up Now</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-secondary" style="width: auto;">Login</a>
+        </div>
     {% endif %}
-</div>
+</section>
 {% endblock %}
