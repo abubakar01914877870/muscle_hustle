@@ -3,8 +3,8 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 import os
-from ..models.user import db
-from ..models.progress import ProgressEntry
+from ..models.progress_mongo import ProgressEntry
+from ..database import get_db
 
 progress_bp = Blueprint('progress', __name__, url_prefix='/progress')
 
@@ -48,8 +48,10 @@ def add_entry():
                 file.save(os.path.join(UPLOAD_FOLDER, photo_filename))
         
         # Create entry
-        entry = ProgressEntry(
-            user_id=current_user.id,
+        db = get_db()
+        ProgressEntry.create(
+            db=db,
+            user_id=str(current_user.id),
             weight=weight,
             body_fat=float(body_fat) if body_fat else None,
             water_intake=float(water_intake) if water_intake else None,
@@ -62,9 +64,6 @@ def add_entry():
             photo_filename=photo_filename
         )
         
-        db.session.add(entry)
-        db.session.commit()
-        
         flash('Progress entry added successfully!', 'success')
         return redirect(url_for('progress.index'))
     
@@ -75,9 +74,8 @@ def add_entry():
 @progress_bp.route('/api/entries')
 @login_required
 def get_entries():
-    entries = ProgressEntry.query.filter_by(user_id=current_user.id)\
-        .order_by(ProgressEntry.created_at.desc())\
-        .all()
+    db = get_db()
+    entries = ProgressEntry.find_by_user(db, str(current_user.id))
     
     return jsonify([entry.to_dict() for entry in entries])
 
@@ -85,11 +83,9 @@ def get_entries():
 @login_required
 def get_chart_data():
     # Get entries from last 30 days
+    db = get_db()
     thirty_days_ago = datetime.utcnow() - timedelta(days=30)
-    entries = ProgressEntry.query.filter(
-        ProgressEntry.user_id == current_user.id,
-        ProgressEntry.created_at >= thirty_days_ago
-    ).order_by(ProgressEntry.created_at.asc()).all()
+    entries = ProgressEntry.find_by_user_since(db, str(current_user.id), thirty_days_ago)
     
     data = {
         'labels': [entry.created_at.strftime('%b %d') for entry in entries],
@@ -99,13 +95,18 @@ def get_chart_data():
     
     return jsonify(data)
 
-@progress_bp.route('/delete/<int:entry_id>', methods=['POST'])
+@progress_bp.route('/delete/<entry_id>', methods=['POST'])
 @login_required
 def delete_entry(entry_id):
-    entry = ProgressEntry.query.get_or_404(entry_id)
+    db = get_db()
+    entry = ProgressEntry.find_by_id(db, entry_id)
+    
+    if not entry:
+        flash('Entry not found', 'error')
+        return redirect(url_for('progress.index'))
     
     # Check ownership
-    if entry.user_id != current_user.id:
+    if str(entry.user_id) != str(current_user.id):
         flash('Unauthorized access', 'error')
         return redirect(url_for('progress.index'))
     
@@ -115,8 +116,7 @@ def delete_entry(entry_id):
         if os.path.exists(photo_path):
             os.remove(photo_path)
     
-    db.session.delete(entry)
-    db.session.commit()
+    ProgressEntry.delete(db, entry_id)
     
     flash('Entry deleted successfully', 'success')
     return redirect(url_for('progress.index'))

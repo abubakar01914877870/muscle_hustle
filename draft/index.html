@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Muscle Hustle - Exercise Database</title>
+  <style>
+    :root {
+      --color-white: rgba(255, 255, 255, 1);
+      --color-black: rgba(0, 0, 0, 1);
+      --color-cream-50: rgba(252, 252, 249, 1);
+      --color-cream-100: rgba(255, 255, 253, 1);
+      --color-gray-200: rgba(245, 245, 245, 1);
+      --color-gray-300: rgba(167, 169, 169, 1);
+      --color-gray-400: rgba(119, 124, 124, 1);
+      --color-slate-500: rgba(98, 108, 113, 1);
+      --color-brown-600: rgba(94, 82, 64, 1);
+      --color-charcoal-700: rgba(31, 33, 33, 1);
+      --color-charcoal-800: rgba(38, 40, 40, 1);
+      --color-slate-900: rgba(19, 52, 59, 1);
+      --color-teal-300: rgba(50, 184, 198, 1);
+      --color-teal-400: rgba(45, 166, 178, 1);
+      --color-teal-500: rgba(33, 128, 141, 1);
+      --color-teal-600: rgba(29, 116, 128, 1);
+      --color-teal-700: rgba(26, 104, 115, 1);
+      --color-teal-800: rgba(41, 150, 161, 1);
+      --color-red-400: rgba(255, 84, 89, 1);
+      --color-red-500: rgba(192, 21, 47, 1);
+      --color-orange-400: rgba(230, 129, 97, 1);
+      --color-orange-500: rgba(168, 75, 47, 1);
+      --color-brown-600-rgb: 94, 82, 64;
+      --color-teal-500-rgb: 33, 128, 141;
+      --color-slate-900-rgb: 19, 52, 59;
+      --color-slate-500-rgb: 98, 108, 113;
+      --color-red-500-rgb: 192, 21, 47;
+      --color-red-400-rgb: 255, 84, 89;
+      --color-orange-500-rgb: 168, 75, 47;
+      --color-orange-400-rgb: 230, 129, 97;
+      --color-bg-1: rgba(59, 130, 246, 0.08);
+      --color-bg-2: rgba(245, 158, 11, 0.08);
+      --color-bg-3: rgba(34, 197, 94, 0.08);
+      --color-bg-4: rgba(239, 68, 68, 0.08);
+      --color-bg-5: rgba(147, 51, 234, 0.08);
+      --color-bg-6: rgba(249, 115, 22, 0.08);
+      --color-bg-7: rgba(236, 72, 153, 0.08);
+      --color-bg-8: rgba(6, 182, 212, 0.08);
+      --color-background: var(--color-cream-50);
+      --color-surface: var(--color-cream-100);
+      --color-text: var(--color-slate-900);
+      --color-text-secondary: var(--color-slate-500);
+      --color-primary: var(--color-teal-500);
+      --color-primary-hover: var(--color-teal-600);
+      --color-primary-active: var(--color-teal-700);
+      --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+      --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
+      --color-secondary-active: rgba(var(--color-brown-600-rgb), 0.25);
+      --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+      --color-btn-primary-text: var(--color-cream-50);
+      --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+      --color-card-border-inner: rgba(var(--color-brown-600-rgb), 0.12);
+      --color-error: var(--color-red-500);
+      --color-success: var(--color-teal-500);
+      --color-warning: var(--color-orange-500);
+      --color-info: var(--color-slate-500);
+      --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
+      --color-select-caret: rgba(var(--color-slate-900-rgb), 0.8);
+      --focus-ring: 0 0 0 3px var(--color-focus-ring);
+      --focus-outline: 2px solid var(--color-primary);
+      --status-bg-opacity: 0.15;
+      --status-border-opacity: 0.25;
+      --select-caret-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23134252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      --select-caret-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 14px;
+      --font-size-lg: 16px;
+      --font-size-xl: 18px;
+      --font-size-2xl: 20px;
+      --font-size-3xl: 24px;
+      --font-size-4xl: 30px;
+      --font-weight-normal: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 550;
+      --font-weight-bold: 600;
+      --line-height-tight: 1.2;
+      --line-height-normal: 1.5;
+      --letter-spacing-tight: -0.01em;
+      --space-0: 0;
+      --space-1: 1px;
+      --space-2: 2px;
+      --space-4: 4px;
+      --space-6: 6px;
+      --space-8: 8px;
+      --space-10: 10px;
+      --space-12: 12px;
+      --space-16: 16px;
+      --space-20: 20px;
+      --space-24: 24px;
+      --space-32: 32px;
+      --radius-sm: 6px;
+      --radius-base: 8px;
+      --radius-md: 10px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+      --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+      --duration-fast: 150ms;
+      --duration-normal: 250ms;
+      --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+      --container-sm: 640px;
+      --container-md: 768px;
+      --container-lg: 1024px;
+      --container-xl: 1280px;
+      --orange: #FF6B35;
+      --blue: #4A90E2;
+      --green: #50C878;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-gray-400-rgb: 119, 124, 124;
+        --color-teal-300-rgb: 50, 184, 198;
+        --color-gray-300-rgb: 167, 169, 169;
+        --color-gray-200-rgb: 245, 245, 245;
+        --color-bg-1: rgba(29, 78, 216, 0.15);
+        --color-bg-2: rgba(180, 83, 9, 0.15);
+        --color-bg-3: rgba(21, 128, 61, 0.15);
+        --color-bg-4: rgba(185, 28, 28, 0.15);
+        --color-bg-5: rgba(107, 33, 168, 0.15);
+        --color-bg-6: rgba(194, 65, 12, 0.15);
+        --color-bg-7: rgba(190, 24, 93, 0.15);
+        --color-bg-8: rgba(8, 145, 178, 0.15);
+        --color-background: var(--color-charcoal-700);
+        --color-surface: var(--color-charcoal-800);
+        --color-text: var(--color-gray-200);
+        --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+        --color-primary: var(--color-teal-300);
+        --color-primary-hover: var(--color-teal-400);
+        --color-primary-active: var(--color-teal-800);
+        --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+        --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
+        --color-secondary-active: rgba(var(--color-gray-400-rgb), 0.3);
+        --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+        --color-error: var(--color-red-400);
+        --color-success: var(--color-teal-300);
+        --color-warning: var(--color-orange-400);
+        --color-info: var(--color-gray-300);
+        --color-focus-ring: rgba(var(--color-teal-300-rgb), 0.4);
+        --color-btn-primary-text: var(--color-slate-900);
+        --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
+        --color-card-border-inner: rgba(var(--color-gray-400-rgb), 0.15);
+        --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+        --color-select-caret: rgba(var(--color-gray-200-rgb), 0.8);
+      }
+    }
+
+    @font-face {
+      font-family: 'FKGroteskNeue';
+      src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2') format('woff2');
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--color-background);
+      color: var(--color-text);
+      line-height: var(--line-height-normal);
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--orange) 0%, var(--color-orange-500) 100%);
+      color: var(--color-white);
+      padding: var(--space-16) var(--space-24);
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-24);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    }
+
+    .logo {
+      font-size: var(--font-size-3xl);
+    }
+
+    .app-name {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-white);
+    }
+
+    .nav {
+      display: flex;
+      gap: var(--space-24);
+    }
+
+    .nav a {
+      color: var(--color-white);
+      text-decoration: none;
+      font-weight: var(--font-weight-medium);
+      transition: opacity var(--duration-fast) var(--ease-standard);
+    }
+
+    .nav a:hover {
+      opacity: 0.8;
+    }
+
+    .nav a.active {
+      text-decoration: underline;
+    }
+
+    .search-bar {
+      flex: 0 1 300px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: var(--space-10) var(--space-16);
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-md);
+      background-color: rgba(255, 255, 255, 0.2);
+      color: var(--color-white);
+      transition: background-color var(--duration-fast) var(--ease-standard);
+    }
+
+    .search-bar input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--space-32) var(--space-24);
+    }
+
+    .filter-section {
+      margin-bottom: var(--space-32);
+    }
+
+    .filter-group {
+      margin-bottom: var(--space-24);
+    }
+
+    .filter-group h3 {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--space-12);
+      color: var(--color-text);
+    }
+
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-8);
+    }
+
+    .filter-btn {
+      padding: var(--space-8) var(--space-16);
+      border: 1px solid var(--color-border);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-standard);
+    }
+
+    .filter-btn:hover {
+      background-color: var(--color-secondary);
+    }
+
+    .filter-btn.active {
+      background-color: var(--orange);
+      color: var(--color-white);
+      border-color: var(--orange);
+    }
+
+    .clear-filters {
+      padding: var(--space-8) var(--space-16);
+      border: 1px solid var(--color-border);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-standard);
+    }
+
+    .clear-filters:hover {
+      background-color: var(--color-secondary-hover);
+    }
+
+    .exercise-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-24);
+      flex-wrap: wrap;
+      gap: var(--space-16);
+    }
+
+    .exercise-count {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .exercise-search {
+      flex: 1;
+      max-width: 400px;
+    }
+
+    .exercise-search input {
+      width: 100%;
+      padding: var(--space-10) var(--space-16);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-md);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+    }
+
+    .exercise-search input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: var(--focus-ring);
+    }
+
+    .exercise-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--space-24);
+      margin-bottom: var(--space-32);
+    }
+
+    .exercise-card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-standard);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .exercise-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .exercise-thumbnail {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, var(--color-bg-1), var(--color-bg-3));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-4xl);
+    }
+
+    .exercise-content {
+      padding: var(--space-16);
+    }
+
+    .exercise-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--space-8);
+      color: var(--color-text);
+    }
+
+    .exercise-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-6);
+      margin-bottom: var(--space-12);
+    }
+
+    .badge {
+      padding: var(--space-4) var(--space-10);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-muscle {
+      background-color: var(--color-bg-1);
+      color: var(--blue);
+    }
+
+    .badge-equipment {
+      background-color: var(--color-bg-6);
+      color: var(--orange);
+    }
+
+    .badge-difficulty {
+      background-color: var(--color-bg-3);
+      color: var(--green);
+    }
+
+    .exercise-description {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-16);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .view-details-btn {
+      width: 100%;
+      padding: var(--space-10) var(--space-16);
+      background-color: var(--color-primary);
+      color: var(--color-btn-primary-text);
+      border: none;
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: background-color var(--duration-fast) var(--ease-standard);
+    }
+
+    .view-details-btn:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-8);
+      margin-top: var(--space-32);
+    }
+
+    .pagination button {
+      padding: var(--space-8) var(--space-16);
+      border: 1px solid var(--color-border);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-standard);
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background-color: var(--color-secondary);
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination button.active {
+      background-color: var(--color-primary);
+      color: var(--color-btn-primary-text);
+      border-color: var(--color-primary);
+    }
+
+    .fab {
+      position: fixed;
+      bottom: var(--space-32);
+      right: var(--space-32);
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--orange) 0%, var(--color-orange-500) 100%);
+      color: var(--color-white);
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-3xl);
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--duration-normal) var(--ease-standard);
+      z-index: 100;
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+    }
+
+    .fab.visible {
+      display: flex;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      overflow-y: auto;
+      padding: var(--space-24);
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-32);
+      max-width: 800px;
+      width: 100%;
+      margin: var(--space-32) auto;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-24);
+    }
+
+    .modal-header h2 {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: var(--font-size-3xl);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color var(--duration-fast) var(--ease-standard);
+    }
+
+    .close-btn:hover {
+      color: var(--color-text);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-16);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      margin-bottom: var(--space-6);
+    }
+
+    .form-label.required::after {
+      content: ' *';
+      color: var(--color-error);
+    }
+
+    .form-control {
+      padding: var(--space-10) var(--space-12);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-md);
+      color: var(--color-text);
+      background-color: var(--color-background);
+      font-family: var(--font-family-base);
+      transition: border-color var(--duration-fast) var(--ease-standard);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: var(--focus-ring);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    select.form-control {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: var(--select-caret-light);
+      background-repeat: no-repeat;
+      background-position: right var(--space-12) center;
+      background-size: 16px;
+      padding-right: var(--space-32);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      select.form-control {
+        background-image: var(--select-caret-dark);
+      }
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-8);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+    }
+
+    .checkbox-label input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--color-primary);
+    }
+
+    .radio-group {
+      display: flex;
+      gap: var(--space-16);
+    }
+
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+    }
+
+    .radio-label input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--color-primary);
+    }
+
+    .image-upload-container {
+      margin-top: var(--space-8);
+    }
+
+    .image-upload-btn {
+      padding: var(--space-10) var(--space-16);
+      background-color: var(--color-secondary);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      transition: background-color var(--duration-fast) var(--ease-standard);
+    }
+
+    .image-upload-btn:hover {
+      background-color: var(--color-secondary-hover);
+    }
+
+    .image-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: var(--space-12);
+      margin-top: var(--space-12);
+    }
+
+    .image-preview-item {
+      position: relative;
+      width: 100%;
+      padding-bottom: 100%;
+      background-color: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-base);
+      overflow: hidden;
+    }
+
+    .image-preview-item img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-remove-btn {
+      position: absolute;
+      top: var(--space-4);
+      right: var(--space-4);
+      width: 24px;
+      height: 24px;
+      background-color: var(--color-error);
+      color: var(--color-white);
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: var(--space-12);
+      justify-content: flex-end;
+      margin-top: var(--space-24);
+    }
+
+    .btn {
+      padding: var(--space-10) var(--space-24);
+      border: none;
+      border-radius: var(--radius-base);
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-standard);
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: var(--color-btn-primary-text);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: var(--color-secondary);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--color-secondary-hover);
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .nav {
+        justify-content: center;
+      }
+
+      .search-bar {
+        flex: 1;
+        max-width: 100%;
+      }
+
+      .exercise-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .checkbox-group {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .modal-content {
+        padding: var(--space-16);
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .exercise-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="logo">💪</div>
+        <h1 class="app-name">Muscle Hustle</h1>
+      </div>
+      <nav class="nav">
+        <a href="#">Home</a>
+        <a href="#" class="active">Exercises</a>
+        <a href="#">My Workouts</a>
+        <a href="#">Profile</a>
+      </nav>
+      <div class="search-bar">
+        <input type="text" id="headerSearch" placeholder="Search exercises...">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Filter Section -->
+    <section class="filter-section">
+      <div class="filter-group">
+        <h3>Filter by Muscle Group</h3>
+        <div class="filter-buttons" id="muscleFilters">
+          <button class="filter-btn" data-filter="muscle" data-value="Abs">Abs</button>
+          <button class="filter-btn" data-filter="muscle" data-value="Back">Back</button>
+          <button class="filter-btn" data-filter="muscle" data-value="Biceps">Biceps</button>
+          <button class="filter-btn" data-filter="muscle" data-value="Cardio">Cardio</button>
+          <button class="filter-btn" data-filter="muscle" data-value="Chest">Chest</button>
+          <button class="filter-btn" data-filter="muscle" data-value="Forearms">Forearms</button>
+          <button class="filter-btn" data-filter="muscle" data-value="Glutes">Glutes</button>
+          <button class="filter-btn" data-filter="muscle" data-value="Shoulders">Shoulders</button>
+          <button class="filter-btn" data-filter="muscle" data-value="Triceps">Triceps</button>
+          <button class="filter-btn" data-filter="muscle" data-value="Upper Legs">Upper Legs</button>
+          <button class="filter-btn" data-filter="muscle" data-value="Lower Legs">Lower Legs</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h3>Filter by Equipment</h3>
+        <div class="filter-buttons" id="equipmentFilters">
+          <button class="filter-btn" data-filter="equipment" data-value="Body Weight">Body Weight</button>
+          <button class="filter-btn" data-filter="equipment" data-value="Bands">Bands</button>
+          <button class="filter-btn" data-filter="equipment" data-value="Barbell">Barbell</button>
+          <button class="filter-btn" data-filter="equipment" data-value="Bench">Bench</button>
+          <button class="filter-btn" data-filter="equipment" data-value="Dumbbell">Dumbbell</button>
+          <button class="filter-btn" data-filter="equipment" data-value="Exercise Ball">Exercise Ball</button>
+          <button class="filter-btn" data-filter="equipment" data-value="EZ Curl Bar">EZ Curl Bar</button>
+          <button class="filter-btn" data-filter="equipment" data-value="Kettlebell">Kettlebell</button>
+          <button class="filter-btn" data-filter="equipment" data-value="Cardio Machine">Cardio Machine</button>
+          <button class="filter-btn" data-filter="equipment" data-value="Strength Machine">Strength Machine</button>
+          <button class="filter-btn" data-filter="equipment" data-value="Pullup Bar">Pullup Bar</button>
+          <button class="filter-btn" data-filter="equipment" data-value="Weight Plate">Weight Plate</button>
+        </div>
+      </div>
+
+      <button class="clear-filters" id="clearFilters">Clear Filters</button>
+    </section>
+
+    <!-- Exercise Display Section -->
+    <section>
+      <div class="exercise-header">
+        <div class="exercise-count" id="exerciseCount">15 EXERCISES FOUND</div>
+        <div class="exercise-search">
+          <input type="text" id="exerciseSearch" placeholder="Search exercises by name...">
+        </div>
+      </div>
+
+      <div class="exercise-grid" id="exerciseGrid">
+        <!-- Exercise cards will be dynamically inserted here -->
+      </div>
+
+      <div class="pagination" id="pagination">
+        <!-- Pagination will be dynamically inserted here -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Floating Action Button -->
+  <button class="fab" id="addExerciseFab">+</button>
+
+  <!-- Add Exercise Modal -->
+  <div class="modal" id="addExerciseModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add New Exercise</h2>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+
+      <form id="exerciseForm">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label required" for="exerciseName">Exercise Name</label>
+            <input type="text" id="exerciseName" class="form-control" required>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label" for="exerciseDescription">Description</label>
+            <textarea id="exerciseDescription" class="form-control" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required" for="primaryMuscle">Primary Muscle Group</label>
+            <select id="primaryMuscle" class="form-control" required>
+              <option value="">Select muscle group</option>
+              <option value="Abs">Abs</option>
+              <option value="Back">Back</option>
+              <option value="Biceps">Biceps</option>
+              <option value="Cardio">Cardio</option>
+              <option value="Chest">Chest</option>
+              <option value="Forearms">Forearms</option>
+              <option value="Glutes">Glutes</option>
+              <option value="Shoulders">Shoulders</option>
+              <option value="Triceps">Triceps</option>
+              <option value="Upper Legs">Upper Legs</option>
+              <option value="Lower Legs">Lower Legs</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required" for="exerciseEquipment">Equipment</label>
+            <select id="exerciseEquipment" class="form-control" required>
+              <option value="">Select equipment</option>
+              <option value="Body Weight">Body Weight</option>
+              <option value="Bands">Bands</option>
+              <option value="Barbell">Barbell</option>
+              <option value="Bench">Bench</option>
+              <option value="Dumbbell">Dumbbell</option>
+              <option value="Exercise Ball">Exercise Ball</option>
+              <option value="EZ Curl Bar">EZ Curl Bar</option>
+              <option value="Kettlebell">Kettlebell</option>
+              <option value="Cardio Machine">Cardio Machine</option>
+              <option value="Strength Machine">Strength Machine</option>
+              <option value="Pullup Bar">Pullup Bar</option>
+              <option value="Weight Plate">Weight Plate</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Secondary Muscle Groups</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="secondaryMuscles" value="Abs"> Abs
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="secondaryMuscles" value="Back"> Back
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="secondaryMuscles" value="Biceps"> Biceps
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="secondaryMuscles" value="Chest"> Chest
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="secondaryMuscles" value="Forearms"> Forearms
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="secondaryMuscles" value="Glutes"> Glutes
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="secondaryMuscles" value="Shoulders"> Shoulders
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="secondaryMuscles" value="Triceps"> Triceps
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="secondaryMuscles" value="Upper Legs"> Upper Legs
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="secondaryMuscles" value="Lower Legs"> Lower Legs
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Difficulty</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="difficulty" value="Beginner" required> Beginner
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="difficulty" value="Intermediate"> Intermediate
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="difficulty" value="Advanced"> Advanced
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required" for="exerciseType">Type</label>
+            <select id="exerciseType" class="form-control" required>
+              <option value="">Select type</option>
+              <option value="Strength">Strength</option>
+              <option value="Cardio">Cardio</option>
+              <option value="Flexibility">Flexibility</option>
+              <option value="Balance">Balance</option>
+              <option value="Plyometric">Plyometric</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label" for="exerciseInstructions">Instructions</label>
+            <textarea id="exerciseInstructions" class="form-control" rows="5" placeholder="Enter step-by-step instructions..."></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label" for="exerciseImages">Multiple Image Upload</label>
+            <div class="image-upload-container">
+              <input type="file" id="exerciseImages" accept="image/*" multiple style="display: none;">
+              <button type="button" class="image-upload-btn" onclick="document.getElementById('exerciseImages').click()">Choose Images</button>
+              <div class="image-preview-grid" id="imagePreviewGrid"></div>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label" for="exerciseVideo">Video URL (optional)</label>
+            <input type="url" id="exerciseVideo" class="form-control" placeholder="https://...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="targetReps">Target Reps/Sets</label>
+            <input type="text" id="targetReps" class="form-control" placeholder="e.g., 3 sets of 10-12 reps">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="exerciseTips">Tips &amp; Safety</label>
+            <textarea id="exerciseTips" class="form-control" rows="3"></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label" for="commonMistakes">Common Mistakes</label>
+            <textarea id="commonMistakes" class="form-control" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelForm">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // In-memory data storage
+    let exercises = [
+      {
+        id: 1001,
+        name: "Barbell Bench Press",
+        muscle: "Chest",
+        secondary_muscles: ["Shoulders", "Triceps"],
+        equipment: "Barbell",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "The barbell chest press is a fundamental exercise for building upper body strength, targeting the pectoral muscles, triceps, and shoulders. Essential for any strength program.",
+        instructions: "1. Load barbell with weight. 2. Lie on bench with feet flat. 3. Grip barbell slightly wider than shoulder-width. 4. Lower to mid-chest. 5. Press back up.",
+        reps_sets: "3-4 sets of 8-12 reps",
+        tips: "Keep feet flat, maintain slight arch in lower back",
+        common_mistakes: "Bouncing bar, flaring elbows too wide, lifting hips"
+      },
+      {
+        id: 1002,
+        name: "Cable Lat Pulldown (Wide Grip)",
+        muscle: "Back",
+        secondary_muscles: ["Biceps"],
+        equipment: "Strength Machine",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "Classic bodybuilding exercise for building a stronger back. Targets latissimus dorsi muscles effectively.",
+        instructions: "1. Sit under cable machine. 2. Grab bar with wide overhand grip. 3. Keep abs drawn in, back straight. 4. Pull bar down to upper chest. 5. Hold and squeeze lats. 6. Slowly return.",
+        reps_sets: "3 sets of 10-15 reps",
+        tips: "Pull with your back, not arms. Lean back slightly.",
+        common_mistakes: "Using momentum, pulling behind neck, rounding shoulders"
+      },
+      {
+        id: 1003,
+        name: "Dumbbell Lateral Raise",
+        muscle: "Shoulders",
+        secondary_muscles: [],
+        equipment: "Dumbbell",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "Effective exercise for targeting lateral deltoid muscles on the sides of shoulders. Great for building shoulder width.",
+        instructions: "1. Stand with feet shoulder-width apart. 2. Hold dumbbells at sides. 3. Keep slight bend in elbows. 4. Raise arms to shoulder height. 5. Pause at top. 6. Lower slowly.",
+        reps_sets: "3-4 sets of 12-15 reps",
+        tips: "Use controlled movements, avoid swinging weight",
+        common_mistakes: "Using too much weight, jerky movements, raising above shoulders"
+      },
+      {
+        id: 1004,
+        name: "Machine Leg Extension",
+        muscle: "Upper Legs",
+        secondary_muscles: [],
+        equipment: "Strength Machine",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "Staple exercise for building strong legs. Isolates quadriceps effectively.",
+        instructions: "1. Adjust seat for full knee range. 2. Position footpad above ankles. 3. Slowly extend legs until straight. 4. Hold for a count. 5. Return to start.",
+        reps_sets: "3 sets of 12-15 reps",
+        tips: "Use controlled movements, do not lock knees",
+        common_mistakes: "Swinging weight, locking knees, using momentum"
+      },
+      {
+        id: 1005,
+        name: "Barbell Squat",
+        muscle: "Upper Legs",
+        secondary_muscles: ["Glutes", "Lower Legs"],
+        equipment: "Barbell",
+        difficulty: "Intermediate",
+        type: "Strength",
+        description: "Fundamental exercise for building lower body strength. Targets quads, hamstrings, glutes, and core. The king of exercises.",
+        instructions: "1. Position barbell on upper back. 2. Stand with feet shoulder-width apart. 3. Lower by pushing hips back and bending knees. 4. Go until thighs parallel to ground. 5. Push through heels to stand.",
+        reps_sets: "3-5 sets of 6-10 reps",
+        tips: "Keep chest up, back straight, weight in heels",
+        common_mistakes: "Knees caving inward, leaning too far forward, not going deep enough"
+      },
+      {
+        id: 1006,
+        name: "Pull-Up",
+        muscle: "Back",
+        secondary_muscles: ["Biceps", "Forearms"],
+        equipment: "Pullup Bar",
+        difficulty: "Intermediate",
+        type: "Strength",
+        description: "Classic bodyweight exercise for building back and arm strength. One of the most effective upper body exercises.",
+        instructions: "1. Grab bar with overhand grip, shoulder-width apart. 2. Lift yourself until chin is above bar. 3. Pause for a second. 4. Lower yourself slowly. 5. Repeat.",
+        reps_sets: "3-4 sets to failure",
+        tips: "Maintain control, avoid swinging, activate lats",
+        common_mistakes: "Using momentum, not going full range, stopping too early"
+      },
+      {
+        id: 1007,
+        name: "Dumbbell Alternating Bicep Curl",
+        muscle: "Biceps",
+        secondary_muscles: ["Forearms"],
+        equipment: "Dumbbell",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "Isolation exercise for building bicep strength and size. Alternating allows focus on each arm individually.",
+        instructions: "1. Stand with feet shoulder-width apart. 2. Hold dumbbells at sides with palms facing forward. 3. Curl each dumbbell alternately. 4. Control the descent. 5. Repeat.",
+        reps_sets: "3 sets of 10-12 reps per arm",
+        tips: "Keep elbows stationary, control the negative",
+        common_mistakes: "Swinging weight, moving elbows, too heavy"
+      },
+      {
+        id: 1008,
+        name: "Cable Tricep Pushdown (Rope)",
+        muscle: "Triceps",
+        secondary_muscles: [],
+        equipment: "Strength Machine",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "Rope triceps pushdown targets triceps muscle for better definition and bigger arms.",
+        instructions: "1. Attach rope to high pulley. 2. Stand facing machine. 3. Keep elbows at sides, push rope down towards thighs. 4. Split rope apart at bottom. 5. Control return to start.",
+        reps_sets: "3-4 sets of 12-15 reps",
+        tips: "Keep upper arms stationary, focus on tricep contraction",
+        common_mistakes: "Moving upper arms, using momentum, too heavy"
+      },
+      {
+        id: 1009,
+        name: "Walking",
+        muscle: "Cardio",
+        secondary_muscles: ["Upper Legs", "Lower Legs"],
+        equipment: "Cardio Machine",
+        difficulty: "Beginner",
+        type: "Cardio",
+        description: "Form of cardio that can be performed outside or on treadmill. Burns calories and strengthens legs.",
+        instructions: "1. Start at comfortable pace. 2. Maintain steady breathing. 3. Keep posture upright. 4. Continue for desired duration. 5. Cool down gradually.",
+        reps_sets: "20-60 minutes",
+        tips: "Maintain steady pace, stay hydrated",
+        common_mistakes: "Going too fast too soon, poor posture"
+      },
+      {
+        id: 1010,
+        name: "Machine Leg Press",
+        muscle: "Upper Legs",
+        secondary_muscles: ["Glutes"],
+        equipment: "Strength Machine",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "Variation targeting external leg muscles. Great alternative to squats with less back stress.",
+        instructions: "1. Sit on machine with feet on platform 6 inches apart. 2. Grab handles, release locks. 3. Bend knees and bring weight towards chest. 4. Push back to start. 5. Repeat.",
+        reps_sets: "3-4 sets of 10-15 reps",
+        tips: "Do not lock knees at top, control the descent",
+        common_mistakes: "Locking knees, going too heavy, poor foot position"
+      },
+      {
+        id: 1011,
+        name: "Dumbbell Bench Press",
+        muscle: "Chest",
+        secondary_muscles: ["Shoulders", "Triceps"],
+        equipment: "Dumbbell",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "Effective exercise for chest, shoulders, and triceps. Allows greater range of motion than barbell.",
+        instructions: "1. Lie on bench with feet flat. 2. Hold dumbbells at chest level. 3. Press dumbbells upward until arms extended. 4. Keep control at top. 5. Lower to chest.",
+        reps_sets: "3-4 sets of 8-12 reps",
+        tips: "Maintain control, go full range of motion",
+        common_mistakes: "Dropping dumbbells, uneven pressing, locking elbows"
+      },
+      {
+        id: 1012,
+        name: "Cable Seated Row",
+        muscle: "Back",
+        secondary_muscles: ["Biceps"],
+        equipment: "Strength Machine",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "Popular exercise targeting upper and middle back. Excellent for building back thickness and posture.",
+        instructions: "1. Sit on machine with feet on footrests. 2. Grasp handle with both hands. 3. Pull handle towards torso, squeeze shoulder blades. 4. Hold briefly. 5. Return with control.",
+        reps_sets: "3-4 sets of 10-12 reps",
+        tips: "Pull with your back, not arms. Keep chest up.",
+        common_mistakes: "Rounding shoulders, using legs, jerky movements"
+      },
+      {
+        id: 1013,
+        name: "Dumbbell Seated Shoulder Press",
+        muscle: "Shoulders",
+        secondary_muscles: ["Triceps"],
+        equipment: "Dumbbell",
+        difficulty: "Intermediate",
+        type: "Strength",
+        description: "Builds strength in shoulders, deltoids, triceps, and upper chest.",
+        instructions: "1. Sit on bench with dumbbells at shoulder height. 2. Press upward until arms extended. 3. Keep core tight. 4. Lower to shoulder height. 5. Repeat.",
+        reps_sets: "3-4 sets of 8-12 reps",
+        tips: "Keep dumbbells overhead, maintain control",
+        common_mistakes: "Arching too much, uneven pressing, going too heavy"
+      },
+      {
+        id: 1014,
+        name: "Machine Fly",
+        muscle: "Chest",
+        secondary_muscles: [],
+        equipment: "Strength Machine",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "Isolation exercise for chest muscles, particularly pectoralis major.",
+        instructions: "1. Adjust seat so handles at chest level. 2. Push handles together in front of chest. 3. Squeeze chest at contraction. 4. Pause briefly. 5. Return to start.",
+        reps_sets: "3 sets of 12-15 reps",
+        tips: "Keep elbows slightly bent, focus on chest contraction",
+        common_mistakes: "Moving elbows, going too heavy, jerky movements"
+      },
+      {
+        id: 1015,
+        name: "Dumbbell One-Arm Row",
+        muscle: "Back",
+        secondary_muscles: ["Biceps"],
+        equipment: "Dumbbell",
+        difficulty: "Beginner",
+        type: "Strength",
+        description: "Unilateral back exercise for building strength and correcting imbalances.",
+        instructions: "1. Kneel over bench with one knee on bench. 2. Place opposite foot on floor. 3. Pull dumbbell to chest. 4. Hold and squeeze back. 5. Lower slowly. 6. Repeat all reps, switch arms.",
+        reps_sets: "3 sets of 10-12 reps per arm",
+        tips: "Focus on pulling with back, not arm. Keep core tight.",
+        common_mistakes: "Using momentum, rotating torso, too heavy"
+      }
+    ];
+
+    // State
+    let activeFilters = { muscle: [], equipment: [] };
+    let currentPage = 1;
+    const itemsPerPage = 30;
+    let searchQuery = '';
+    let uploadedImages = [];
+
+    // Check admin status
+    function checkAdmin() {
+      // Since localStorage is not available, use in-memory admin flag
+      // For demo purposes, set to true to show the FAB
+      const isAdmin = true; // Change to false to hide admin button
+      const fab = document.getElementById('addExerciseFab');
+      if (isAdmin) {
+        fab.classList.add('visible');
+      }
+    }
+
+    // Filter exercises
+    function filterExercises() {
+      let filtered = exercises;
+
+      // Apply muscle filter
+      if (activeFilters.muscle.length > 0) {
+        filtered = filtered.filter(ex => activeFilters.muscle.includes(ex.muscle));
+      }
+
+      // Apply equipment filter
+      if (activeFilters.equipment.length > 0) {
+        filtered = filtered.filter(ex => activeFilters.equipment.includes(ex.equipment));
+      }
+
+      // Apply search query
+      if (searchQuery) {
+        filtered = filtered.filter(ex => 
+          ex.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+
+      return filtered;
+    }
+
+    // Render exercise cards
+    function renderExercises() {
+      const filtered = filterExercises();
+      const grid = document.getElementById('exerciseGrid');
+      const count = document.getElementById('exerciseCount');
+      
+      // Update count
+      count.textContent = `${filtered.length} EXERCISE${filtered.length !== 1 ? 'S' : ''} FOUND`;
+
+      // Calculate pagination
+      const totalPages = Math.ceil(filtered.length / itemsPerPage);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedExercises = filtered.slice(startIndex, endIndex);
+
+      // Clear grid
+      grid.innerHTML = '';
+
+      // Render cards
+      paginatedExercises.forEach(exercise => {
+        const card = document.createElement('div');
+        card.className = 'exercise-card';
+        card.innerHTML = `
+          <div class="exercise-thumbnail">💪</div>
+          <div class="exercise-content">
+            <h3 class="exercise-name">${exercise.name}</h3>
+            <div class="exercise-badges">
+              <span class="badge badge-muscle">${exercise.muscle}</span>
+              <span class="badge badge-equipment">${exercise.equipment}</span>
+              <span class="badge badge-difficulty">${exercise.difficulty}</span>
+            </div>
+            <p class="exercise-description">${exercise.description}</p>
+            <button class="view-details-btn" onclick="viewExercise(${exercise.id})">View Details</button>
+          </div>
+        `;
+        card.onclick = (e) => {
+          if (!e.target.classList.contains('view-details-btn')) {
+            viewExercise(exercise.id);
+          }
+        };
+        grid.appendChild(card);
+      });
+
+      // Render pagination
+      renderPagination(totalPages);
+    }
+
+    // Render pagination
+    function renderPagination(totalPages) {
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = '';
+
+      if (totalPages <= 1) return;
+
+      // Previous button
+      const prevBtn = document.createElement('button');
+      prevBtn.textContent = 'Previous';
+      prevBtn.disabled = currentPage === 1;
+      prevBtn.onclick = () => {
+        currentPage--;
+        renderExercises();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      pagination.appendChild(prevBtn);
+
+      // Page numbers
+      for (let i = 1; i <= totalPages; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.textContent = i;
+        if (i === currentPage) {
+          pageBtn.classList.add('active');
+        }
+        pageBtn.onclick = () => {
+          currentPage = i;
+          renderExercises();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        pagination.appendChild(pageBtn);
+      }
+
+      // Next button
+      const nextBtn = document.createElement('button');
+      nextBtn.textContent = 'Next';
+      nextBtn.disabled = currentPage === totalPages;
+      nextBtn.onclick = () => {
+        currentPage++;
+        renderExercises();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      pagination.appendChild(nextBtn);
+    }
+
+    // View exercise details
+    function viewExercise(id) {
+      window.open(`exercise-detail.html?id=${id}`, '_blank');
+    }
+
+    // Handle filter button clicks
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const filterType = this.dataset.filter;
+        const value = this.dataset.value;
+
+        if (this.classList.contains('active')) {
+          this.classList.remove('active');
+          activeFilters[filterType] = activeFilters[filterType].filter(v => v !== value);
+        } else {
+          this.classList.add('active');
+          activeFilters[filterType].push(value);
+        }
+
+        currentPage = 1;
+        renderExercises();
+      });
+    });
+
+    // Clear filters
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      activeFilters = { muscle: [], equipment: [] };
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      currentPage = 1;
+      renderExercises();
+    });
+
+    // Search functionality
+    document.getElementById('exerciseSearch').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      currentPage = 1;
+      renderExercises();
+    });
+
+    document.getElementById('headerSearch').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      document.getElementById('exerciseSearch').value = searchQuery;
+      currentPage = 1;
+      renderExercises();
+    });
+
+    // Modal controls
+    const modal = document.getElementById('addExerciseModal');
+    const fab = document.getElementById('addExerciseFab');
+    const closeModal = document.getElementById('closeModal');
+    const cancelForm = document.getElementById('cancelForm');
+
+    fab.addEventListener('click', () => {
+      modal.classList.add('active');
+    });
+
+    closeModal.addEventListener('click', () => {
+      modal.classList.remove('active');
+      resetForm();
+    });
+
+    cancelForm.addEventListener('click', () => {
+      modal.classList.remove('active');
+      resetForm();
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+        resetForm();
+      }
+    });
+
+    // Image upload handling
+    document.getElementById('exerciseImages').addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          uploadedImages.push(event.target.result);
+          renderImagePreviews();
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    function renderImagePreviews() {
+      const grid = document.getElementById('imagePreviewGrid');
+      grid.innerHTML = '';
+      uploadedImages.forEach((img, index) => {
+        const item = document.createElement('div');
+        item.className = 'image-preview-item';
+        item.innerHTML = `
+          <img src="${img}" alt="Preview ${index + 1}">
+          <button type="button" class="image-remove-btn" onclick="removeImage(${index})">&times;</button>
+        `;
+        grid.appendChild(item);
+      });
+    }
+
+    function removeImage(index) {
+      uploadedImages.splice(index, 1);
+      renderImagePreviews();
+    }
+
+    // Form submission
+    document.getElementById('exerciseForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Collect secondary muscles
+      const secondaryMuscles = [];
+      document.querySelectorAll('input[name="secondaryMuscles"]:checked').forEach(cb => {
+        secondaryMuscles.push(cb.value);
+      });
+
+      // Get difficulty
+      const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+
+      // Create new exercise
+      const newExercise = {
+        id: Date.now(),
+        name: document.getElementById('exerciseName').value,
+        muscle: document.getElementById('primaryMuscle').value,
+        secondary_muscles: secondaryMuscles,
+        equipment: document.getElementById('exerciseEquipment').value,
+        difficulty: difficulty,
+        type: document.getElementById('exerciseType').value,
+        description: document.getElementById('exerciseDescription').value,
+        instructions: document.getElementById('exerciseInstructions').value,
+        reps_sets: document.getElementById('targetReps').value,
+        tips: document.getElementById('exerciseTips').value,
+        common_mistakes: document.getElementById('commonMistakes').value,
+        video_url: document.getElementById('exerciseVideo').value,
+        images: [...uploadedImages]
+      };
+
+      // Add to exercises array
+      exercises.push(newExercise);
+
+      // Close modal and reset
+      modal.classList.remove('active');
+      resetForm();
+      
+      // Re-render exercises
+      renderExercises();
+    });
+
+    function resetForm() {
+      document.getElementById('exerciseForm').reset();
+      uploadedImages = [];
+      renderImagePreviews();
+    }
+
+    // Initialize
+    checkAdmin();
+    renderExercises();
+  </script>
+</body>
+</html>

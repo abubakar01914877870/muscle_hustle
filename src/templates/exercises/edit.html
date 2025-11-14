@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Exercise - Muscle Hustle{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='design-system.css') }}">
+
+<style>
+  .form-header {
+    background: linear-gradient(135deg, var(--orange) 0%, var(--color-orange-500) 100%);
+    color: var(--color-white);
+    padding: var(--space-24) var(--space-32);
+    margin: calc(var(--space-24) * -1) calc(var(--space-32) * -1) var(--space-32);
+    box-shadow: var(--shadow-md);
+  }
+
+  .form-header h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .form-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-32);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-16);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .form-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    margin-bottom: var(--space-6);
+  }
+
+  .form-label.required::after {
+    content: ' *';
+    color: var(--color-error);
+  }
+
+  .form-control {
+    padding: var(--space-10) var(--space-12);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-base);
+    font-size: var(--font-size-md);
+    color: var(--color-text);
+    background-color: var(--color-background);
+    font-family: var(--font-family-base);
+    transition: border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--focus-ring);
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: var(--select-caret-light);
+    background-repeat: no-repeat;
+    background-position: right var(--space-12) center;
+    background-size: 16px;
+    padding-right: var(--space-32);
+  }
+
+  .checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-8);
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+  }
+
+  .checkbox-label input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+  }
+
+  .radio-group {
+    display: flex;
+    gap: var(--space-16);
+  }
+
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+  }
+
+  .radio-label input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: var(--space-12);
+    justify-content: flex-end;
+    margin-top: var(--space-24);
+  }
+
+  .btn {
+    padding: var(--space-10) var(--space-24);
+    border: none;
+    border-radius: var(--radius-base);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-standard);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-btn-primary-text);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-secondary-hover);
+  }
+
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .checkbox-group {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<div class="form-header">
+  <h1>Edit Exercise</h1>
+</div>
+
+<div class="form-container">
+  <form method="POST" enctype="multipart/form-data">
+    <div class="form-grid">
+      <div class="form-group full-width">
+        <label class="form-label required" for="name">Exercise Name</label>
+        <input type="text" id="name" name="name" class="form-control" value="{{ exercise.name }}" required>
+      </div>
+
+      <div class="form-group full-width">
+        <label class="form-label" for="description">Description</label>
+        <textarea id="description" name="description" class="form-control" rows="3">{{ exercise.description or '' }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required" for="muscle">Primary Muscle Group</label>
+        <select id="muscle" name="muscle" class="form-control" required>
+          <option value="">Select muscle group</option>
+          {% for muscle_option in ['Abs', 'Back', 'Biceps', 'Cardio', 'Chest', 'Forearms', 'Glutes', 'Shoulders', 'Triceps', 'Upper Legs', 'Lower Legs'] %}
+            <option value="{{ muscle_option }}" {% if exercise.muscle == muscle_option %}selected{% endif %}>{{ muscle_option }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required" for="equipment">Equipment</label>
+        <select id="equipment" name="equipment" class="form-control" required>
+          <option value="">Select equipment</option>
+          {% for equipment_option in ['Body Weight', 'Bands', 'Barbell', 'Bench', 'Dumbbell', 'Exercise Ball', 'EZ Curl Bar', 'Kettlebell', 'Cardio Machine', 'Strength Machine', 'Pullup Bar', 'Weight Plate'] %}
+            <option value="{{ equipment_option }}" {% if exercise.equipment == equipment_option %}selected{% endif %}>{{ equipment_option }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group full-width">
+        <label class="form-label">Secondary Muscle Groups</label>
+        <div class="checkbox-group">
+          {% for muscle_option in ['Abs', 'Back', 'Biceps', 'Chest', 'Forearms', 'Glutes', 'Shoulders', 'Triceps', 'Upper Legs', 'Lower Legs'] %}
+            <label class="checkbox-label">
+              <input type="checkbox" name="secondary_muscles" value="{{ muscle_option }}" 
+                     {% if muscle_option in exercise.secondary_muscles %}checked{% endif %}> {{ muscle_option }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required">Difficulty</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="difficulty" value="Beginner" {% if exercise.difficulty == 'Beginner' %}checked{% endif %} required> Beginner
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="difficulty" value="Intermediate" {% if exercise.difficulty == 'Intermediate' %}checked{% endif %}> Intermediate
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="difficulty" value="Advanced" {% if exercise.difficulty == 'Advanced' %}checked{% endif %}> Advanced
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required" for="type">Type</label>
+        <select id="type" name="type" class="form-control" required>
+          <option value="">Select type</option>
+          {% for type_option in ['Strength', 'Cardio', 'Flexibility', 'Balance', 'Plyometric'] %}
+            <option value="{{ type_option }}" {% if exercise.type == type_option %}selected{% endif %}>{{ type_option }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group full-width">
+        <label class="form-label" for="instructions">Instructions</label>
+        <textarea id="instructions" name="instructions" class="form-control" rows="5" placeholder="Enter step-by-step instructions...">{{ exercise.instructions or '' }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reps_sets">Target Reps/Sets</label>
+        <input type="text" id="reps_sets" name="reps_sets" class="form-control" value="{{ exercise.reps_sets or '' }}" placeholder="e.g., 3 sets of 10-12 reps">
+      </div>
+
+      <div class="form-group full-width">
+        <label class="form-label" for="tips">Tips & Safety</label>
+        <textarea id="tips" name="tips" class="form-control" rows="3">{{ exercise.tips or '' }}</textarea>
+      </div>
+
+      <div class="form-group full-width">
+        <label class="form-label" for="common_mistakes">Common Mistakes</label>
+        <textarea id="common_mistakes" name="common_mistakes" class="form-control" rows="3">{{ exercise.common_mistakes or '' }}</textarea>
+      </div>
+
+      <div class="form-group full-width">
+        <label class="form-label">Media Type</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="media_type" value="image" {% if exercise.media_type == 'image' or not exercise.media_type %}checked{% endif %} onchange="toggleMediaInput()"> Image
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="media_type" value="video" {% if exercise.media_type == 'video' %}checked{% endif %} onchange="toggleMediaInput()"> YouTube Video
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group full-width" id="imageUploadGroup" {% if exercise.media_type == 'video' %}style="display: none;"{% endif %}>
+        <label class="form-label" for="exercise_image">Upload New Image</label>
+        {% if exercise.image_filename %}
+          <div style="margin-bottom: var(--space-12);">
+            <img src="{{ url_for('static', filename='uploads/exercises/' + exercise.image_filename) }}" alt="{{ exercise.name }}" style="max-width: 200px; border-radius: var(--radius-base); border: 1px solid var(--color-border);">
+            <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: var(--space-4);">Current image</p>
+          </div>
+        {% endif %}
+        <input type="file" id="exercise_image" name="exercise_image" class="form-control" accept="image/*">
+        <small style="color: var(--color-text-secondary); margin-top: var(--space-4); display: block;">Leave empty to keep current image</small>
+      </div>
+
+      <div class="form-group full-width" id="videoUrlGroup" {% if exercise.media_type != 'video' %}style="display: none;"{% endif %}>
+        <label class="form-label" for="video_url">YouTube Video URL</label>
+        {% if exercise.video_url and exercise.media_type == 'video' %}
+          <div style="margin-bottom: var(--space-12);">
+            <iframe width="300" height="169" src="{{ exercise.video_url }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: var(--radius-base);"></iframe>
+            <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: var(--space-4);">Current video</p>
+          </div>
+        {% endif %}
+        <input type="url" id="video_url" name="video_url" class="form-control" value="{{ exercise.video_url if exercise.media_type == 'video' else '' }}" placeholder="https://www.youtube.com/watch?v=...">
+        <small style="color: var(--color-text-secondary); margin-top: var(--space-4); display: block;">Paste YouTube video URL</small>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a href="{{ url_for('exercises.detail', exercise_id=exercise.id) }}" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function toggleMediaInput() {
+    const mediaType = document.querySelector('input[name="media_type"]:checked').value;
+    const imageGroup = document.getElementById('imageUploadGroup');
+    const videoGroup = document.getElementById('videoUrlGroup');
+    
+    if (mediaType === 'image') {
+      imageGroup.style.display = 'flex';
+      videoGroup.style.display = 'none';
+    } else {
+      imageGroup.style.display = 'none';
+      videoGroup.style.display = 'flex';
+    }
+  }
+  
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    toggleMediaInput();
+  });
+</script>
+
+{% endblock %}

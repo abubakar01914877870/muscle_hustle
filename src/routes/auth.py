@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from ..models.user import User, db
+from ..models.user_mongo import User
+from ..database import get_db
 
 auth = Blueprint('auth', __name__)
 
@@ -28,16 +29,13 @@ def signup():
             return render_template('register.html')
         
         # Check if user already exists
-        if User.query.filter_by(email=email).first():
+        db = get_db()
+        if User.find_by_email(db, email):
             flash('Email already registered', 'error')
             return render_template('register.html')
         
         # Create new user
-        new_user = User(email=email)
-        new_user.set_password(password)
-        
-        db.session.add(new_user)
-        db.session.commit()
+        User.create(db, email=email, password=password)
         
         flash('Account created successfully! Please log in.', 'success')
         return redirect(url_for('auth.login'))
@@ -58,7 +56,8 @@ def login():
             flash('Please provide both email and password', 'error')
             return render_template('login.html')
         
-        user = User.query.filter_by(email=email).first()
+        db = get_db()
+        user = User.find_by_email(db, email)
         
         if user and user.check_password(password):
             login_user(user, remember=remember)

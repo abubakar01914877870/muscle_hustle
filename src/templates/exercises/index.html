@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+
+{% block title %}All Exercises - Muscle Hustle{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='design-system.css') }}">
+
+<style>
+  .exercise-header-banner {
+    background: linear-gradient(135deg, var(--orange) 0%, var(--color-orange-500) 100%);
+    color: var(--color-white);
+    padding: var(--space-24) var(--space-32);
+    margin: calc(var(--space-24) * -1) calc(var(--space-32) * -1) var(--space-32);
+    box-shadow: var(--shadow-md);
+  }
+
+  .exercise-header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-24);
+  }
+
+  .exercise-title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-white);
+  }
+
+  .header-search {
+    flex: 0 1 400px;
+  }
+
+  .header-search input {
+    width: 100%;
+    padding: var(--space-10) var(--space-16);
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-md);
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--color-white);
+  }
+
+  .header-search input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .header-search input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .filter-section {
+    margin-bottom: var(--space-32);
+  }
+
+  .filter-group {
+    margin-bottom: var(--space-24);
+  }
+
+  .filter-group h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-12);
+  }
+
+  .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+  }
+
+  .filter-btn {
+    padding: var(--space-8) var(--space-16);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-standard);
+    text-decoration: none;
+  }
+
+  .filter-btn:hover {
+    background-color: var(--color-secondary);
+  }
+
+  .filter-btn.active {
+    background-color: var(--orange);
+    color: var(--color-white);
+    border-color: var(--orange);
+  }
+
+  .clear-filters {
+    padding: var(--space-8) var(--space-16);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border-radius: var(--radius-base);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-standard);
+  }
+
+  .clear-filters:hover {
+    background-color: var(--color-secondary-hover);
+  }
+
+  .exercise-count {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-24);
+  }
+
+  .exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-24);
+  }
+
+  .exercise-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--ease-standard);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .exercise-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .exercise-thumbnail {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, var(--color-bg-1), var(--color-bg-3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-4xl);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .exercise-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .exercise-thumbnail iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .exercise-thumbnail .placeholder {
+    font-size: var(--font-size-4xl);
+  }
+
+  .exercise-content {
+    padding: var(--space-16);
+  }
+
+  .exercise-name {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-8);
+  }
+
+  .exercise-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    margin-bottom: var(--space-12);
+  }
+
+  .badge {
+    padding: var(--space-4) var(--space-10);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.05em);
+  }
+
+  .badge-muscle {
+    background-color: var(--color-bg-1);
+    color: var(--blue);
+  }
+
+  .badge-equipment {
+    background-color: var(--color-bg-6);
+    color: var(--orange);
+  }
+
+  .badge-difficulty {
+    background-color: var(--color-bg-3);
+    color: var(--green);
+  }
+
+  .exercise-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-16);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .view-details-btn {
+    width: 100%;
+    padding: var(--space-10) var(--space-16);
+    background-color: var(--color-primary);
+    color: var(--color-btn-primary-text);
+    border: none;
+    border-radius: var(--radius-base);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-standard);
+    text-decoration: none;
+    display: block;
+    text-align: center;
+  }
+
+  .view-details-btn:hover {
+    background-color: var(--color-primary-hover);
+  }
+
+  .fab {
+    position: fixed;
+    bottom: var(--space-32);
+    right: var(--space-32);
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--orange) 0%, var(--color-orange-500) 100%);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-3xl);
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-normal) var(--ease-standard);
+    z-index: 100;
+    text-decoration: none;
+  }
+
+  .fab:hover {
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    .exercise-header-content {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .header-search {
+      flex: 1;
+      max-width: 100%;
+    }
+
+    .exercise-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="exercise-header-banner">
+  <div class="exercise-header-content">
+    <h1 class="exercise-title">💪 All Exercises</h1>
+    <div class="header-search">
+      <form method="GET" action="{{ url_for('exercises.index') }}">
+        <input type="text" name="search" placeholder="Search exercises..." value="{{ search_query }}">
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="filter-section">
+  <div class="filter-group">
+    <h3>Filter by Muscle Group</h3>
+    <div class="filter-buttons">
+      {% for muscle in ['Abs', 'Back', 'Biceps', 'Cardio', 'Chest', 'Forearms', 'Glutes', 'Shoulders', 'Triceps', 'Upper Legs', 'Lower Legs'] %}
+        <a href="{{ url_for('exercises.index', muscle=muscle, search=search_query) }}" 
+           class="filter-btn {% if muscle in active_filters.muscle %}active{% endif %}">
+          {{ muscle }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <h3>Filter by Equipment</h3>
+    <div class="filter-buttons">
+      {% for equipment in ['Body Weight', 'Bands', 'Barbell', 'Bench', 'Dumbbell', 'Exercise Ball', 'EZ Curl Bar', 'Kettlebell', 'Cardio Machine', 'Strength Machine', 'Pullup Bar', 'Weight Plate'] %}
+        <a href="{{ url_for('exercises.index', equipment=equipment, search=search_query) }}" 
+           class="filter-btn {% if equipment in active_filters.equipment %}active{% endif %}">
+          {{ equipment }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <a href="{{ url_for('exercises.index') }}" class="clear-filters">Clear Filters</a>
+</div>
+
+<div class="exercise-count">{{ exercises|length }} EXERCISE{% if exercises|length != 1 %}S{% endif %} FOUND</div>
+
+<div class="exercise-grid">
+  {% for exercise in exercises %}
+    <div class="exercise-card" onclick="window.location='{{ url_for('exercises.detail', exercise_id=exercise.id) }}'">
+      <div class="exercise-thumbnail">
+        {% if exercise.media_type == 'image' and exercise.image_filename %}
+          <img src="{{ url_for('static', filename='uploads/exercises/' + exercise.image_filename) }}" alt="{{ exercise.name }}">
+        {% elif exercise.media_type == 'video' and exercise.video_url %}
+          <iframe src="{{ exercise.video_url }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        {% else %}
+          <span class="placeholder">💪</span>
+        {% endif %}
+      </div>
+      <div class="exercise-content">
+        <h3 class="exercise-name">{{ exercise.name }}</h3>
+        <div class="exercise-badges">
+          <span class="badge badge-muscle">{{ exercise.muscle }}</span>
+          <span class="badge badge-equipment">{{ exercise.equipment }}</span>
+          <span class="badge badge-difficulty">{{ exercise.difficulty }}</span>
+        </div>
+        <p class="exercise-description">{{ exercise.description }}</p>
+        <a href="{{ url_for('exercises.detail', exercise_id=exercise.id) }}" class="view-details-btn" onclick="event.stopPropagation()">View Details</a>
+      </div>
+    </div>
+  {% else %}
+    <p>No exercises found. {% if current_user.is_admin %}<a href="{{ url_for('exercises.add') }}">Add the first exercise</a>{% endif %}</p>
+  {% endfor %}
+</div>
+
+{% if current_user.is_authenticated and current_user.is_admin %}
+  <a href="{{ url_for('exercises.add') }}" class="fab">+</a>
+{% endif %}
+
+{% endblock %}

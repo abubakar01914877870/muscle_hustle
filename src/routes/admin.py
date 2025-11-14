@@ -2,7 +2,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from functools import wraps
 from datetime import datetime
-from ..models.user import User, db
+from ..models.user_mongo import User
+from ..database import get_db
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -19,14 +20,19 @@ def admin_required(f):
 @login_required
 @admin_required
 def user_list():
-    users = User.query.all()
+    db = get_db()
+    users = User.find_all(db)
     return render_template('admin/users.html', users=users)
 
-@admin.route('/users/<int:user_id>/edit', methods=['GET', 'POST'])
+@admin.route('/users/<user_id>/edit', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def edit_user(user_id):
-    user = User.query.get_or_404(user_id)
+    db = get_db()
+    user = User.find_by_id(db, user_id)
+    if not user:
+        flash('User not found', 'error')
+        return redirect(url_for('admin.user_list'))
     
     if request.method == 'POST':
         email = request.form.get('email')
@@ -38,37 +44,44 @@ def edit_user(user_id):
             return render_template('admin/edit_user.html', user=user)
         
         # Check if email is already taken by another user
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user and existing_user.id != user_id:
+        existing_user = User.find_by_email(db, email)
+        if existing_user and str(existing_user.id) != str(user_id):
             flash('Email already in use by another user', 'error')
             return render_template('admin/edit_user.html', user=user)
         
-        user.email = email
-        user.is_admin = is_admin
+        # Update user
+        update_data = {
+            'email': email,
+            'is_admin': is_admin
+        }
         
         # Only update password if provided
         if password:
             user.set_password(password)
+            update_data['password_hash'] = user.password_hash
         
-        db.session.commit()
+        User.update(db, user_id, update_data)
         flash(f'User {user.email} updated successfully', 'success')
         return redirect(url_for('admin.user_list'))
     
     return render_template('admin/edit_user.html', user=user)
 
-@admin.route('/users/<int:user_id>/delete', methods=['POST'])
+@admin.route('/users/<user_id>/delete', methods=['POST'])
 @login_required
 @admin_required
 def delete_user(user_id):
-    user = User.query.get_or_404(user_id)
+    db = get_db()
+    user = User.find_by_id(db, user_id)
+    if not user:
+        flash('User not found', 'error')
+        return redirect(url_for('admin.user_list'))
     
     # Prevent deleting yourself
-    if user.id == current_user.id:
+    if str(user.id) == str(current_user.id):
         flash('You cannot delete your own account', 'error')
         return redirect(url_for('admin.user_list'))
     
     email = user.email
-    db.session.delete(user)
-    db.session.commit()
+    User.delete(db, user_id)
     flash(f'User {email} deleted successfully', 'success')
     return redirect(url_for('admin.user_list'))

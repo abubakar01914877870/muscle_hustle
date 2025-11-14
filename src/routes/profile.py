@@ -3,7 +3,8 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
-from ..models.user import User, db
+from ..models.user_mongo import User
+from ..database import get_db
 
 profile = Blueprint('profile', __name__, url_prefix='/profile')
 
@@ -50,8 +51,9 @@ def upload_picture():
         file.save(os.path.join(UPLOAD_FOLDER, unique_filename))
         
         # Update user profile
+        db = get_db()
+        User.update(db, current_user.id, {'profile_picture': unique_filename})
         current_user.profile_picture = unique_filename
-        db.session.commit()
         
         flash('Profile picture updated successfully!', 'success')
     else:
@@ -69,8 +71,9 @@ def remove_picture():
             os.remove(file_path)
         
         # Update database
+        db = get_db()
+        User.update(db, current_user.id, {'profile_picture': None})
         current_user.profile_picture = None
-        db.session.commit()
         
         flash('Profile picture removed successfully!', 'success')
     
@@ -80,61 +83,108 @@ def remove_picture():
 @login_required
 def edit_profile():
     if request.method == 'POST':
+        # Build update data dictionary
+        update_data = {}
+        
         # Personal Information
-        current_user.full_name = request.form.get('full_name')
+        full_name = request.form.get('full_name')
+        if full_name:
+            update_data['full_name'] = full_name
+            current_user.full_name = full_name
         
         dob = request.form.get('date_of_birth')
         if dob:
             try:
-                current_user.date_of_birth = datetime.strptime(dob, '%Y-%m-%d').date()
+                dob_date = datetime.strptime(dob, '%Y-%m-%d')
+                update_data['date_of_birth'] = dob_date
+                current_user.date_of_birth = dob_date
             except ValueError:
                 pass
         
-        current_user.gender = request.form.get('gender')
-        current_user.phone = request.form.get('phone')
+        gender = request.form.get('gender')
+        if gender:
+            update_data['gender'] = gender
+            current_user.gender = gender
+        
+        phone = request.form.get('phone')
+        if phone:
+            update_data['phone'] = phone
+            current_user.phone = phone
         
         # Physical Measurements
         height = request.form.get('height')
         if height:
             try:
-                current_user.height = float(height)
+                height_val = float(height)
+                update_data['height'] = height_val
+                current_user.height = height_val
             except ValueError:
                 pass
         
         weight = request.form.get('weight')
         if weight:
             try:
-                current_user.weight = float(weight)
+                weight_val = float(weight)
+                update_data['weight'] = weight_val
+                current_user.weight = weight_val
             except ValueError:
                 pass
         
         target_weight = request.form.get('target_weight')
         if target_weight:
             try:
-                current_user.target_weight = float(target_weight)
+                target_val = float(target_weight)
+                update_data['target_weight'] = target_val
+                current_user.target_weight = target_val
             except ValueError:
                 pass
         
         # Fitness Information
-        current_user.fitness_level = request.form.get('fitness_level')
-        current_user.fitness_goal = request.form.get('fitness_goal')
-        current_user.activity_level = request.form.get('activity_level')
+        fitness_level = request.form.get('fitness_level')
+        if fitness_level:
+            update_data['fitness_level'] = fitness_level
+            current_user.fitness_level = fitness_level
+        
+        fitness_goal = request.form.get('fitness_goal')
+        if fitness_goal:
+            update_data['fitness_goal'] = fitness_goal
+            current_user.fitness_goal = fitness_goal
+        
+        activity_level = request.form.get('activity_level')
+        if activity_level:
+            update_data['activity_level'] = activity_level
+            current_user.activity_level = activity_level
         
         # Health Information
-        current_user.medical_conditions = request.form.get('medical_conditions')
-        current_user.dietary_restrictions = request.form.get('dietary_restrictions')
+        medical_conditions = request.form.get('medical_conditions')
+        if medical_conditions:
+            update_data['medical_conditions'] = medical_conditions
+            current_user.medical_conditions = medical_conditions
+        
+        dietary_restrictions = request.form.get('dietary_restrictions')
+        if dietary_restrictions:
+            update_data['dietary_restrictions'] = dietary_restrictions
+            current_user.dietary_restrictions = dietary_restrictions
         
         # Preferences
-        current_user.preferred_workout_time = request.form.get('preferred_workout_time')
+        preferred_workout_time = request.form.get('preferred_workout_time')
+        if preferred_workout_time:
+            update_data['preferred_workout_time'] = preferred_workout_time
+            current_user.preferred_workout_time = preferred_workout_time
         
         workout_freq = request.form.get('workout_frequency')
         if workout_freq:
             try:
-                current_user.workout_frequency = int(workout_freq)
+                freq_val = int(workout_freq)
+                update_data['workout_frequency'] = freq_val
+                current_user.workout_frequency = freq_val
             except ValueError:
                 pass
         
-        db.session.commit()
+        # Update database
+        db = get_db()
+        User.update(db, current_user.id, update_data)
+        
         flash('Profile updated successfully!', 'success')
         return redirect(url_for('profile.view_profile'))
     
@@ -161,7 +211,8 @@ def change_password():
             return render_template('profile/change_password.html')
         
         current_user.set_password(new_password)
-        db.session.commit()
+        db = get_db()
+        User.update(db, current_user.id, {'password_hash': current_user.password_hash})
         flash('Password changed successfully!', 'success')
         return redirect(url_for('profile.view_profile'))
     

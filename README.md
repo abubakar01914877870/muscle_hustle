@@ -52,31 +52,35 @@ A comprehensive Flask-based fitness tracking application with user authenticatio
 
 ### Production Deployment
 
-⚠️ **IMPORTANT**: See [PRODUCTION_DEPLOYMENT.md](PRODUCTION_DEPLOYMENT.md) for safe deployment procedures.
-
 **Quick steps:**
-1. Backup database first!
-2. Run migration: `python migrate_add_profile_picture.py`
+1. Set MongoDB connection string via environment variable
+2. Initialize database: `python init_db.py`
 3. Update code: `git pull`
 4. Restart application
 
-**Never use `reset_db.py` in production!**
-
 ## Database Management
 
-### For Development
-- **Initialize Database**: `python init_db.py` - Creates tables and admin user if needed (preserves existing data)
-- **Reset Database**: `python reset_db.py` - ⚠️ WARNING: Deletes all data (development only!)
+### MongoDB Configuration
+The application uses MongoDB for data storage. Configure via environment variables:
+- `MONGO_URI`: MongoDB connection string (defaults to development cluster)
+- `MONGO_DBNAME`: Database name (defaults to "muscle_hustle")
 
-### For Production
-- **Migrate Database**: `python migrate_add_profile_picture.py` - Safely adds new columns without data loss
-- **Never use reset_db.py in production!** - See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)
+### Connection Protocol
+The application tests the MongoDB connection on startup and displays:
+- ✅ Success message with connection details
+- ❌ Error message with troubleshooting steps (exits if connection fails)
 
-### Database Backup
+See [docs/DATABASE_CONNECTION.md](docs/DATABASE_CONNECTION.md) for detailed connection protocol.
+
+### Initialize Database
 ```bash
-# Always backup before changes
-cp src/instance/users.db src/instance/users_backup_$(date +%Y%m%d).db
+python init_db.py
 ```
+This creates indexes and a default admin user if needed.
+
+### Database Collections
+- **users**: User accounts with authentication and profiles
+- **progress_entries**: Fitness progress tracking with photos and measurements
 
 4. **Access the app:**
    Open your browser and navigate to `http://127.0.0.1:5000`
@@ -99,24 +103,23 @@ cp src/instance/users.db src/instance/users_backup_$(date +%Y%m%d).db
 ## Project Structure
 
 ```
-flask-auth-app/
+muscle-hustle/
 ├── src/
 │   ├── app.py              # Application factory
+│   ├── database.py         # MongoDB connection
+│   ├── config.py           # Configuration settings
 │   ├── models/
-│   │   └── user.py         # User model with password hashing
+│   │   ├── user_mongo.py   # User model with MongoDB
+│   │   └── progress_mongo.py # Progress tracking model
 │   ├── routes/
 │   │   ├── auth.py         # Authentication routes
-│   │   └── main.py         # Main routes
-│   ├── templates/
-│   │   ├── base.html       # Base template
-│   │   ├── login.html      # Login page
-│   │   ├── register.html   # Registration page
-│   │   └── home.html       # Home page
-│   └── static/
-│       └── styles.css      # Styling
-├── instance/
-│   └── users.db            # SQLite database (created automatically)
-├── config.py               # Configuration settings
+│   │   ├── main.py         # Main routes
+│   │   ├── admin.py        # Admin routes
+│   │   ├── profile.py      # Profile routes
+│   │   └── progress.py     # Progress tracking routes
+│   ├── templates/          # HTML templates
+│   └── static/             # CSS, JS, uploads
+├── docs/                   # Documentation
 ├── init_db.py              # Database initialization script
 ├── requirements.txt        # Python dependencies
 └── README.md
@@ -134,7 +137,8 @@ flask-auth-app/
 
 Set environment variables for production:
 - `SECRET_KEY`: Secret key for session encryption
-- `DATABASE_URL`: Database connection string (defaults to SQLite)
+- `MONGO_URI`: MongoDB connection string
+- `MONGO_DBNAME`: MongoDB database name (defaults to "muscle_hustle")
 
 ## License
 
@@ -147,11 +151,9 @@ MIT License
 
 This app is ready to deploy on PythonAnywhere.
 
-**📚 Deployment Guides:**
-- **[PYTHONANYWHERE_GUIDE.md](PYTHONANYWHERE_GUIDE.md)** - Complete PythonAnywhere deployment guide
-- **[PYTHONANYWHERE_DEPLOYMENT.md](PYTHONANYWHERE_DEPLOYMENT.md)** - Initial setup guide
-- **[PRODUCTION_DEPLOYMENT.md](PRODUCTION_DEPLOYMENT.md)** - Safe update procedures
-- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Quick checklist
+**📚 Documentation:**
+- See [docs/](docs/) folder for all guides and documentation
+- MongoDB migration guide available in docs/
 
 #### Quick Start
 1. Create account at https://www.pythonanywhere.com/
@@ -165,16 +167,13 @@ Your app will be live at: `https://yourusername.pythonanywhere.com`
 
 #### Updating Production
 ```bash
-# 1. Find database location
-python find_database.py
+# 1. Set MongoDB connection
+export MONGO_URI="your_mongodb_connection_string"
 
-# 2. Backup database
-cp instance/users.db instance/users_backup_$(date +%Y%m%d).db
+# 2. Initialize database (creates indexes and admin user)
+python init_db.py
 
-# 3. Run migration
-python migrate_add_profile_picture.py
-
-# 4. Reload web app from Web tab
+# 3. Reload web app from Web tab
 ```
 
 ### Default Admin Account
@@ -199,3 +198,10 @@ Feel free to submit issues and enhancement requests!
 For deployment issues, check:
 - PythonAnywhere Help: https://help.pythonanywhere.com/
 - PythonAnywhere Forums: https://www.pythonanywhere.com/forums/
+
+
+## Mobile APP 
+
+When app open it will opean a screen day wise. 7 day 7 screen. it will show that day excerise, that day diate food and other information that need to care off. 
+
+When diatecian plan a diate he will plan for 7 days  diffrently. 
