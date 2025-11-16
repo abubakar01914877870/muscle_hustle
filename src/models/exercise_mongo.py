@@ -22,9 +22,9 @@ class Exercise:
         self.tips = exercise_dict.get('tips')
         self.common_mistakes = exercise_dict.get('common_mistakes')
         self.media_type = exercise_dict.get('media_type', 'image')
-        self.image_filename = exercise_dict.get('image_filename')
+        self.image_data = exercise_dict.get('image_data')  # Base64 encoded image
+        self.image_type = exercise_dict.get('image_type', 'image/jpeg')
         self.video_url = exercise_dict.get('video_url')
-        self.images = exercise_dict.get('images', [])
         self.created_by = exercise_dict.get('created_by')
         self.created_at = exercise_dict.get('created_at', datetime.utcnow())
         self.updated_at = exercise_dict.get('updated_at', datetime.utcnow())
@@ -33,6 +33,12 @@ class Exercise:
     def id(self):
         """Return exercise ID"""
         return str(self._id)
+    
+    def get_image_url(self):
+        """Get data URL for image"""
+        if self.image_data:
+            return f"data:{self.image_type};base64,{self.image_data}"
+        return None
     
     def to_dict(self):
         """Convert exercise to dictionary"""
@@ -50,9 +56,9 @@ class Exercise:
             'tips': self.tips,
             'common_mistakes': self.common_mistakes,
             'media_type': self.media_type,
-            'image_filename': self.image_filename,
+            'image_data': self.image_data,
+            'image_type': self.image_type,
             'video_url': self.video_url,
-            'images': self.images,
             'created_by': self.created_by,
             'created_at': self.created_at,
             'updated_at': self.updated_at
@@ -106,9 +112,9 @@ class Exercise:
             'tips': kwargs.get('tips', ''),
             'common_mistakes': kwargs.get('common_mistakes', ''),
             'media_type': kwargs.get('media_type', 'image'),
-            'image_filename': kwargs.get('image_filename'),
+            'image_data': kwargs.get('image_data'),
+            'image_type': kwargs.get('image_type', 'image/jpeg'),
             'video_url': kwargs.get('video_url'),
-            'images': kwargs.get('images', []),
             'created_by': kwargs.get('created_by'),
             'created_at': datetime.utcnow(),
             'updated_at': datetime.utcnow()

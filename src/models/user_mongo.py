@@ -15,7 +15,8 @@ class User(UserMixin):
         self.email = user_dict.get('email')
         self.password_hash = user_dict.get('password_hash')
         self.is_admin = user_dict.get('is_admin', False)
-        self.profile_picture = user_dict.get('profile_picture')
+        self.profile_picture = user_dict.get('profile_picture')  # Now stores base64 image data
+        self.profile_picture_type = user_dict.get('profile_picture_type', 'image/jpeg')
         self.full_name = user_dict.get('full_name')
         self.date_of_birth = user_dict.get('date_of_birth')
         self.gender = user_dict.get('gender')
@@ -70,6 +71,12 @@ class User(UserMixin):
             return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
         return None
     
+    def get_profile_picture_url(self):
+        """Get data URL for profile picture"""
+        if self.profile_picture:
+            return f"data:{self.profile_picture_type};base64,{self.profile_picture}"
+        return None
+    
     def to_dict(self):
         """Convert user to dictionary"""
         return {
@@ -78,6 +85,7 @@ class User(UserMixin):
             'password_hash': self.password_hash,
             'is_admin': self.is_admin,
             'profile_picture': self.profile_picture,
+            'profile_picture_type': self.profile_picture_type,
             'full_name': self.full_name,
             'date_of_birth': self.date_of_birth,
             'gender': self.gender,

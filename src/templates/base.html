@@ -21,7 +21,7 @@
             <a href="{{ url_for('profile.view_profile') }}" class="header-profile-link">
                 <div class="header-profile-image">
                     {% if current_user.profile_picture %}
-                        <img src="{{ url_for('static', filename='uploads/profiles/' + current_user.profile_picture) }}" alt="Profile">
+                        <img src="{{ current_user.get_profile_picture_url() }}" alt="Profile">
                     {% elif current_user.full_name %}
                         <span>{{ current_user.full_name.split()[0][0] }}{{ current_user.full_name.split()[-1][0] if current_user.full_name.split()|length > 1 else '' }}</span>
                     {% else %}

@@ -1,18 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from werkzeug.utils import secure_filename
 from datetime import datetime
-import os
 from ..models.user_mongo import User
 from ..database import get_db
+from ..utils.image_handler import resize_image
 
 profile = Blueprint('profile', __name__, url_prefix='/profile')
-
-UPLOAD_FOLDER = 'src/static/uploads/profiles'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @profile.route('/')
 @login_required
@@ -32,32 +25,25 @@ def upload_picture():
         flash('No file selected', 'error')
         return redirect(url_for('profile.view_profile'))
     
-    if file and allowed_file(file.filename):
-        # Create upload directory if it doesn't exist
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    if file:
+        # Resize and encode image
+        image_result = resize_image(file, max_width=400, max_height=400)
         
-        # Delete old profile picture if exists
-        if current_user.profile_picture:
-            old_path = os.path.join(UPLOAD_FOLDER, current_user.profile_picture)
-            if os.path.exists(old_path):
-                os.remove(old_path)
-        
-        # Generate unique filename
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = secure_filename(file.filename)
-        unique_filename = f"{current_user.id}_{timestamp}_{filename}"
-        
-        # Save file
-        file.save(os.path.join(UPLOAD_FOLDER, unique_filename))
-        
-        # Update user profile
-        db = get_db()
-        User.update(db, current_user.id, {'profile_picture': unique_filename})
-        current_user.profile_picture = unique_filename
-        
-        flash('Profile picture updated successfully!', 'success')
+        if image_result:
+            # Update user profile in database
+            db = get_db()
+            User.update(db, current_user.id, {
+                'profile_picture': image_result['image_data'],
+                'profile_picture_type': image_result['content_type']
+            })
+            current_user.profile_picture = image_result['image_data']
+            current_user.profile_picture_type = image_result['content_type']
+            
+            flash('Profile picture updated successfully!', 'success')
+        else:
+            flash('Error processing image', 'error')
     else:
-        flash('Invalid file type. Please upload an image file (PNG, JPG, JPEG, GIF, WEBP)', 'error')
+        flash('Invalid file type', 'error')
     
     return redirect(url_for('profile.view_profile'))
 
@@ -65,15 +51,14 @@ def upload_picture():
 @login_required
 def remove_picture():
     if current_user.profile_picture:
-        # Delete file
-        file_path = os.path.join(UPLOAD_FOLDER, current_user.profile_picture)
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        
         # Update database
         db = get_db()
-        User.update(db, current_user.id, {'profile_picture': None})
+        User.update(db, current_user.id, {
+            'profile_picture': None,
+            'profile_picture_type': None
+        })
         current_user.profile_picture = None
+        current_user.profile_picture_type = None
         
         flash('Profile picture removed successfully!', 'success')
     

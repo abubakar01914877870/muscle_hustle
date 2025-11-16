@@ -330,8 +330,8 @@
           minute: '2-digit'
         });
 
-        const imageHtml = entry.photo_filename
-          ? `<img src="{{ url_for('static', filename='uploads/progress/') }}${entry.photo_filename}" alt="Progress photo" class="entry-image">`
+        const imageHtml = entry.photo_url
+          ? `<img src="${entry.photo_url}" alt="Progress photo" class="entry-image">`
           : `<div class="entry-image no-image">No photo</div>`;
 
         const metrics = [];

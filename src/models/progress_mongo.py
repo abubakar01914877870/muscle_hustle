@@ -20,13 +20,20 @@ class ProgressEntry:
         self.arms = entry_dict.get('arms')
         self.thighs = entry_dict.get('thighs')
         self.notes = entry_dict.get('notes')
-        self.photo_filename = entry_dict.get('photo_filename')
+        self.photo_data = entry_dict.get('photo_data')  # Base64 encoded photo
+        self.photo_type = entry_dict.get('photo_type', 'image/jpeg')
         self.created_at = entry_dict.get('created_at', datetime.utcnow())
     
     @property
     def id(self):
         """Return entry ID"""
         return str(self._id)
+    
+    def get_photo_url(self):
+        """Get data URL for photo"""
+        if self.photo_data:
+            return f"data:{self.photo_type};base64,{self.photo_data}"
+        return None
     
     def to_dict(self):
         """Convert to dictionary"""
@@ -41,7 +48,7 @@ class ProgressEntry:
             'arms': self.arms,
             'thighs': self.thighs,
             'notes': self.notes,
-            'photo_filename': self.photo_filename,
+            'photo_url': self.get_photo_url(),
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
     
@@ -91,7 +98,8 @@ class ProgressEntry:
             'arms': kwargs.get('arms'),
             'thighs': kwargs.get('thighs'),
             'notes': kwargs.get('notes'),
-            'photo_filename': kwargs.get('photo_filename'),
+            'photo_data': kwargs.get('photo_data'),
+            'photo_type': kwargs.get('photo_type', 'image/jpeg'),
             'created_at': datetime.utcnow()
         }
         result = db.progress_entries.insert_one(entry_dict)

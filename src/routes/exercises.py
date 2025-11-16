@@ -1,18 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
-from werkzeug.utils import secure_filename
 from datetime import datetime
-import os
 from ..models.exercise_mongo import Exercise
 from ..database import get_db
+from ..utils.image_handler import resize_image
+import re
 
 exercises_bp = Blueprint('exercises', __name__, url_prefix='/exercises')
-
-UPLOAD_FOLDER = 'src/static/uploads/exercises'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @exercises_bp.route('/')
 def index():
@@ -67,16 +61,15 @@ def add():
             media_type = request.form.get('media_type', 'image')
             
             # Handle image upload
-            image_filename = None
+            image_data = None
+            image_type = None
             if media_type == 'image' and 'exercise_image' in request.files:
                 file = request.files['exercise_image']
-                if file and file.filename and allowed_file(file.filename):
-                    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                    filename = secure_filename(file.filename)
-                    unique_filename = f"{timestamp}_{filename}"
-                    file.save(os.path.join(UPLOAD_FOLDER, unique_filename))
-                    image_filename = unique_filename
+                if file and file.filename:
+                    image_result = resize_image(file, max_width=800, max_height=800)
+                    if image_result:
+                        image_data = image_result['image_data']
+                        image_type = image_result['content_type']
             
             # Handle YouTube URL
             youtube_url = None
@@ -99,7 +92,7 @@ def add():
             
             # Create exercise
             db = get_db()
-            print(f"DEBUG: Creating exercise with media_type='{media_type}', image_filename='{image_filename}', video_url='{youtube_url}'")
+            print(f"DEBUG: Creating exercise with media_type='{media_type}', has_image='{image_data is not None}', video_url='{youtube_url}'")
             
             Exercise.create(
                 db=db,
@@ -115,7 +108,8 @@ def add():
                 tips=request.form.get('tips'),
                 common_mistakes=request.form.get('common_mistakes'),
                 media_type=media_type,
-                image_filename=image_filename,
+                image_data=image_data,
+                image_type=image_type,
                 video_url=youtube_url,
                 created_by=str(current_user.id)
             )
@@ -130,7 +124,6 @@ def add():
 
 def extract_youtube_id(url):
     """Extract YouTube video ID from URL"""
-    import re
     patterns = [
         r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)',
         r'youtube\.com\/watch\?.*v=([^&\n?#]+)'
@@ -180,21 +173,12 @@ def edit(exercise_id):
             # Handle image upload
             if media_type == 'image' and 'exercise_image' in request.files:
                 file = request.files['exercise_image']
-                if file and file.filename and allowed_file(file.filename):
-                    # Delete old image if exists
-                    if exercise.image_filename:
-                        old_path = os.path.join(UPLOAD_FOLDER, exercise.image_filename)
-                        if os.path.exists(old_path):
-                            os.remove(old_path)
-                    
-                    # Save new image
-                    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                    filename = secure_filename(file.filename)
-                    unique_filename = f"{timestamp}_{filename}"
-                    file.save(os.path.join(UPLOAD_FOLDER, unique_filename))
-                    update_data['image_filename'] = unique_filename
-                    update_data['video_url'] = None
+                if file and file.filename:
+                    image_result = resize_image(file, max_width=800, max_height=800)
+                    if image_result:
+                        update_data['image_data'] = image_result['image_data']
+                        update_data['image_type'] = image_result['content_type']
+                        update_data['video_url'] = None
             
             # Handle YouTube URL
             elif media_type == 'video':
@@ -205,13 +189,9 @@ def edit(exercise_id):
                     print(f"DEBUG EDIT: Extracted YouTube ID: '{youtube_id}'")
                     if youtube_id:
                         update_data['video_url'] = f"https://www.youtube.com/embed/{youtube_id}"
-                        update_data['image_filename'] = None
+                        update_data['image_data'] = None
+                        update_data['image_type'] = None
                         print(f"DEBUG EDIT: Final embed URL: '{update_data['video_url']}'")
-                        # Delete old image if exists
-                        if exercise.image_filename:
-                            old_path = os.path.join(UPLOAD_FOLDER, exercise.image_filename)
-                            if os.path.exists(old_path):
-                                os.remove(old_path)
                     else:
                         flash('Invalid YouTube URL. Please use a valid YouTube link.', 'error')
                         return render_template('exercises/edit.html', exercise=exercise)
@@ -245,12 +225,7 @@ def delete(exercise_id):
         flash('Exercise not found', 'error')
         return redirect(url_for('exercises.index'))
     
-    # Delete images
-    for image in exercise.images:
-        image_path = os.path.join(UPLOAD_FOLDER, image)
-        if os.path.exists(image_path):
-            os.remove(image_path)
-    
+    # Images are stored in DB, no file deletion needed
     Exercise.delete(db, exercise_id)
     flash('Exercise deleted successfully!', 'success')
     return redirect(url_for('exercises.index'))

@@ -325,8 +325,8 @@
   {% for exercise in exercises %}
     <div class="exercise-card" onclick="window.location='{{ url_for('exercises.detail', exercise_id=exercise.id) }}'">
       <div class="exercise-thumbnail">
-        {% if exercise.media_type == 'image' and exercise.image_filename %}
-          <img src="{{ url_for('static', filename='uploads/exercises/' + exercise.image_filename) }}" alt="{{ exercise.name }}">
+        {% if exercise.media_type == 'image' and exercise.image_data %}
+          <img src="{{ exercise.get_image_url() }}" alt="{{ exercise.name }}">
         {% elif exercise.media_type == 'video' and exercise.video_url %}
           <iframe src="{{ exercise.video_url }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         {% else %}

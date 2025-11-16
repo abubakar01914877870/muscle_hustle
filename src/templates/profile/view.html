@@ -7,7 +7,7 @@
 <section class="profile-hero">
     <div class="profile-image-large" onclick="document.getElementById('profilePictureInput').click()" style="cursor: pointer;">
         {% if user.profile_picture %}
-            <img src="{{ url_for('static', filename='uploads/profiles/' + user.profile_picture) }}" alt="Profile Picture">
+            <img src="{{ user.get_profile_picture_url() }}" alt="Profile Picture">
         {% elif user.full_name %}
             <span>{{ user.full_name.split()[0][0] }}{{ user.full_name.split()[-1][0] if user.full_name.split()|length > 1 else '' }}</span>
         {% else %}

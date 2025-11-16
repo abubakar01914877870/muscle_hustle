@@ -184,9 +184,9 @@
   </div>
 </div>
 
-{% if exercise.media_type == 'image' and exercise.image_filename %}
+{% if exercise.media_type == 'image' and exercise.image_data %}
 <div class="exercise-media">
-  <img src="{{ url_for('static', filename='uploads/exercises/' + exercise.image_filename) }}" alt="{{ exercise.name }}">
+  <img src="{{ exercise.get_image_url() }}" alt="{{ exercise.name }}">
 </div>
 {% elif exercise.media_type == 'video' and exercise.video_url %}
 <div class="exercise-media">

@@ -1,18 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
-from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
-import os
 from ..models.progress_mongo import ProgressEntry
 from ..database import get_db
+from ..utils.image_handler import resize_image
 
 progress_bp = Blueprint('progress', __name__, url_prefix='/progress')
-
-UPLOAD_FOLDER = 'src/static/uploads/progress'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @progress_bp.route('/')
 @login_required
@@ -34,18 +27,15 @@ def add_entry():
         notes = request.form.get('notes', '').strip()
         
         # Handle photo upload
-        photo_filename = None
+        photo_data = None
+        photo_type = None
         if 'photo' in request.files:
             file = request.files['photo']
-            if file and file.filename and allowed_file(file.filename):
-                # Create upload directory if it doesn't exist
-                os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-                
-                # Generate unique filename
-                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                filename = secure_filename(file.filename)
-                photo_filename = f"{current_user.id}_{timestamp}_{filename}"
-                file.save(os.path.join(UPLOAD_FOLDER, photo_filename))
+            if file and file.filename:
+                image_result = resize_image(file, max_width=800, max_height=800)
+                if image_result:
+                    photo_data = image_result['image_data']
+                    photo_type = image_result['content_type']
         
         # Create entry
         db = get_db()
@@ -61,7 +51,8 @@ def add_entry():
             arms=float(arms) if arms else None,
             thighs=float(thighs) if thighs else None,
             notes=notes if notes else None,
-            photo_filename=photo_filename
+            photo_data=photo_data,
+            photo_type=photo_type
         )
         
         flash('Progress entry added successfully!', 'success')
@@ -110,12 +101,7 @@ def delete_entry(entry_id):
         flash('Unauthorized access', 'error')
         return redirect(url_for('progress.index'))
     
-    # Delete photo file if exists
-    if entry.photo_filename:
-        photo_path = os.path.join(UPLOAD_FOLDER, entry.photo_filename)
-        if os.path.exists(photo_path):
-            os.remove(photo_path)
-    
+    # Photos are stored in DB, no file deletion needed
     ProgressEntry.delete(db, entry_id)
     
     flash('Entry deleted successfully', 'success')
