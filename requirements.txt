@@ -4,3 +4,4 @@ Werkzeug
 pymongo
 dnspython
 Pillow
+gunicorn
