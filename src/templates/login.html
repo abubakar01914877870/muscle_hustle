@@ -4,28 +4,33 @@
 
 {% block content %}
 <section class="form-section" style="max-width: 500px; margin-left: auto; margin-right: auto;">
-    <h2>Login to Your Account</h2>
+    <div style="text-align: center; margin-bottom: var(--space-24);">
+        <div style="font-size: 64px; margin-bottom: var(--space-16);">💪</div>
+        <h2 style="margin-bottom: var(--space-8);">Welcome Back, Champion!</h2>
+        <p style="color: var(--color-text-secondary); font-size: var(--font-size-md);">Ready to crush your goals? Let's go! 🔥</p>
+    </div>
+    
     <form method="POST" action="{{ url_for('auth.login') }}">
         <div class="form-grid" style="grid-template-columns: 1fr;">
             <div class="form-group">
-                <label class="form-label" for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control" required placeholder="your@email.com">
+                <label class="form-label" for="email">EMAIL</label>
+                <input type="email" id="email" name="email" class="form-control" required placeholder="your@email.com" style="font-size: var(--font-size-md);">
             </div>
             <div class="form-group">
-                <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" required placeholder="Enter your password">
+                <label class="form-label" for="password">PASSWORD</label>
+                <input type="password" id="password" name="password" class="form-control" required placeholder="Enter your password" style="font-size: var(--font-size-md);">
             </div>
             <div class="form-group">
-                <label style="display: flex; align-items: center; gap: var(--space-8); cursor: pointer;">
-                    <input type="checkbox" name="remember" value="true" style="width: auto;">
-                    <span style="font-size: var(--font-size-sm);">Remember me</span>
+                <label style="display: flex; align-items: center; gap: var(--space-12); cursor: pointer; color: var(--color-text-secondary);">
+                    <input type="checkbox" name="remember" value="true" style="width: 20px; height: 20px; accent-color: var(--color-primary);">
+                    <span style="font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);">Keep me logged in</span>
                 </label>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%; font-size: var(--font-size-lg); margin-top: var(--space-16);">Let's Go! 🚀</button>
     </form>
-    <p style="text-align: center; margin-top: var(--space-20); color: var(--color-text-secondary); font-size: var(--font-size-sm);">
-        Don't have an account? <a href="{{ url_for('auth.signup') }}" style="color: var(--color-primary); font-weight: var(--font-weight-medium);">Sign up here</a>
+    <p style="text-align: center; margin-top: var(--space-24); color: var(--color-text-secondary); font-size: var(--font-size-md);">
+        New here? <a href="{{ url_for('auth.signup') }}" style="color: var(--color-primary); font-weight: var(--font-weight-bold); text-decoration: none; border-bottom: 2px solid var(--color-primary);">Start Your Journey</a>
     </p>
 </section>
 {% endblock %}

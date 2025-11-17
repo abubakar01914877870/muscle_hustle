@@ -18,7 +18,12 @@ def get_mongo_client():
     """Get MongoDB client (singleton)"""
     global _client
     if _client is None:
-        _client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        import ssl
+        _client = MongoClient(
+            MONGO_URI, 
+            serverSelectionTimeoutMS=5000,
+            tlsAllowInvalidCertificates=True  # For development only - remove in production
+        )
     return _client
 
 def get_db():

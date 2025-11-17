@@ -5,51 +5,55 @@
 {% block content %}
 <section class="card">
     {% if current_user.is_authenticated %}
-        <h2>Welcome back, {{ current_user.full_name or current_user.email }}!</h2>
-        <p style="color: var(--color-text-secondary); margin-bottom: var(--space-24);">You are successfully logged in and ready to track your fitness journey.</p>
+        <h2>🔥 Let's Crush It, {{ current_user.full_name or current_user.email }}!</h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: var(--space-24); font-size: var(--font-size-lg); font-weight: var(--font-weight-medium);">Time to dominate your fitness goals. Your journey starts NOW! 💪</p>
         
         <div class="form-grid">
-            <div class="card" style="margin-bottom: 0;">
-                <h3 style="border: none; padding: 0; margin-bottom: var(--space-12);">📊 Progress Tracker</h3>
-                <p style="color: var(--color-text-secondary); margin-bottom: var(--space-16); font-size: var(--font-size-sm);">Track your weight, measurements, and progress photos</p>
-                <a href="{{ url_for('progress.index') }}" class="btn btn-primary">Go to Progress Tracker</a>
+            <div class="card" style="margin-bottom: 0; border: 2px solid var(--color-primary);">
+                <h3 style="border: none; padding: 0; margin-bottom: var(--space-12); color: var(--color-primary);">📊 Track Progress</h3>
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--space-16); font-size: var(--font-size-sm);">Log your gains, measurements, and transformation photos</p>
+                <a href="{{ url_for('progress.index') }}" class="btn btn-primary" style="width: 100%;">Start Tracking 🚀</a>
             </div>
             
-            <div class="card" style="margin-bottom: 0;">
-                <h3 style="border: none; padding: 0; margin-bottom: var(--space-12);">👤 Your Profile</h3>
-                <p style="color: var(--color-text-secondary); margin-bottom: var(--space-16); font-size: var(--font-size-sm);">View and update your fitness profile and goals</p>
-                <a href="{{ url_for('profile.view_profile') }}" class="btn btn-secondary">View Profile</a>
+            <div class="card" style="margin-bottom: 0; border: 2px solid var(--color-accent);">
+                <h3 style="border: none; padding: 0; margin-bottom: var(--space-12); color: var(--color-accent);">💪 Your Profile</h3>
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--space-16); font-size: var(--font-size-sm);">Update your stats and crush your fitness goals</p>
+                <a href="{{ url_for('profile.view_profile') }}" class="btn btn-secondary" style="width: 100%;">View Profile</a>
             </div>
         </div>
     {% else %}
-        <h2>Welcome to Muscle Hustle</h2>
-        <p style="color: var(--color-text-secondary); margin-bottom: var(--space-24); font-size: var(--font-size-lg);">Your comprehensive fitness tracking companion. Track your progress, set goals, and achieve your fitness dreams.</p>
+        <h2>💪 Welcome to Muscle Hustle</h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: var(--space-32); font-size: var(--font-size-xl); font-weight: var(--font-weight-medium); text-align: center;">Your ultimate fitness tracking companion. Track progress, smash goals, and transform your life! 🔥</p>
         
         <div class="form-grid">
-            <div>
-                <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-8);">✨ Track Progress</h3>
-                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">Log your weight, body measurements, and progress photos with timestamps</p>
+            <div style="text-align: center; padding: var(--space-20); background: linear-gradient(135deg, rgba(var(--color-energy-red-rgb), 0.1), rgba(var(--color-motivation-orange-rgb), 0.1)); border-radius: var(--radius-lg); border: 1px solid rgba(var(--color-energy-red-rgb), 0.3);">
+                <div style="font-size: 48px; margin-bottom: var(--space-12);">🎯</div>
+                <h3 style="font-size: var(--font-size-xl); margin-bottom: var(--space-12); color: var(--color-primary); font-weight: var(--font-weight-bold);">Set Goals</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">Define your targets and crush them one rep at a time</p>
             </div>
             
-            <div>
-                <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-8);">📈 Visualize Growth</h3>
-                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">See your progress with interactive charts and timeline views</p>
+            <div style="text-align: center; padding: var(--space-20); background: linear-gradient(135deg, rgba(var(--color-electric-blue-rgb), 0.1), rgba(var(--color-achievement-green-rgb), 0.1)); border-radius: var(--radius-lg); border: 1px solid rgba(var(--color-electric-blue-rgb), 0.3);">
+                <div style="font-size: 48px; margin-bottom: var(--space-12);">📈</div>
+                <h3 style="font-size: var(--font-size-xl); margin-bottom: var(--space-12); color: var(--color-accent); font-weight: var(--font-weight-bold);">Track Progress</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">Log workouts, weight, and watch your transformation unfold</p>
             </div>
             
-            <div>
-                <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-8);">🎯 Set Goals</h3>
-                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">Define your fitness goals and track your journey towards them</p>
+            <div style="text-align: center; padding: var(--space-20); background: linear-gradient(135deg, rgba(var(--color-achievement-green-rgb), 0.1), rgba(var(--color-electric-blue-rgb), 0.1)); border-radius: var(--radius-lg); border: 1px solid rgba(var(--color-achievement-green-rgb), 0.3);">
+                <div style="font-size: 48px; margin-bottom: var(--space-12);">🏆</div>
+                <h3 style="font-size: var(--font-size-xl); margin-bottom: var(--space-12); color: var(--color-success); font-weight: var(--font-weight-bold);">Achieve Greatness</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">Celebrate wins and become the best version of yourself</p>
             </div>
             
-            <div>
-                <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-8);">📝 Take Notes</h3>
-                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">Record your workouts, nutrition, and how you feel each day</p>
+            <div style="text-align: center; padding: var(--space-20); background: linear-gradient(135deg, rgba(var(--color-motivation-orange-rgb), 0.1), rgba(var(--color-energy-red-rgb), 0.1)); border-radius: var(--radius-lg); border: 1px solid rgba(var(--color-motivation-orange-rgb), 0.3);">
+                <div style="font-size: 48px; margin-bottom: var(--space-12);">⚡</div>
+                <h3 style="font-size: var(--font-size-xl); margin-bottom: var(--space-12); color: var(--color-secondary); font-weight: var(--font-weight-bold);">Stay Motivated</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">Daily inspiration and progress tracking keeps you fired up</p>
             </div>
         </div>
         
-        <div style="margin-top: var(--space-32); display: flex; gap: var(--space-16); flex-wrap: wrap; justify-content: center;">
-            <a href="{{ url_for('auth.signup') }}" class="btn btn-primary" style="width: auto;">Sign Up Now</a>
-            <a href="{{ url_for('auth.login') }}" class="btn btn-secondary" style="width: auto;">Login</a>
+        <div style="margin-top: var(--space-32); display: flex; gap: var(--space-20); flex-wrap: wrap; justify-content: center;">
+            <a href="{{ url_for('auth.signup') }}" class="btn btn-primary" style="width: auto; font-size: var(--font-size-lg); padding: var(--space-20) var(--space-32);">Start Your Journey 🚀</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-secondary" style="width: auto; font-size: var(--font-size-lg); padding: var(--space-20) var(--space-32);">Login</a>
         </div>
     {% endif %}
 </section>

@@ -4,26 +4,32 @@
 
 {% block content %}
 <section class="form-section" style="max-width: 500px; margin-left: auto; margin-right: auto;">
-    <h2>Create Your Account</h2>
+    <div style="text-align: center; margin-bottom: var(--space-24);">
+        <div style="font-size: 64px; margin-bottom: var(--space-16);">🚀</div>
+        <h2 style="margin-bottom: var(--space-8);">Start Your Transformation!</h2>
+        <p style="color: var(--color-text-secondary); font-size: var(--font-size-md);">Join thousands crushing their fitness goals! 💪</p>
+    </div>
+    
     <form action="{{ url_for('auth.signup') }}" method="POST">
         <div class="form-grid" style="grid-template-columns: 1fr;">
             <div class="form-group">
-                <label class="form-label" for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control" required placeholder="your@email.com">
+                <label class="form-label" for="email">EMAIL</label>
+                <input type="email" id="email" name="email" class="form-control" required placeholder="your@email.com" style="font-size: var(--font-size-md);">
             </div>
             <div class="form-group">
-                <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" required minlength="6" placeholder="At least 6 characters">
+                <label class="form-label" for="password">PASSWORD</label>
+                <input type="password" id="password" name="password" class="form-control" required minlength="6" placeholder="At least 6 characters" style="font-size: var(--font-size-md);">
+                <small style="color: var(--color-text-secondary); font-size: var(--font-size-xs); margin-top: var(--space-4); display: block;">Make it strong! 🔒</small>
             </div>
             <div class="form-group">
-                <label class="form-label" for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required minlength="6" placeholder="Re-enter your password">
+                <label class="form-label" for="confirm_password">CONFIRM PASSWORD</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required minlength="6" placeholder="Re-enter your password" style="font-size: var(--font-size-md);">
             </div>
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%; font-size: var(--font-size-lg); margin-top: var(--space-16);">Create Account 🔥</button>
     </form>
-    <p style="text-align: center; margin-top: var(--space-20); color: var(--color-text-secondary); font-size: var(--font-size-sm);">
-        Already have an account? <a href="{{ url_for('auth.login') }}" style="color: var(--color-primary); font-weight: var(--font-weight-medium);">Login here</a>
+    <p style="text-align: center; margin-top: var(--space-24); color: var(--color-text-secondary); font-size: var(--font-size-md);">
+        Already a member? <a href="{{ url_for('auth.login') }}" style="color: var(--color-primary); font-weight: var(--font-weight-bold); text-decoration: none; border-bottom: 2px solid var(--color-primary);">Login Here</a>
     </p>
 </section>
 {% endblock %}
