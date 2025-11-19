@@ -11,6 +11,7 @@
     </div>
     
     <form action="{{ url_for('auth.signup') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="form-grid" style="grid-template-columns: 1fr;">
             <div class="form-group">
                 <label class="form-label" for="email">EMAIL</label>

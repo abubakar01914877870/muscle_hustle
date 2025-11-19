@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 from .database import init_db, get_db
 from .models.user_mongo import User
 from .routes.auth import auth
@@ -9,6 +10,8 @@ from .routes.admin import admin
 from .routes.profile import profile
 from .routes.progress import progress_bp
 from .routes.exercises import exercises_bp
+from .routes.blog import blog
+from .routes.admin_blog import admin_blog
 
 app = Flask(__name__)
 
@@ -16,6 +19,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI') or "mongodb+srv://admin:1234qa@muscle-hustle-developme.ekctotl.mongodb.net/?appName=muscle-hustle-development"
 app.config['MONGO_DBNAME'] = "muscle_hustle"
+
+# CSRF Protection
+csrf = CSRFProtect(app)
 
 # Initialize MongoDB
 init_db(app)
@@ -39,6 +45,8 @@ app.register_blueprint(admin)
 app.register_blueprint(profile)
 app.register_blueprint(progress_bp)
 app.register_blueprint(exercises_bp)
+app.register_blueprint(blog)
+app.register_blueprint(admin_blog)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -3,191 +3,7 @@
 {% block title %}Progress Tracker - Muscle Hustle{% endblock %}
 
 {% block extra_css %}
-<style>
-  /* Progress-specific styles */
-  .file-input-wrapper {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-  }
-
-  .file-input {
-    opacity: 0;
-    position: absolute;
-    z-index: -1;
-  }
-
-  .file-input-label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-10) var(--space-12);
-    background-color: var(--color-secondary);
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-base);
-    cursor: pointer;
-    transition: background-color var(--duration-fast) var(--ease-standard);
-    font-size: var(--font-size-md);
-  }
-
-  .file-input-label:hover {
-    background-color: var(--color-secondary-hover);
-  }
-
-  .file-name {
-    margin-top: var(--space-8);
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-  }
-
-  .chart-container {
-    position: relative;
-    height: 300px;
-    width: 100%;
-  }
-
-  .timeline {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-20);
-  }
-
-  .timeline-entry {
-    background-color: var(--color-background);
-    border: 1px solid var(--color-card-border-inner);
-    border-radius: var(--radius-md);
-    padding: var(--space-16);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-16);
-    transition: box-shadow var(--duration-normal) var(--ease-standard);
-  }
-
-  .timeline-entry:hover {
-    box-shadow: var(--shadow-md);
-  }
-
-  @media (min-width: 640px) {
-    .timeline-entry {
-      flex-direction: row;
-    }
-  }
-
-  .entry-image {
-    flex-shrink: 0;
-    width: 100%;
-    height: 200px;
-    border-radius: var(--radius-base);
-    object-fit: cover;
-    background-color: var(--color-secondary);
-  }
-
-  @media (min-width: 640px) {
-    .entry-image {
-      width: 150px;
-      height: 150px;
-    }
-  }
-
-  .entry-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-12);
-  }
-
-  .entry-header {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .entry-date {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    font-weight: var(--font-weight-medium);
-  }
-
-  .entry-weight {
-    font-size: var(--font-size-2xl);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-primary);
-  }
-
-  .entry-metrics {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: var(--space-12);
-  }
-
-  .metric-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .metric-label {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: var(--font-weight-medium);
-  }
-
-  .metric-value {
-    font-size: var(--font-size-lg);
-    color: var(--color-text);
-    font-weight: var(--font-weight-medium);
-  }
-
-  .entry-notes {
-    padding-top: var(--space-12);
-    border-top: 1px solid var(--color-card-border-inner);
-  }
-
-  .notes-label {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: var(--font-weight-medium);
-    margin-bottom: var(--space-6);
-  }
-
-  .notes-text {
-    font-size: var(--font-size-sm);
-    color: var(--color-text);
-    line-height: 1.6;
-  }
-
-  .no-image {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--color-secondary);
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-    text-align: center;
-    padding: var(--space-16);
-  }
-
-  .btn-delete-small {
-    padding: var(--space-6) var(--space-12);
-    background-color: var(--color-error);
-    color: white;
-    border: none;
-    border-radius: var(--radius-base);
-    font-size: var(--font-size-sm);
-    cursor: pointer;
-    transition: opacity var(--duration-fast) var(--ease-standard);
-    font-family: var(--font-family-base);
-  }
-
-  .btn-delete-small:hover {
-    opacity: 0.8;
-  }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='progress.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -207,6 +23,7 @@
       {% endwith %}
       
       <form id="progressForm" method="POST" action="{{ url_for('progress.add_entry') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label" for="weight">Weight (kg) *</label>
@@ -363,6 +180,7 @@
               </div>
               ${notesHtml}
               <form method="POST" action="{{ url_for('progress.delete_entry', entry_id=0) }}".replace('/0', '/${entry.id}') style="margin-top: 12px;" onsubmit="return confirm('Are you sure you want to delete this entry?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <button type="submit" class="btn-delete-small">Delete Entry</button>
               </form>
             </div>
@@ -408,16 +226,18 @@
           datasets: [{
             label: 'Weight (kg)',
             data: data.weights,
-            borderColor: 'rgba(33, 128, 141, 1)',
-            backgroundColor: 'rgba(33, 128, 141, 0.1)',
-            borderWidth: 2,
+            borderColor: 'rgba(255, 70, 85, 1)',
+            backgroundColor: 'rgba(255, 70, 85, 0.2)',
+            borderWidth: 3,
             fill: true,
-            tension: 0.3,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            pointBackgroundColor: 'rgba(33, 128, 141, 1)',
+            tension: 0.4,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            pointBackgroundColor: 'rgba(255, 70, 85, 1)',
             pointBorderColor: '#fff',
-            pointBorderWidth: 2
+            pointBorderWidth: 2,
+            pointHoverBackgroundColor: 'rgba(0, 217, 255, 1)',
+            pointHoverBorderColor: '#fff'
           }]
         },
         options: {
@@ -432,10 +252,12 @@
               display: false
             },
             tooltip: {
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              backgroundColor: 'rgba(21, 27, 61, 0.95)',
               padding: 12,
               titleColor: '#fff',
               bodyColor: '#fff',
+              borderColor: 'rgba(255, 70, 85, 0.5)',
+              borderWidth: 2,
               cornerRadius: 8,
               displayColors: false,
               callbacks: {
@@ -448,10 +270,24 @@
           scales: {
             y: {
               beginAtZero: false,
+              grid: {
+                color: 'rgba(160, 174, 192, 0.1)',
+                borderColor: 'rgba(160, 174, 192, 0.2)'
+              },
               ticks: {
+                color: 'rgba(160, 174, 192, 1)',
                 callback: function(value) {
                   return value + ' kg';
                 }
+              }
+            },
+            x: {
+              grid: {
+                color: 'rgba(160, 174, 192, 0.1)',
+                borderColor: 'rgba(160, 174, 192, 0.2)'
+              },
+              ticks: {
+                color: 'rgba(160, 174, 192, 1)'
               }
             }
           }

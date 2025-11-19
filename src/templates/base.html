@@ -33,12 +33,14 @@
         </div>
         <nav class="header-nav">
             <a href="{{ url_for('main.home') }}" class="nav-link">Home</a>
+            <a href="{{ url_for('blog.blog_list') }}" class="nav-link">Blog</a>
             <a href="{{ url_for('exercises.index') }}" class="nav-link">All Exercises</a>
             {% if current_user.is_authenticated %}
                 <a href="{{ url_for('profile.view_profile') }}" class="nav-link">Profile</a>
                 <a href="{{ url_for('progress.index') }}" class="nav-link">Progress Tracker</a>
                 {% if current_user.is_admin %}
                     <a href="{{ url_for('admin.user_list') }}" class="nav-link">User Management</a>
+                    <a href="{{ url_for('admin_blog.blog_dashboard') }}" class="nav-link">Blog Management</a>
                 {% endif %}
                 <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
             {% else %}

@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}Create Blog Post - Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Create New Blog Post</h2>
+                <a href="{{ url_for('admin_blog.blog_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for="title">Title *</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="content_type">Content Format</label>
+                            <select class="form-control" id="content_type" name="content_type">
+                                <option value="html">HTML</option>
+                                <option value="plain">Plain Text</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="content">Content *</label>
+                            <textarea class="form-control" id="content" name="content" rows="15" required></textarea>
+                            <small class="form-text text-muted">
+                                You can include HTML tags for formatting. Use the image upload button to add images.
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Image Upload</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="image-upload" accept="image/*">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary" id="upload-btn">
+                                        <i class="fas fa-upload"></i> Upload Image
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="upload-status" class="mt-2" style="display: none;">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-spinner fa-spin"></i> Uploading image...
+                                </div>
+                            </div>
+                            <div id="upload-error" class="mt-2" style="display: none;">
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-triangle"></i> 
+                                    <span id="error-message"></span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger ml-2" onclick="retryUpload()">
+                                        Retry
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="upload-success" class="mt-2" style="display: none;">
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle"></i> Image uploaded successfully and added to content!
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">
+                                Upload images to Firebase Storage and insert them into your content. Supported formats: JPG, PNG, GIF, WebP (max 5MB).
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>YouTube Video</label>
+                            <div class="input-group">
+                                <input type="url" class="form-control" id="youtube-url" placeholder="https://www.youtube.com/watch?v=...">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary" id="youtube-btn">
+                                        <i class="fab fa-youtube"></i> Add Video
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="youtube-status" class="mt-2" style="display: none;">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-spinner fa-spin"></i> Validating YouTube video...
+                                </div>
+                            </div>
+                            <div id="youtube-error" class="mt-2" style="display: none;">
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-triangle"></i> 
+                                    <span id="youtube-error-message"></span>
+                                </div>
+                            </div>
+                            <div id="youtube-success" class="mt-2" style="display: none;">
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle"></i> YouTube video validated and added to content!
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">
+                                Add YouTube videos by pasting the video URL. The embed code will be automatically generated.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Publish Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select class="form-control" id="status" name="status">
+                                        <option value="draft">Draft</option>
+                                        <option value="published">Published</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-block">
+                                        <i class="fas fa-save"></i> Create Blog Post
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentFile = null;
+
+function hideAllMessages() {
+    document.getElementById('upload-status').style.display = 'none';
+    document.getElementById('upload-error').style.display = 'none';
+    document.getElementById('upload-success').style.display = 'none';
+    document.getElementById('youtube-status').style.display = 'none';
+    document.getElementById('youtube-error').style.display = 'none';
+    document.getElementById('youtube-success').style.display = 'none';
+}
+
+function retryUpload() {
+    if (currentFile) {
+        uploadImage(currentFile);
+    }
+}
+
+function uploadImage(file) {
+    currentFile = file;
+    hideAllMessages();
+    
+    const uploadBtn = document.getElementById('upload-btn');
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    // Show loading state
+    document.getElementById('upload-status').style.display = 'block';
+    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    uploadBtn.disabled = true;
+    
+    fetch('{{ url_for("admin_blog.upload_image") }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token() }}'
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('upload-status').style.display = 'none';
+        
+        if (data.success) {
+            // Insert image HTML into content textarea
+            const contentTextarea = document.getElementById('content');
+            const imageHtml = `<img src="${data.download_url}" alt="Blog image" class="img-fluid" style="max-width: 100%; height: auto;">`;
+            contentTextarea.value += '\n' + imageHtml + '\n';
+            
+            // Clear file input
+            document.getElementById('image-upload').value = '';
+            currentFile = null;
+            
+            // Show success message
+            document.getElementById('upload-success').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('upload-success').style.display = 'none';
+            }, 5000);
+        } else {
+            // Show error message
+            document.getElementById('error-message').textContent = data.error || 'Upload failed';
+            document.getElementById('upload-error').style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('upload-status').style.display = 'none';
+        document.getElementById('error-message').textContent = 'Network error. Please check your connection and try again.';
+        document.getElementById('upload-error').style.display = 'block';
+    })
+    .finally(() => {
+        // Reset button state
+        uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Image';
+        uploadBtn.disabled = false;
+    });
+}
+
+document.getElementById('upload-btn').addEventListener('click', function() {
+    const fileInput = document.getElementById('image-upload');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert('Please select an image file first.');
+        return;
+    }
+    
+    uploadImage(file);
+});
+
+document.getElementById('youtube-btn').addEventListener('click', function() {
+    const urlInput = document.getElementById('youtube-url');
+    const url = urlInput.value.trim();
+    
+    if (!url) {
+        alert('Please enter a YouTube video URL first.');
+        return;
+    }
+    
+    hideAllMessages();
+    
+    const youtubeBtn = document.getElementById('youtube-btn');
+    
+    // Show loading state
+    document.getElementById('youtube-status').style.display = 'block';
+    youtubeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validating...';
+    youtubeBtn.disabled = true;
+    
+    fetch('{{ url_for("admin_blog.validate_youtube") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ url: url })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('youtube-status').style.display = 'none';
+        
+        if (data.success) {
+            // Insert video embed into content textarea
+            const contentTextarea = document.getElementById('content');
+            contentTextarea.value += '\n' + data.embed_code + '\n';
+            
+            // Clear URL input
+            urlInput.value = '';
+            
+            // Show success message
+            document.getElementById('youtube-success').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('youtube-success').style.display = 'none';
+            }, 5000);
+            
+            // Show accessibility warning if needed
+            if (!data.accessible && data.access_warning) {
+                setTimeout(() => {
+                    alert('Warning: ' + data.access_warning + '\nThe video has been added but may not be accessible to all users.');
+                }, 1000);
+            }
+        } else {
+            // Show error message
+            document.getElementById('youtube-error-message').textContent = data.error || 'YouTube validation failed';
+            document.getElementById('youtube-error').style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('youtube-status').style.display = 'none';
+        document.getElementById('youtube-error-message').textContent = 'Network error. Please check your connection and try again.';
+        document.getElementById('youtube-error').style.display = 'block';
+    })
+    .finally(() => {
+        // Reset button state
+        youtubeBtn.innerHTML = '<i class="fab fa-youtube"></i> Add Video';
+        youtubeBtn.disabled = false;
+    });
+});
+
+// Auto-hide success messages after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const successAlerts = document.querySelectorAll('.alert-success');
+    successAlerts.forEach(alert => {
+        if (alert.style.display !== 'none') {
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+    });
+});
+</script>
+{% endblock %}

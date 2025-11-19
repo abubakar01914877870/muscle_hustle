@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Blog Management - Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Blog Management</h2>
+                <a href="{{ url_for('admin_blog.create_blog_post') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> New Blog Post
+                </a>
+            </div>
+
+            {% if posts %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Author</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                            <tr>
+                                <td>
+                                    <strong>{{ post.title }}</strong>
+                                    {% if post.content_type == 'html' %}
+                                        <span class="badge badge-info">HTML</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">Plain Text</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if post.status == 'published' %}
+                                        <span class="badge badge-success">Published</span>
+                                        {% if post.published_at %}
+                                            <br><small class="text-muted">{{ post.published_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge badge-warning">Draft</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ post.author_name }}</td>
+                                <td>{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ post.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('admin_blog.edit_blog_post', post_id=post.id) }}" 
+                                           class="btn btn-sm btn-outline-primary">Edit</a>
+                                        
+                                        <form method="POST" action="{{ url_for('admin_blog.toggle_post_status', post_id=post.id) }}" 
+                                              style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                            {% if post.status == 'draft' %}
+                                                <button type="submit" class="btn btn-sm btn-outline-success">Publish</button>
+                                            {% else %}
+                                                <button type="submit" class="btn btn-sm btn-outline-warning">Unpublish</button>
+                                            {% endif %}
+                                        </form>
+                                        
+                                        <form method="POST" action="{{ url_for('admin_blog.delete_blog_post', post_id=post.id) }}" 
+                                              style="display: inline;" 
+                                              onsubmit="return confirm('Are you sure you want to delete this blog post?');">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <h4>No blog posts yet</h4>
+                    <p>Get started by creating your first blog post.</p>
+                    <a href="{{ url_for('admin_blog.create_blog_post') }}" class="btn btn-primary">Create First Post</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

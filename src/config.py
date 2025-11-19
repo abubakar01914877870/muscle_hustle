@@ -15,6 +15,10 @@ class Config:
     UPLOAD_FOLDER = 'src/static/uploads'
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     
+    # Firebase Configuration
+    FIREBASE_CREDENTIALS_PATH = os.environ.get('FIREBASE_CREDENTIALS_PATH')
+    FIREBASE_STORAGE_BUCKET = os.environ.get('FIREBASE_STORAGE_BUCKET')
+    
 class DevelopmentConfig(Config):
     DEBUG = True
     

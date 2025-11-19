@@ -1,7 +1,12 @@
 Flask
 Flask-Login
+Flask-WTF
 Werkzeug
 pymongo
 dnspython
 Pillow
 gunicorn
+firebase-admin
+hypothesis
+pytest
+bleach

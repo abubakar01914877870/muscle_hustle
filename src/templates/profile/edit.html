@@ -4,6 +4,7 @@
 
 {% block content %}
 <form method="POST" action="{{ url_for('profile.edit_profile') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <!-- Personal Information -->
     <section class="form-section">
         <div class="section-header">

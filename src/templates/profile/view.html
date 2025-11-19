@@ -15,11 +15,13 @@
         {% endif %}
     </div>
     <form id="profilePictureForm" method="POST" action="{{ url_for('profile.upload_picture') }}" enctype="multipart/form-data" style="display: none;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="file" id="profilePictureInput" name="profile_picture" accept="image/*" onchange="document.getElementById('profilePictureForm').submit();">
     </form>
     <p class="upload-hint">Click image to change profile picture</p>
     {% if user.profile_picture %}
     <form method="POST" action="{{ url_for('profile.remove_picture') }}" style="margin-top: var(--space-8);">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <button type="submit" class="btn btn-secondary" style="font-size: var(--font-size-sm); padding: var(--space-6) var(--space-12);" onclick="return confirm('Remove profile picture?');">Remove Picture</button>
     </form>
     {% endif %}

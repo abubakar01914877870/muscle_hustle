@@ -7,6 +7,7 @@
     <h2>Edit Profile: {{ user.email }}</h2>
     
     <form method="POST" action="{{ url_for('admin.edit_user_profile', user_id=user.id) }}" class="profile-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="form-section">
             <h3>Personal Information</h3>
             

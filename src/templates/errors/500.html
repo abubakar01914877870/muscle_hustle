@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - Muscle Hustle{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-title">Oops! Something went wrong</h1>
+        <p class="error-message">
+            {{ error_message or "We're experiencing technical difficulties. Our team has been notified and is working to fix the issue." }}
+        </p>
+        <div class="error-actions">
+            <a href="{{ url_for('blog.blog_list') }}" class="btn btn-primary">
+                ← Back to Blog
+            </a>
+            <button onclick="window.location.reload()" class="btn btn-secondary">
+                🔄 Try Again
+            </button>
+        </div>
+        <div class="error-help">
+            <p>If the problem persists, please contact our support team.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: 2rem;
+}
+
+.error-content {
+    text-align: center;
+    max-width: 500px;
+    background: white;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.error-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.error-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.error-help {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+@media (max-width: 480px) {
+    .error-content {
+        padding: 2rem 1rem;
+    }
+    
+    .error-title {
+        font-size: 1.5rem;
+    }
+    
+    .error-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

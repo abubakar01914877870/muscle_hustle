@@ -101,6 +101,14 @@ def init_db(app):
             db.exercises.create_index('muscle')
             db.exercises.create_index('equipment')
             
+            # Blog posts collection indexes
+            db.blog_posts.create_index([('status', 1), ('published_at', -1)])  # For published posts
+            db.blog_posts.create_index([('author_id', 1), ('created_at', -1)])  # For admin management
+            db.blog_posts.create_index([('title', 'text'), ('content', 'text')])  # For future search
+            db.blog_posts.create_index('view_count')  # For popular posts queries
+            db.blog_posts.create_index('tags')  # For tag-based filtering
+            db.blog_posts.create_index([('status', 1), ('created_at', -1)])  # For admin post listing
+            
             print("✅ Database indexes created successfully")
     except Exception as e:
         print(f"⚠️  Warning: Could not create indexes: {str(e)}")
