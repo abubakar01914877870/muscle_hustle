@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}{{ trainer.full_name or trainer.email }} - Trainer Profile{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px;">
+
+    <!-- Trainer Hero Section -->
+    <section class="trainer-hero">
+        <div class="trainer-hero-content">
+            <div class="trainer-profile-image-large">
+                {% if trainer.profile_picture %}
+                <img src="{{ trainer.get_profile_picture_url() }}" alt="{{ trainer.full_name or trainer.email }}">
+                {% elif trainer.full_name %}
+                <span>{{ trainer.full_name.split()[0][0] }}{{ trainer.full_name.split()[-1][0] if
+                    trainer.full_name.split()|length > 1 else '' }}</span>
+                {% else %}
+                <span>{{ trainer.email[0]|upper }}</span>
+                {% endif %}
+            </div>
+
+            <div class="trainer-hero-info">
+                <h1>{{ trainer.full_name or trainer.email }}</h1>
+
+                {% if trainer.trainer_profile.get('tagline') %}
+                <p class="trainer-tagline">{{ trainer.trainer_profile.get('tagline') }}</p>
+                {% endif %}
+
+                {% if trainer.get_trainer_specializations() %}
+                <div class="trainer-specializations">
+                    {% for spec in trainer.get_trainer_specializations() %}
+                    <span class="specialization-badge">{{ spec }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if current_user.is_authenticated and current_user.id == trainer.id %}
+                <div class="trainer-actions">
+                    <a href="{{ url_for('trainer.edit_profile') }}" class="btn btn-primary">✏️ Edit Profile</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <div class="trainer-layout">
+        <!-- Main Content -->
+        <div class="trainer-main">
+
+            <!-- About Section -->
+            {% if trainer.trainer_profile.get('bio') %}
+            <section class="trainer-section">
+                <h2>📖 About Me</h2>
+                <p class="trainer-bio">{{ trainer.trainer_profile.get('bio') }}</p>
+            </section>
+            {% endif %}
+
+            <!-- Certifications Section -->
+            {% if trainer.get_trainer_certifications() %}
+            <section class="trainer-section">
+                <h2>🎓 Certifications</h2>
+                <ul class="certifications-list">
+                    {% for cert in trainer.get_trainer_certifications() %}
+                    <li>{{ cert }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+
+            <!-- Specializations Section -->
+            {% if trainer.get_trainer_specializations() %}
+            <section class="trainer-section">
+                <h2>💪 Specializations</h2>
+                <div class="specializations-grid">
+                    {% for spec in trainer.get_trainer_specializations() %}
+                    <div class="specialization-card">{{ spec }}</div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="trainer-sidebar">
+
+            <!-- Stats Card -->
+            {% if trainer.trainer_profile.get('years_of_experience') %}
+            <div class="trainer-stats-card">
+                <h3>📊 Experience</h3>
+                <div class="stat-item">
+                    <div class="stat-value">{{ trainer.trainer_profile.get('years_of_experience') }}+</div>
+                    <div class="stat-label">Years of Experience</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Pricing Card -->
+            {% if trainer.trainer_profile.get('hourly_rate') %}
+            <div class="trainer-pricing-card">
+                <h3>💰 Pricing</h3>
+                <div class="pricing-item">
+                    <div class="price">${{ "%.2f"|format(trainer.trainer_profile.get('hourly_rate')) }}</div>
+                    <div class="price-label">per hour</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Contact Card -->
+            {% set social_links = trainer.trainer_profile.get('social_links', {}) %}
+            {% if social_links.get('instagram') or social_links.get('facebook') or social_links.get('linkedin') %}
+            <div class="trainer-contact-card">
+                <h3>🔗 Connect</h3>
+                <div class="social-links">
+                    {% if social_links.get('instagram') %}
+                    <a href="{{ social_links.get('instagram') }}" target="_blank" rel="noopener noreferrer"
+                        class="social-link">
+                        <span>📷</span> Instagram
+                    </a>
+                    {% endif %}
+                    {% if social_links.get('facebook') %}
+                    <a href="{{ social_links.get('facebook') }}" target="_blank" rel="noopener noreferrer"
+                        class="social-link">
+                        <span>📘</span> Facebook
+                    </a>
+                    {% endif %}
+                    {% if social_links.get('linkedin') %}
+                    <a href="{{ social_links.get('linkedin') }}" target="_blank" rel="noopener noreferrer"
+                        class="social-link">
+                        <span>💼</span> LinkedIn
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

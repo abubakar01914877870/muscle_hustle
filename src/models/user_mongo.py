@@ -33,6 +33,10 @@ class User(UserMixin):
         self.workout_frequency = user_dict.get('workout_frequency')
         self.created_at = user_dict.get('created_at', datetime.utcnow())
         self.updated_at = user_dict.get('updated_at', datetime.utcnow())
+        
+        # Trainer fields
+        self.is_trainer = user_dict.get('is_trainer', False)
+        self.trainer_profile = user_dict.get('trainer_profile', {})
     
     def get_id(self):
         """Return user ID for Flask-Login"""
@@ -62,7 +66,6 @@ class User(UserMixin):
         """Calculate age from date of birth"""
         if self.date_of_birth:
             if isinstance(self.date_of_birth, str):
-                from datetime import datetime
                 dob = datetime.fromisoformat(self.date_of_birth.replace('Z', '+00:00'))
             else:
                 dob = self.date_of_birth
@@ -76,6 +79,57 @@ class User(UserMixin):
         if self.profile_picture:
             return f"data:{self.profile_picture_type};base64,{self.profile_picture}"
         return None
+    
+    def get_trainer_specializations(self):
+        """Get list of trainer specializations"""
+        if self.is_trainer and self.trainer_profile:
+            return self.trainer_profile.get('specializations', [])
+        return []
+    
+    def get_trainer_certifications(self):
+        """Get list of trainer certifications"""
+        if self.is_trainer and self.trainer_profile:
+            return self.trainer_profile.get('certifications', [])
+        return []
+    
+    def is_trainer_profile_published(self):
+        """Check if trainer profile is published"""
+        if self.is_trainer and self.trainer_profile:
+            return self.trainer_profile.get('is_published', False)
+        return False
+    
+    def update_trainer_profile(self, db, profile_data):
+        """Update trainer profile data"""
+        if not self.is_trainer:
+            return False
+        
+        self.trainer_profile = profile_data
+        self.updated_at = datetime.utcnow()
+        
+        try:
+            db.users.update_one(
+                {'_id': self._id},
+                {'$set': {
+                    'trainer_profile': self.trainer_profile,
+                    'updated_at': self.updated_at
+                }}
+            )
+            return True
+        except Exception as e:
+            print(f"Error updating trainer profile: {e}")
+            return False
+    
+    @staticmethod
+    def find_all_trainers(db, published_only=True):
+        """Find all trainers"""
+        query = {'is_trainer': True}
+        if published_only:
+            query['trainer_profile.is_published'] = True
+        
+        trainers = []
+        for user_dict in db.users.find(query):
+            trainers.append(User(user_dict))
+        return trainers
     
     def to_dict(self):
         """Convert user to dictionary"""
@@ -101,7 +155,9 @@ class User(UserMixin):
             'preferred_workout_time': self.preferred_workout_time,
             'workout_frequency': self.workout_frequency,
             'created_at': self.created_at,
-            'updated_at': self.updated_at
+            'updated_at': self.updated_at,
+            'is_trainer': self.is_trainer,
+            'trainer_profile': self.trainer_profile
         }
     
     @staticmethod

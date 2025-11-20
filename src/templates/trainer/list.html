@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Our Trainers - Muscle Hustle{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">Our Trainers</h1>
+        <p class="page-subtitle">Meet our certified fitness professionals</p>
+    </div>
+
+    <!-- Trainers Grid -->
+    {% if trainers %}
+    <div class="trainer-grid">
+        {% for trainer in trainers %}
+        <a href="{{ url_for('trainer.view_profile', trainer_id=trainer.id) }}" class="trainer-card" target="_blank">
+
+            <div class="trainer-card-image">
+                {% if trainer.profile_picture %}
+                <img src="{{ trainer.get_profile_picture_url() }}" alt="{{ trainer.full_name or trainer.email }}">
+                {% elif trainer.full_name %}
+                <div class="trainer-card-initials">
+                    {{ trainer.full_name.split()[0][0] }}{{ trainer.full_name.split()[-1][0] if
+                    trainer.full_name.split()|length > 1 else '' }}
+                </div>
+                {% else %}
+                <div class="trainer-card-initials">{{ trainer.email[0]|upper }}</div>
+                {% endif %}
+            </div>
+
+            <div class="trainer-card-content">
+                <h3 class="trainer-card-name">{{ trainer.full_name or trainer.email }}</h3>
+
+                {% if trainer.trainer_profile.get('tagline') %}
+                <p class="trainer-card-tagline">{{ trainer.trainer_profile.get('tagline') }}</p>
+                {% endif %}
+
+                {% if trainer.get_trainer_specializations() %}
+                <div class="trainer-card-specializations">
+                    {% for spec in trainer.get_trainer_specializations()[:3] %}
+                    <span class="spec-badge">{{ spec }}</span>
+                    {% endfor %}
+                    {% if trainer.get_trainer_specializations()|length > 3 %}
+                    <span class="spec-badge">+{{ trainer.get_trainer_specializations()|length - 3 }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if trainer.trainer_profile.get('years_of_experience') %}
+                <div class="trainer-card-stats">
+                    <div class="stat-box">
+                        <div class="stat-value">{{ trainer.trainer_profile.get('years_of_experience') }}+</div>
+                        <div class="stat-label">Years</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="trainer-card-action">
+                    <span class="view-profile-btn">View Profile →</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No trainers available at the moment. Check back soon!</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

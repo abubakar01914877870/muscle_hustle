@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Trainer Profile - Muscle Hustle{% endblock %}
+
+{% block content %}
+<div class="container profile-form">
+    <h2>Edit Trainer Profile</h2>
+
+    <form method="POST" action="{{ url_for('trainer.edit_profile') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+        <!-- Basic Information -->
+        <div class="form-section">
+            <h3>📝 Basic Information</h3>
+
+            <div class="form-group">
+                <label for="tagline">Tagline</label>
+                <input type="text" id="tagline" name="tagline" value="{{ user.trainer_profile.get('tagline', '') }}"
+                    placeholder="e.g., Certified Personal Trainer & Nutrition Coach" maxlength="100">
+                <small>A short one-line description (max 100 characters)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="bio">About Me / Bio</label>
+                <textarea id="bio" name="bio" rows="6"
+                    placeholder="Tell people about your background, experience, and training philosophy...">{{ user.trainer_profile.get('bio', '') }}</textarea>
+            </div>
+        </div>
+
+        <!-- Professional Information -->
+        <div class="form-section">
+            <h3>🎓 Professional Information</h3>
+
+            <div class="form-group">
+                <label>Certifications</label>
+                <div id="certifications-container">
+                    {% set certifications = user.trainer_profile.get('certifications', []) %}
+                    {% if certifications %}
+                    {% for cert in certifications %}
+                    <div class="certification-item">
+                        <input type="text" name="certification_{{ loop.index0 }}" value="{{ cert }}"
+                            placeholder="e.g., NASM Certified Personal Trainer">
+                        <button type="button" class="btn-remove-cert" onclick="this.parentElement.remove()">✕</button>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="certification-item">
+                        <input type="text" name="certification_0" placeholder="e.g., NASM Certified Personal Trainer">
+                        <button type="button" class="btn-remove-cert" onclick="this.parentElement.remove()">✕</button>
+                    </div>
+                    {% endif %}
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="addCertification()">+ Add
+                    Certification</button>
+            </div>
+
+            <div class="form-group">
+                <label>Specializations</label>
+                {% set user_specializations = user.trainer_profile.get('specializations', []) %}
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" name="specializations" value="Strength Training" {%
+                            if 'Strength Training' in user_specializations %}checked{% endif %}> Strength
+                        Training</label>
+                    <label><input type="checkbox" name="specializations" value="Cardio" {% if 'Cardio' in
+                            user_specializations %}checked{% endif %}> Cardio</label>
+                    <label><input type="checkbox" name="specializations" value="Yoga" {% if 'Yoga' in
+                            user_specializations %}checked{% endif %}> Yoga</label>
+                    <label><input type="checkbox" name="specializations" value="Pilates" {% if 'Pilates' in
+                            user_specializations %}checked{% endif %}> Pilates</label>
+                    <label><input type="checkbox" name="specializations" value="CrossFit" {% if 'CrossFit' in
+                            user_specializations %}checked{% endif %}> CrossFit</label>
+                    <label><input type="checkbox" name="specializations" value="HIIT" {% if 'HIIT' in
+                            user_specializations %}checked{% endif %}> HIIT</label>
+                    <label><input type="checkbox" name="specializations" value="Bodybuilding" {% if 'Bodybuilding' in
+                            user_specializations %}checked{% endif %}> Bodybuilding</label>
+                    <label><input type="checkbox" name="specializations" value="Weight Loss" {% if 'Weight Loss' in
+                            user_specializations %}checked{% endif %}> Weight Loss</label>
+                    <label><input type="checkbox" name="specializations" value="Nutrition Coaching" {%
+                            if 'Nutrition Coaching' in user_specializations %}checked{% endif %}> Nutrition
+                        Coaching</label>
+                    <label><input type="checkbox" name="specializations" value="Sports Performance" {%
+                            if 'Sports Performance' in user_specializations %}checked{% endif %}> Sports
+                        Performance</label>
+                    <label><input type="checkbox" name="specializations" value="Rehabilitation" {% if 'Rehabilitation'
+                            in user_specializations %}checked{% endif %}> Rehabilitation</label>
+                    <label><input type="checkbox" name="specializations" value="Senior Fitness" {% if 'Senior Fitness'
+                            in user_specializations %}checked{% endif %}> Senior Fitness</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="years_of_experience">Years of Experience</label>
+                    <input type="number" id="years_of_experience" name="years_of_experience"
+                        value="{{ user.trainer_profile.get('years_of_experience', '') }}" min="0" max="50"
+                        placeholder="e.g., 5">
+                </div>
+
+                <div class="form-group">
+                    <label for="hourly_rate">Hourly Rate (Optional)</label>
+                    <input type="number" id="hourly_rate" name="hourly_rate"
+                        value="{{ user.trainer_profile.get('hourly_rate', '') }}" min="0" step="0.01"
+                        placeholder="e.g., 50.00">
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Links -->
+        <div class="form-section">
+            <h3>🔗 Social Links</h3>
+            {% set social_links = user.trainer_profile.get('social_links', {}) %}
+
+            <div class="form-group">
+                <label for="instagram">Instagram</label>
+                <input type="url" id="instagram" name="instagram" value="{{ social_links.get('instagram', '') }}"
+                    placeholder="https://instagram.com/yourprofile">
+            </div>
+
+            <div class="form-group">
+                <label for="facebook">Facebook</label>
+                <input type="url" id="facebook" name="facebook" value="{{ social_links.get('facebook', '') }}"
+                    placeholder="https://facebook.com/yourprofile">
+            </div>
+
+            <div class="form-group">
+                <label for="linkedin">LinkedIn</label>
+                <input type="url" id="linkedin" name="linkedin" value="{{ social_links.get('linkedin', '') }}"
+                    placeholder="https://linkedin.com/in/yourprofile">
+            </div>
+        </div>
+
+        <!-- Publish Settings -->
+        <div class="form-section">
+            <h3>🌐 Visibility</h3>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="is_published" {% if user.trainer_profile.get('is_published', False)
+                        %}checked{% endif %}>
+                    Publish my trainer profile (make it visible to the public)
+                </label>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">💾 Save Profile</button>
+            <a href="{{ url_for('profile.view_profile') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    let certCount = {{ user.trainer_profile.get('certifications', []) | length }};
+
+    function addCertification() {
+        const container = document.getElementById('certifications-container');
+        const newCert = document.createElement('div');
+        newCert.className = 'certification-item';
+        newCert.innerHTML = `
+        <input type="text" name="certification_${certCount}" 
+               placeholder="e.g., NASM Certified Personal Trainer">
+        <button type="button" class="btn-remove-cert" onclick="this.parentElement.remove()">✕</button>
+    `;
+        container.appendChild(newCert);
+        certCount++;
+    }
+</script>
+
+<style>
+    .certification-item {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .certification-item input {
+        flex: 1;
+    }
+
+    .btn-remove-cert {
+        background: var(--color-error);
+        color: var(--color-white);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-base);
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn-remove-cert:hover {
+        background: var(--color-energy-red-active);
+    }
+
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .checkbox-grid label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-text);
+    }
+
+    small {
+        display: block;
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-xs);
+        margin-top: 0.25rem;
+    }
+</style>
+{% endblock %}

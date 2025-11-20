@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Find a Gym{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">Find Your Gym</h1>
+        <p class="page-subtitle">Discover the best gyms in your area and start your fitness journey today.</p>
+    </div>
+
+    <div class="gym-grid">
+        {% for gym in gyms %}
+        <a href="{{ url_for('gym.detail', gym_id=gym.id) }}" target="_blank" class="gym-card">
+            <div class="gym-image-container">
+                {% if gym.images %}
+                <img src="{{ gym.images[0] }}" alt="{{ gym.name }}" class="gym-image">
+                {% else %}
+                <div class="gym-placeholder">
+                    <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                </div>
+                {% endif %}
+            </div>
+            <div class="gym-content">
+                <h3 class="gym-title">{{ gym.name }}</h3>
+                <p class="gym-description">{{ gym.description }}</p>
+                <div class="gym-meta">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span>{{ gym.address }}</span>
+                </div>
+            </div>
+        </a>
+        {% else %}
+        <div class="empty-state">
+            <p>No gyms found yet. Check back soon!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

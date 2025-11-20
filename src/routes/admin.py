@@ -38,6 +38,7 @@ def edit_user(user_id):
         email = request.form.get('email')
         password = request.form.get('password')
         is_admin = request.form.get('is_admin') == 'on'
+        is_trainer = request.form.get('is_trainer') == 'on'
         
         if not email:
             flash('Email is required', 'error')
@@ -52,7 +53,8 @@ def edit_user(user_id):
         # Update user
         update_data = {
             'email': email,
-            'is_admin': is_admin
+            'is_admin': is_admin,
+            'is_trainer': is_trainer
         }
         
         # Only update password if provided

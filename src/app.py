@@ -20,6 +20,15 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-secret-key-chang
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI') or "mongodb+srv://admin:1234qa@muscle-hustle-developme.ekctotl.mongodb.net/?appName=muscle-hustle-development"
 app.config['MONGO_DBNAME'] = "muscle_hustle"
 
+# Custom Filters
+from markupsafe import Markup, escape
+
+@app.template_filter('nl2br')
+def nl2br_filter(s):
+    if not s:
+        return ""
+    return Markup(str(escape(s)).replace('\n', '<br>\n'))
+
 # CSRF Protection
 csrf = CSRFProtect(app)
 
@@ -47,6 +56,12 @@ app.register_blueprint(progress_bp)
 app.register_blueprint(exercises_bp)
 app.register_blueprint(blog)
 app.register_blueprint(admin_blog)
+from .routes.admin_gym import admin_gym
+app.register_blueprint(admin_gym)
+from .routes.gym import gym_bp
+app.register_blueprint(gym_bp)
+from .routes.trainer import trainer
+app.register_blueprint(trainer)
 
 if __name__ == '__main__':
     app.run(debug=True)
