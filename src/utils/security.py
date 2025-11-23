@@ -14,19 +14,15 @@ class ContentSanitizer:
     ALLOWED_TAGS = [
         'p', 'br', 'strong', 'b', 'em', 'i', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
         'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'a', 'img', 'div', 'span',
-        'table', 'thead', 'tbody', 'tr', 'th', 'td', 'hr', 'iframe'
+        'table', 'thead', 'tbody', 'tr', 'th', 'td', 'hr', 'iframe', 'style'
     ]
     
     # Allowed attributes for HTML tags
     ALLOWED_ATTRIBUTES = {
+        '*': ['class', 'id', 'style'],
         'a': ['href', 'title', 'target', 'rel'],
-        'img': ['src', 'alt', 'title', 'width', 'height', 'class'],
-        'iframe': ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'class'],
-        'div': ['class'],
-        'span': ['class'],
-        'p': ['class'],
-        'h1': ['class'], 'h2': ['class'], 'h3': ['class'], 'h4': ['class'], 'h5': ['class'], 'h6': ['class'],
-        'table': ['class'], 'thead': ['class'], 'tbody': ['class'], 'tr': ['class'], 'th': ['class'], 'td': ['class']
+        'img': ['src', 'alt', 'title', 'width', 'height'],
+        'iframe': ['src', 'width', 'height', 'frameborder', 'allowfullscreen']
     }
     
     # Allowed protocols for links
