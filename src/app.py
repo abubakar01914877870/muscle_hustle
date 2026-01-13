@@ -66,6 +66,9 @@ app.register_blueprint(trainer)
 from .routes.planner import planner_bp
 app.register_blueprint(planner_bp)
 
+from .routes.admin_import import admin_import_bp
+app.register_blueprint(admin_import_bp)
+
 from .routes.mobile import mobile_bp
 app.register_blueprint(mobile_bp)
 

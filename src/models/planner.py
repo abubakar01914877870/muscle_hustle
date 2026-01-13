@@ -29,9 +29,16 @@ class ExerciseGroup:
         
     @staticmethod
     def create(db, user_id, name, exercise_ids):
+        # Validation
+        if not name or not name.strip():
+            raise ValueError("Group name cannot be empty")
+        
+        if not exercise_ids or len(exercise_ids) == 0:
+            raise ValueError("At least one exercise must be selected")
+        
         group_dict = {
             'user_id': ObjectId(user_id),
-            'name': name,
+            'name': name.strip(),
             'exercise_ids': [ObjectId(eid) for eid in exercise_ids],
             'created_at': datetime.utcnow()
         }
@@ -58,10 +65,14 @@ class ExerciseGroup:
 
     def update(self, db, name=None, exercise_ids=None):
         update_data = {}
-        if name:
-            self.name = name
-            update_data['name'] = name
+        if name is not None:
+            if not name.strip():
+                raise ValueError("Group name cannot be empty")
+            self.name = name.strip()
+            update_data['name'] = self.name
         if exercise_ids is not None:
+            if len(exercise_ids) == 0:
+                raise ValueError("At least one exercise must be selected")
             self.exercise_ids = [ObjectId(eid) for eid in exercise_ids]
             update_data['exercise_ids'] = self.exercise_ids
             

@@ -3,6 +3,7 @@ Exercise Model for MongoDB
 """
 from datetime import datetime
 from bson import ObjectId
+import re
 
 class Exercise:
     """Exercise model for MongoDB"""
@@ -76,6 +77,23 @@ class Exercise:
         return None
     
     @staticmethod
+    def find_by_name(db, name, exclude_id=None):
+        """Find exercise by name (case-insensitive)
+        
+        Args:
+            db: MongoDB database instance
+            name: Exercise name to search for
+            exclude_id: Optional exercise ID to exclude from search (for updates)
+            
+        Returns:
+            Exercise document or None
+        """
+        query = {'name': {'$regex': f'^{re.escape(name.strip())}$', '$options': 'i'}}
+        if exclude_id:
+            query['_id'] = {'$ne': ObjectId(exclude_id)}
+        return db.exercises.find_one(query)
+    
+    @staticmethod
     def find_all(db, filters=None, search=None):
         """Find all exercises with optional filters"""
         query = {}
@@ -98,9 +116,19 @@ class Exercise:
     
     @staticmethod
     def create(db, **kwargs):
-        """Create new exercise"""
+        """Create new exercise
+        
+        Raises:
+            ValueError: If an exercise with the same name already exists
+        """
+        name = kwargs.get('name', '').strip()
+        
+        # Check for duplicate name
+        if Exercise.find_by_name(db, name):
+            raise ValueError(f'An exercise with the name "{name}" already exists. Please use a different name.')
+        
         exercise_dict = {
-            'name': kwargs.get('name'),
+            'name': name,
             'muscle': kwargs.get('muscle'),
             'secondary_muscles': kwargs.get('secondary_muscles', []),
             'equipment': kwargs.get('equipment'),
@@ -125,14 +153,28 @@ class Exercise:
     
     @staticmethod
     def update(db, exercise_id, update_data):
-        """Update exercise by ID"""
+        """Update exercise by ID
+        
+        Raises:
+            ValueError: If updating to a name that already exists
+        """
         try:
+            # Check for duplicate name if name is being updated
+            if 'name' in update_data:
+                name = update_data['name'].strip()
+                existing = Exercise.find_by_name(db, name, exclude_id=exercise_id)
+                if existing:
+                    raise ValueError(f'An exercise with the name "{name}" already exists. Please use a different name.')
+                update_data['name'] = name
+            
             update_data['updated_at'] = datetime.utcnow()
             db.exercises.update_one(
                 {'_id': ObjectId(exercise_id)},
                 {'$set': update_data}
             )
             return True
+        except ValueError:
+            raise
         except Exception as e:
             print(f"Error updating exercise: {e}")
             return False
@@ -145,6 +187,81 @@ class Exercise:
             return True
         except:
             return False
+    
+    @staticmethod
+    def import_from_wger(db, wger_data: dict, exercise_info: dict):
+        """
+        Import exercise from Wger API data
+        
+        Args:
+            db: MongoDB database instance
+            wger_data: Basic exercise data from /exercise/ endpoint
+            exercise_info: Detailed info from /exerciseinfo/ endpoint
+            
+        Returns:
+            Exercise object or None
+        """
+        try:
+            wger_id = wger_data.get('id')
+            
+            # Check if already imported
+            existing = db.exercises.find_one({'wger_id': wger_id})
+            if existing:
+                return None  # Already imported
+            
+            # Extract name from translations array
+            translations = exercise_info.get('translations', [])
+            if translations and len(translations) > 0:
+                name = translations[0].get('name', f"Exercise {wger_id}")
+                description = translations[0].get('description', '')
+            else:
+                name = f"Exercise {wger_id}"
+                description = ''
+            
+            # Map category to muscle group
+            category_data = exercise_info.get('category', {})
+            if isinstance(category_data, dict):
+                muscle = category_data.get('name', 'Other')
+            else:
+                muscle = 'Other'
+            
+            # Map equipment
+            equipment_data = exercise_info.get('equipment', [])
+            if equipment_data and isinstance(equipment_data[0], dict):
+                equipment = equipment_data[0].get('name', 'Bodyweight')
+            else:
+                equipment = 'Bodyweight'
+            
+            # Create exercise document
+            exercise_dict = {
+                'wger_id': wger_id,  # Store Wger ID for duplicate prevention
+                'name': name,
+                'muscle': muscle,
+                'secondary_muscles': [],
+                'equipment': equipment,
+                'difficulty': 'Intermediate',  # Default
+                'type': 'Strength',  # Default
+                'description': description,
+                'instructions': description,  # Same as description for Wger
+                'reps_sets': '3 sets x 8-12 reps',  # Default
+                'tips': '',
+                'common_mistakes': '',
+                'media_type': 'image',
+                'image_data': None,
+                'image_type': 'image/jpeg',
+                'video_url': None,
+                'created_by': 'wger_import',
+                'created_at': datetime.utcnow(),
+                'updated_at': datetime.utcnow()
+            }
+            
+            result = db.exercises.insert_one(exercise_dict)
+            exercise_dict['_id'] = result.inserted_id
+            return Exercise(exercise_dict)
+            
+        except Exception as e:
+            print(f"Error importing exercise from Wger: {e}")
+            return None
     
     def __repr__(self):
         return f'<Exercise {self.name}>'

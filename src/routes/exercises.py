@@ -18,18 +18,33 @@ def index():
     equipment_filters = request.args.getlist('equipment')
     search_query = request.args.get('search', '')
     
+    # Pagination
+    page = request.args.get('page', 1, type=int)
+    limit = 20
+    
     filters = {}
     if muscle_filters:
         filters['muscle'] = muscle_filters
     if equipment_filters:
         filters['equipment'] = equipment_filters
     
-    exercises = Exercise.find_all(db, filters=filters, search=search_query)
+    # Fetch exercises from MongoDB
+    all_exercises = Exercise.find_all(db, filters, search_query)
+    
+    # Calculate pagination
+    total_count = len(all_exercises)
+    total_pages = (total_count + limit - 1) // limit
+    start_idx = (page - 1) * limit
+    end_idx = start_idx + limit
+    exercises = all_exercises[start_idx:end_idx]
     
     return render_template('exercises/index.html', 
                          exercises=exercises,
                          active_filters={'muscle': muscle_filters, 'equipment': equipment_filters},
-                         search_query=search_query)
+                         search_query=search_query,
+                         page=page,
+                         total_pages=total_pages,
+                         total_count=total_count)
 
 
 @exercises_bp.route('/<exercise_id>')
@@ -43,6 +58,7 @@ def detail(exercise_id):
         return redirect(url_for('exercises.index'))
     
     return render_template('exercises/detail.html', exercise=exercise)
+
 
 @exercises_bp.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -94,33 +110,55 @@ def add():
             db = get_db()
             print(f"DEBUG: Creating exercise with media_type='{media_type}', has_image='{image_data is not None}', video_url='{youtube_url}'")
             
-            Exercise.create(
-                db=db,
-                name=request.form.get('name'),
-                muscle=request.form.get('muscle'),
-                secondary_muscles=secondary_muscles,
-                equipment=request.form.get('equipment'),
-                difficulty=request.form.get('difficulty'),
-                type=request.form.get('type'),
-                description=request.form.get('description'),
-                instructions=request.form.get('instructions'),
-                reps_sets=request.form.get('reps_sets'),
-                tips=request.form.get('tips'),
-                common_mistakes=request.form.get('common_mistakes'),
-                media_type=media_type,
-                image_data=image_data,
-                image_type=image_type,
-                video_url=youtube_url,
-                created_by=str(current_user.id)
-            )
-            
-            flash('Exercise added successfully!', 'success')
-            return redirect(url_for('exercises.index'))
+            try:
+                Exercise.create(
+                    db=db,
+                    name=request.form.get('name'),
+                    muscle=request.form.get('muscle'),
+                    secondary_muscles=secondary_muscles,
+                    equipment=request.form.get('equipment'),
+                    difficulty=request.form.get('difficulty'),
+                    type=request.form.get('type'),
+                    description=request.form.get('description'),
+                    instructions=request.form.get('instructions'),
+                    reps_sets=request.form.get('reps_sets'),
+                    tips=request.form.get('tips'),
+                    common_mistakes=request.form.get('common_mistakes'),
+                    media_type=media_type,
+                    image_data=image_data,
+                    image_type=image_type,
+                    video_url=youtube_url,
+                    created_by=str(current_user.id)
+                )
+                
+                flash('Exercise added successfully!', 'success')
+                return redirect(url_for('exercises.index'))
+            except ValueError as e:
+                # Duplicate name error
+                flash(str(e), 'error')
+                return render_template('exercises/add.html')
         
         except Exception as e:
             flash(f'Error adding exercise: {str(e)}', 'error')
     
-    return render_template('exercises/add.html')
+    # Check for pre-fill data from import (GET request)
+    prefill_data = {}
+    if request.method == 'GET' and request.args.get('from_import'):
+        prefill_data = {
+            'name': request.args.get('name', ''),
+            'description': request.args.get('description', ''),
+            'muscle': request.args.get('muscle', ''),
+            'equipment': request.args.get('equipment', ''),
+            'secondary_muscles': request.args.getlist('secondary_muscles'),
+            'instructions': request.args.get('instructions', ''),
+            'difficulty': request.args.get('difficulty', ''),
+            'type': request.args.get('type', ''),
+            'reps_sets': request.args.get('reps_sets', ''),
+            'tips': request.args.get('tips', ''),
+            'from_import': True
+        }
+    
+    return render_template('exercises/add.html', prefill=prefill_data)
 
 def extract_youtube_id(url):
     """Extract YouTube video ID from URL"""
@@ -201,9 +239,14 @@ def edit(exercise_id):
                         update_data['video_url'] = exercise.video_url
                         update_data['image_filename'] = None
             
-            Exercise.update(db, exercise_id, update_data)
-            flash('Exercise updated successfully!', 'success')
-            return redirect(url_for('exercises.detail', exercise_id=exercise_id))
+            try:
+                Exercise.update(db, exercise_id, update_data)
+                flash('Exercise updated successfully!', 'success')
+                return redirect(url_for('exercises.detail', exercise_id=exercise_id))
+            except ValueError as e:
+                # Duplicate name error
+                flash(str(e), 'error')
+                return render_template('exercises/edit.html', exercise=exercise)
         
         except Exception as e:
             flash(f'Error updating exercise: {str(e)}', 'error')

@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from src.database import get_db
 from src.models.planner import ExerciseGroup, CalendarAssignment, WorkoutLog
-from src.models.exercise_mongo import Exercise 
+from src.models.exercise_mongo import Exercise
 from datetime import datetime, timedelta
 
 planner_bp = Blueprint('planner', __name__, url_prefix='/planner')
@@ -31,15 +31,17 @@ def create_group():
         name = request.form.get('name')
         exercise_ids = request.form.getlist('exercise_ids')
         
-        if not name:
-            flash('Group name is required', 'error')
-        else:
+        try:
             ExerciseGroup.create(db, current_user.id, name, exercise_ids)
             flash('Exercise Group created successfully!', 'success')
             return redirect(url_for('planner.groups_list'))
+        except ValueError as e:
+            flash(str(e), 'error')
+        except Exception as e:
+            flash('An error occurred while creating the group', 'error')
+            print(f"Error creating group: {str(e)}")
             
-    # GET: Show form with all exercises
-    # Ideally, we should have a better search UI, but for now getting all exercises
+    # GET: Show form with all exercises from MongoDB
     all_exercises = Exercise.find_all(db)
     return render_template('planner/group_form.html', exercises=all_exercises)
 
@@ -60,10 +62,17 @@ def edit_group(group_id):
         # For now assuming checkboxes with name 'exercise_ids'
         exercise_ids = request.form.getlist('exercise_ids')
         
-        group.update(db, name=name, exercise_ids=exercise_ids)
-        flash('Group updated successfully!', 'success')
-        return redirect(url_for('planner.groups_list'))
+        try:
+            group.update(db, name=name, exercise_ids=exercise_ids)
+            flash('Group updated successfully!', 'success')
+            return redirect(url_for('planner.groups_list'))
+        except ValueError as e:
+            flash(str(e), 'error')
+        except Exception as e:
+            flash('An error occurred while updating the group', 'error')
+            print(f"Error updating group: {str(e)}")
 
+    # GET: Show form with all exercises from MongoDB
     all_exercises = Exercise.find_all(db)
     return render_template('planner/group_form.html', group=group, exercises=all_exercises)
 
@@ -167,16 +176,16 @@ def tracker_view():
             # Fetch full exercise details for the group
             exercises = []
             if group.exercise_ids:
-                # This could be optimized
+                # Fetch exercises from MongoDB
                 for eid in group.exercise_ids:
-                    ex = Exercise.find_by_id(db, eid)
+                    ex = Exercise.find_by_id(db, str(eid))
                     if ex:
                         exercises.append({
                             'id': str(ex._id),
                             'name': ex.name,
-                            'reps_sets': ex.reps_sets,
-                            'instructions': ex.instructions,
-                            'tips': ex.tips,
+                            'reps_sets': ex.reps_sets if hasattr(ex, 'reps_sets') else '3 sets x 8-12 reps',
+                            'instructions': ex.instructions if hasattr(ex, 'instructions') else '',
+                            'tips': ex.tips if hasattr(ex, 'tips') else '',
                             'is_completed': str(ex._id) in completed_ids_str
                         })
             

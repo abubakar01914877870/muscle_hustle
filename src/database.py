@@ -109,6 +109,18 @@ def init_db(app):
             db.blog_posts.create_index('tags')  # For tag-based filtering
             db.blog_posts.create_index([('status', 1), ('created_at', -1)])  # For admin post listing
             
+            # Exercise Groups collection indexes
+            db.exercise_groups.create_index('user_id')  # For user-specific queries
+            db.exercise_groups.create_index([('user_id', 1), ('created_at', -1)])  # For sorted user groups
+            
+            # Calendar Assignments collection indexes
+            db.calendar_assignments.create_index([('user_id', 1), ('date_str', 1)])  # For date-based queries
+            db.calendar_assignments.create_index('exercise_group_id')  # For group lookups
+            
+            # Workout Logs collection indexes
+            db.workout_logs.create_index([('user_id', 1), ('date_str', 1)])  # For daily logs
+            db.workout_logs.create_index([('user_id', 1), ('date_str', 1), ('exercise_id', 1)], unique=True)  # Prevent duplicates
+            
             print("✅ Database indexes created successfully")
     except Exception as e:
         print(f"⚠️  Warning: Could not create indexes: {str(e)}")

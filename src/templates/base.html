@@ -94,6 +94,10 @@
                     class="nav-item {% if request.endpoint == 'admin_gym.list_gyms' %}active{% endif %}">
                     Gym Management
                 </a>
+                <a href="{{ url_for('admin_import.browse') }}"
+                    class="nav-item {% if request.endpoint == 'admin_import.browse' %}active{% endif %}">
+                    Import Exercises
+                </a>
                 {% endif %}
 
                 <div class="nav-divider"></div>

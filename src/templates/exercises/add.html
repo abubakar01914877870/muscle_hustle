@@ -185,16 +185,17 @@
 
 <div class="form-container">
   <form method="POST" enctype="multipart/form-data">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="form-grid">
       <div class="form-group full-width">
         <label class="form-label required" for="name">Exercise Name</label>
-        <input type="text" id="name" name="name" class="form-control" required>
+        <input type="text" id="name" name="name" class="form-control" value="{{ prefill.get('name', '') }}" required>
       </div>
 
       <div class="form-group full-width">
         <label class="form-label" for="description">Description</label>
-        <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+        <textarea id="description" name="description" class="form-control"
+          rows="3">{{ prefill.get('description', '') }}</textarea>
       </div>
 
       <div class="form-group">
@@ -299,17 +300,19 @@
 
       <div class="form-group full-width">
         <label class="form-label" for="instructions">Instructions</label>
-        <textarea id="instructions" name="instructions" class="form-control" rows="5" placeholder="Enter step-by-step instructions..."></textarea>
+        <textarea id="instructions" name="instructions" class="form-control" rows="5"
+          placeholder="Enter step-by-step instructions...">{{ prefill.get('instructions', '') }}</textarea>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="reps_sets">Target Reps/Sets</label>
-        <input type="text" id="reps_sets" name="reps_sets" class="form-control" placeholder="e.g., 3 sets of 10-12 reps">
+        <input type="text" id="reps_sets" name="reps_sets" class="form-control"
+          value="{{ prefill.get('reps_sets', '') }}" placeholder="e.g., 3 sets of 10-12 reps">
       </div>
 
       <div class="form-group full-width">
         <label class="form-label" for="tips">Tips & Safety</label>
-        <textarea id="tips" name="tips" class="form-control" rows="3"></textarea>
+        <textarea id="tips" name="tips" class="form-control" rows="3">{{ prefill.get('tips', '') }}</textarea>
       </div>
 
       <div class="form-group full-width">
@@ -332,13 +335,16 @@
       <div class="form-group full-width" id="imageUploadGroup">
         <label class="form-label" for="exercise_image">Upload Image</label>
         <input type="file" id="exercise_image" name="exercise_image" class="form-control" accept="image/*">
-        <small style="color: var(--color-text-secondary); margin-top: var(--space-4); display: block;">Recommended: 800x600px or larger</small>
+        <small style="color: var(--color-text-secondary); margin-top: var(--space-4); display: block;">Recommended:
+          800x600px or larger</small>
       </div>
 
       <div class="form-group full-width" id="videoUrlGroup" style="display: none;">
         <label class="form-label" for="video_url">YouTube Video URL</label>
-        <input type="url" id="video_url" name="video_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
-        <small style="color: var(--color-text-secondary); margin-top: var(--space-4); display: block;">Paste YouTube video URL (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ)</small>
+        <input type="url" id="video_url" name="video_url" class="form-control"
+          placeholder="https://www.youtube.com/watch?v=...">
+        <small style="color: var(--color-text-secondary); margin-top: var(--space-4); display: block;">Paste YouTube
+          video URL (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ)</small>
       </div>
     </div>
 
@@ -356,7 +362,7 @@
     const videoGroup = document.getElementById('videoUrlGroup');
     const videoInput = document.getElementById('video_url');
     const imageInput = document.getElementById('exercise_image');
-    
+
     if (mediaType === 'image') {
       imageGroup.style.display = 'flex';
       videoGroup.style.display = 'none';
@@ -373,10 +379,74 @@
       }
     }
   }
-  
+
   // Initialize on page load
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     toggleMediaInput();
+
+    // Pre-fill select and radio fields if data exists
+    {% if prefill %}
+    const prefillData = {{ prefill| tojson
+  }};
+
+  if (prefillData.muscle) {
+    const muscleSelect = document.getElementById('muscle');
+    for (let i = 0; i < muscleSelect.options.length; i++) {
+      if (muscleSelect.options[i].value === prefillData.muscle) {
+        muscleSelect.selectedIndex = i;
+        break;
+      }
+    }
+  }
+
+  if (prefillData.equipment) {
+    const equipmentSelect = document.getElementById('equipment');
+    for (let i = 0; i < equipmentSelect.options.length; i++) {
+      if (equipmentSelect.options[i].value === prefillData.equipment) {
+        equipmentSelect.selectedIndex = i;
+        break;
+      }
+    }
+  }
+
+  if (prefillData.type) {
+    const typeSelect = document.getElementById('type');
+    for (let i = 0; i < typeSelect.options.length; i++) {
+      if (typeSelect.options[i].value === prefillData.type) {
+        typeSelect.selectedIndex = i;
+        break;
+      }
+    }
+  }
+
+  if (prefillData.difficulty) {
+    const diffRadio = document.querySelector(`input[name="difficulty"][value="${prefillData.difficulty}"]`);
+    if (diffRadio) {
+      diffRadio.checked = true;
+    }
+  }
+
+  if (prefillData.secondary_muscles && prefillData.secondary_muscles.length > 0) {
+    // Handle secondary_muscles which might be a list or single string depending on URL encoding
+    let secondaryMuscles = prefillData.secondary_muscles;
+    // Fix: if it's a string representation of a list from the URL parameter that got parsed weirdly
+    if (typeof secondaryMuscles === 'string') {
+      // This handles case where multiple values come in as ['Abs', 'Back'] string
+      try {
+        secondaryMuscles = JSON.parse(secondaryMuscles.replace(/'/g, '"'));
+      } catch (e) {
+        secondaryMuscles = [secondaryMuscles];
+      }
+    }
+
+    secondaryMuscles.forEach(muscle => {
+      const checkbox = document.querySelector(`input[name="secondary_muscles"][value="${muscle}"]`);
+      if (checkbox) {
+        checkbox.checked = true;
+      }
+    });
+  }
+  {% endif %}
   });
 </script>
 
