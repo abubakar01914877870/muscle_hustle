@@ -1,0 +1,140 @@
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='tracker.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="tracker-container">
+    <div class="tracker-header">
+        <h1 class="tracker-title">Daily Tracker</h1>
+        <input type="date" id="datePicker" class="date-selector" value="{{ date }}">
+    </div>
+
+    {% if daily_plan %}
+    <div class="task-list">
+        {% for group in daily_plan %}
+        {% for exercise in group.exercises %}
+        <div class="task-card {% if exercise.is_completed %}completed{% endif %}" id="card-{{ exercise.id }}">
+            <div class="task-main-row">
+                <!-- Checkbox -->
+                <div class="task-checkbox {% if exercise.is_completed %}checked{% endif %}"
+                    onclick="toggleTask('{{ exercise.id }}')">
+                    {% if exercise.is_completed %}✓{% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="task-content">
+                    <h3 class="task-title">{{ exercise.name }}</h3>
+                    <!-- Reps/Sets or Duration -->
+                    <div class="task-meta">
+                        {% if exercise.reps_sets %}
+                        {{ exercise.reps_sets }}
+                        {% else %}
+                        3 sets x 10 reps <!-- Placeholder if empty -->
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Expand/Details -->
+                <div class="task-actions">
+                    <button class="btn-details" onclick="toggleDetails('{{ exercise.id }}', this)">
+                        ▼
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hidden Details -->
+            <div class="task-details" id="details-{{ exercise.id }}">
+                {% if exercise.instructions %}
+                <span class="detail-label">Instructions</span>
+                <p>{{ exercise.instructions }}</p>
+                {% endif %}
+
+                {% if exercise.tips %}
+                <span class="detail-label">Tips</span>
+                <p>{{ exercise.tips }}</p>
+                {% endif %}
+
+                <div style="margin-top: 1rem;">
+                    <a href="{{ url_for('exercises.detail', exercise_id=exercise.id) }}"
+                        style="color: var(--tracker-accent); text-decoration: none; font-weight: 600;">View Full
+                        Exercise →</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state-white">
+        <span class="icon">☕</span>
+        <h3>Rest Day</h3>
+        <p>No workouts assigned for this date.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Date Picker Logic
+    document.getElementById('datePicker').addEventListener('change', function (e) {
+        window.location.href = "{{ url_for('planner.tracker_view') }}?date=" + e.target.value;
+    });
+
+    // Toggle Details
+    function toggleDetails(id, btn) {
+        const details = document.getElementById('details-' + id);
+        details.classList.toggle('show');
+        btn.classList.toggle('open');
+    }
+
+    // Toggle Completion (Logic ported from previous version)
+    async function toggleTask(exerciseId) {
+        const card = document.getElementById('card-' + exerciseId);
+        const checkbox = card.querySelector('.task-checkbox');
+
+        const isChecked = !checkbox.classList.contains('checked');
+        const date = document.getElementById('datePicker').value;
+
+        // UI Update
+        if (isChecked) {
+            checkbox.classList.add('checked');
+            checkbox.innerHTML = '✓';
+            card.classList.add('completed');
+        } else {
+            checkbox.classList.remove('checked');
+            checkbox.innerHTML = '';
+            card.classList.remove('completed');
+        }
+
+        // Backend Call
+        try {
+            const response = await fetch('/planner/api/log', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    date: date,
+                    exercise_id: exerciseId,
+                    completed: isChecked
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed');
+        } catch (e) {
+            console.error(e);
+            // Revert on error
+            if (isChecked) {
+                checkbox.classList.remove('checked');
+                checkbox.innerHTML = '';
+                card.classList.remove('completed');
+            } else {
+                checkbox.classList.add('checked');
+                checkbox.innerHTML = '✓';
+                card.classList.add('completed');
+            }
+            alert('Could not update status.');
+        }
+    }
+</script>
+{% endblock %}

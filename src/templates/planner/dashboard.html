@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}My Workout Plan{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="mobile-app-container">
+    <!-- Header Section -->
+    <header class="app-header">
+        <div class="user-welcome">
+            <span class="greeting-text">Welcome back,</span>
+            <h1 class="user-name">{{ current_user.full_name if current_user.full_name else 'Athlete' }}</h1>
+        </div>
+        <div class="user-avatar">
+            <span>{{ current_user.full_name[0] if current_user.full_name else 'A' }}</span>
+        </div>
+    </header>
+
+    <!-- Quick Stats Section -->
+    <div class="stats-overview">
+        <div class="stat-bubble">
+            <span class="stat-value">3</span>
+            <span class="stat-label">Streak</span>
+        </div>
+        <div class="stat-bubble highlight">
+            <span class="stat-value">12</span>
+            <span class="stat-label">Workouts</span>
+        </div>
+        <div class="stat-bubble">
+            <span class="stat-value">340</span>
+            <span class="stat-label">Minutes</span>
+        </div>
+    </div>
+
+    <!-- Main Navigation Grid -->
+    <div class="nav-grid">
+        <!-- Daily Tracker (Primary Action) -->
+        <a href="{{ url_for('planner.tracker_view') }}" class="nav-card primary-card">
+            <div class="card-content">
+                <div class="card-icon">⚡</div>
+                <div class="card-text">
+                    <h2>Daily Tracker</h2>
+                    <p>Start today's workout</p>
+                </div>
+            </div>
+            <div class="card-action-icon">→</div>
+        </a>
+
+        <!-- Weekly Calendar -->
+        <a href="{{ url_for('planner.calendar_view') }}" class="nav-card secondary-card">
+            <div class="card-content">
+                <div class="card-icon">📅</div>
+                <div class="card-text">
+                    <h2>Schedule</h2>
+                    <p>Plan your week</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Exercise Groups -->
+        <a href="{{ url_for('planner.groups_list') }}" class="nav-card secondary-card">
+            <div class="card-content">
+                <div class="card-icon">💪</div>
+                <div class="card-text">
+                    <h2>Routines</h2>
+                    <p>Manage groups</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Recent Activity / Today's Focus -->
+    <div class="section-container">
+        <div class="section-header">
+            <h3>Today's Focus</h3>
+            <span class="date-badge">{% if today_date %}{{ today_date }}{% else %}Today{% endif %}</span>
+        </div>
+        <div class="focus-card">
+            <div class="focus-icon">🔥</div>
+            <div class="focus-details">
+                <h4>Full Body Power</h4>
+                <p>45 mins • High Intensity</p>
+            </div>
+            <button class="start-button">Start</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

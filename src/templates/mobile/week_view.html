@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6 mb-20">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400">
+            Weekly Plan
+        </h1>
+        <div class="text-sm text-gray-400">
+            {{ days[0].date.strftime('%b %d') }} - {{ days[-1].date.strftime('%b %d') }}
+        </div>
+    </div>
+
+    <!-- Days Grid -->
+    <div class="space-y-4">
+        {% for day in days %}
+        <div
+            class="bg-gray-800 rounded-xl p-4 border {% if day.date_str == today_date %}border-blue-500 shadow-lg shadow-blue-500/20{% else %}border-gray-700{% endif %}">
+            <div class="flex justify-between items-center mb-3">
+                <span
+                    class="font-semibold text-lg {% if day.date_str == today_date %}text-blue-400{% else %}text-gray-300{% endif %}">
+                    {{ day.day_name }}
+                </span>
+                <span class="text-sm text-gray-500">{{ day.date.strftime('%d') }}</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Workout Section -->
+                <div class="bg-gray-700/50 rounded-lg p-3">
+                    <div class="mb-2 flex items-center gap-2">
+                        <i class="fas fa-dumbbell text-orange-400"></i>
+                        <span class="text-xs font-uppercase tracking-wider text-gray-400">WORKOUT</span>
+                    </div>
+                    {% if day.exercise %}
+                    <div class="font-medium text-white truncate">{{ day.exercise.group_name }}</div>
+                    <a href="{{ url_for('planner.tracker_view', date=day.date_str) }}"
+                        class="text-xs text-blue-400 hover:text-blue-300 mt-1 block">
+                        View Exercises &rarr;
+                    </a>
+                    {% else %}
+                    <div class="text-gray-500 text-sm italic">Rest Day</div>
+                    {% endif %}
+                </div>
+
+                <!-- Diet Section -->
+                <div class="bg-gray-700/50 rounded-lg p-3">
+                    <div class="mb-2 flex items-center gap-2">
+                        <i class="fas fa-utensils text-green-400"></i>
+                        <span class="text-xs font-uppercase tracking-wider text-gray-400">DIET</span>
+                    </div>
+                    {% if day.diet %}
+                    <div class="font-medium text-white truncate">{{ day.diet.plan_name }}</div>
+                    <button class="text-xs text-blue-400 hover:text-blue-300 mt-1 block"
+                        onclick="showDietDetails('{{ day.diet.meal_plan_id }}')">
+                        View Meals &rarr;
+                    </button>
+                    {% else %}
+                    <div class="text-gray-500 text-sm italic">No Plan</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Simple Diet Modal (Placeholder) -->
+<div id="dietModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+    <div class="bg-gray-800 rounded-xl w-full max-w-md p-6 relative">
+        <button onclick="closeDietModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3 class="text-xl font-bold mb-4" id="modalTitle">Meal Plan</h3>
+        <div id="modalContent" class="space-y-4">
+            <!-- Content loaded dynamically or placeholder -->
+            <p class="text-gray-400">Meal plan details would appear here.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showDietDetails(planId) {
+        // In a real implementation, fetch plan details via AJAX
+        alert('View Meal Plan: ' + planId);
+    }
+    function closeDietModal() {
+        document.getElementById('dietModal').classList.add('hidden');
+    }
+</script>
+{% endblock %}

@@ -63,5 +63,11 @@ app.register_blueprint(gym_bp)
 from .routes.trainer import trainer
 app.register_blueprint(trainer)
 
+from .routes.planner import planner_bp
+app.register_blueprint(planner_bp)
+
+from .routes.mobile import mobile_bp
+app.register_blueprint(mobile_bp)
+
 if __name__ == '__main__':
     app.run(debug=True)

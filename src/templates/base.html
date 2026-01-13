@@ -55,6 +55,12 @@
                 </a>
 
                 {% if current_user.is_authenticated %}
+                </a>
+                <a href="{{ url_for('mobile.week_view') }}"
+                    class="nav-item {% if request.endpoint == 'mobile.week_view' %}active{% endif %}">
+                    <span class="nav-indicator"></span>
+                    Weekly Plan
+                </a>
                 <a href="{{ url_for('progress.index') }}"
                     class="nav-item {% if request.endpoint == 'progress.index' %}active{% endif %}">
                     <span class="nav-indicator"></span>
@@ -117,22 +123,12 @@
                 </button>
 
                 <div class="top-right">
-                    <button class="search-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </button>
-
-                    <div class="search-pill">
-                        <div class="pill-line"></div>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </div>
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('planner.dashboard') }}" class="btn btn-primary btn-sm"
+                        style="margin-right: 1rem;">
+                        📅 My Plan
+                    </a>
+                    {% endif %}
                 </div>
             </header>
 

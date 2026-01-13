@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Workout Calendar - Muscle Hustle{% endblock %}
+
+{% block extra_css %}
+<!-- FullCalendar CSS for ease of use -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<style>
+    .calendar-container {
+        display: flex;
+        flex-direction: column;
+        height: 80vh;
+        background: var(--surface-card);
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+    }
+
+    #calendar {
+        flex-grow: 1;
+    }
+
+    .fc-event {
+        cursor: pointer;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal-card {
+        background: var(--surface-card);
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Workout Calendar</h1>
+            <p class="text-muted">Click any day to assign a workout group.</p>
+        </div>
+        <a href="{{ url_for('planner.dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
+    </div>
+
+    <div class="calendar-container">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+<!-- Assignment Modal -->
+<div id="assignmentModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Assign Workout</h3>
+        <p id="selectedDateDisplay" class="text-muted mb-4"></p>
+
+        <form id="assignForm">
+            <input type="hidden" id="selectedDate" name="date">
+
+            <div class="form-group mb-4">
+                <label class="form-label">Exercise Group</label>
+                <select id="groupSelect" name="group_id" class="form-input" required>
+                    <option value="">Select a Group...</option>
+                    {% for group in groups %}
+                    <option value="{{ group.id }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group mb-4">
+                <label class="form-label">Repeat?</label>
+                <select id="repeatSelect" name="repeat" class="form-input">
+                    <option value="none">Just once</option>
+                    <option value="weekly_4">Weekly for 4 weeks</option>
+                    <option value="weekly_12">Weekly for 3 months</option>
+                    <option value="weekly_52">Weekly for 1 year</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Assign</button>
+                <button type="button" class="btn btn-text" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let calendar;
+    const modal = document.getElementById('assignmentModal');
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridWeek',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,dayGridWeek,dayGridDay'
+            },
+            height: '100%',
+            selectable: true,
+            select: function (info) {
+                openModal(info.startStr);
+            },
+            events: '/planner/api/assignments',
+            eventColor: '#ff4b2b',
+        });
+
+        calendar.render();
+
+        // Load Groups for Select - Done via Jinja
+    });
+
+    function openModal(dateStr) {
+        document.getElementById('selectedDate').value = dateStr;
+        document.getElementById('selectedDateDisplay').textContent = "For: " + dateStr;
+        modal.classList.add('active');
+
+        // If clicking Monday, user might want to assign "Leg Day" to every Monday.
+        // The modal allows this choice suitable.
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+
+    async function fetchGroups() {
+        // We can just use the existing generic API or endpoints.
+        // Actually, let's just cheat and assume we can pass groups in template context? 
+        // No, 'calendar_view' just renders template.
+        // Let's create a tiny helper endpoint or just fetch the HTML list page? No.
+        // Let's add a small endpoint or just pass it in Python context (easier).
+        // Wait, I didn't pass 'groups' in planner/calendar route.
+        // I should fix the route or fetch via a new endpoint.
+        // I will fix the route in next step? No, let's fetch from the same page if I inject it into a JS variable (easiest).
+
+        // Since I can't edit python now inside this tool, I'll fetch it.
+        // Ah, I don't have a JSON endpoint for groups.
+        // I will assume I will fix the route to pass 'groups' into the template in next turn, 
+        // OR I can use a dirty trick: fetch('/planner/groups') and parse HTML? No.
+
+        // BETTER PLAN: I will update the python route to pass groups to this template.
+        // For now, I will write this JS expecting a global variable 'AVAILABLE_GROUPS' 
+        // and I will inject that in the template at the top.
+    }
+
+    document.getElementById('assignForm').onsubmit = async function (e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        const response = await fetch('/planner/api/assignments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': "{{ csrf_token() }}" },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            closeModal();
+            calendar.refetchEvents();
+        } else {
+            alert('Error creating assignment');
+        }
+    }
+</script>
+{% endblock %}

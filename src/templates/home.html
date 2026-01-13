@@ -8,13 +8,17 @@
         <div class="deco-plus" style="top: 20%; left: 0;">+</div>
 
         <h1 class="hero-title">
-            Power <span class="highlight">Your</span><br>
-            <span class="highlight">Your</span> <span class="highlight">Potential</span>
+            Unlock Your <span class="highlight">True</span><br>
+            <span class="highlight">Potential</span>
         </h1>
 
         <p class="hero-subtitle">
-            Transform Your Fitness Journey
+            Transform Your Body, Mind, and Life with Muscle Hustle.
         </p>
+        
+        <div class="hero-cta">
+            <a href="{{ url_for('auth.signup') }}" class="btn btn-primary btn-lg">Start Your Journey</a>
+        </div>
 
         <!-- Decorative Lines -->
         <div class="deco-line" style="width: 100px; top: 15%; left: 20%;"></div>
@@ -26,6 +30,85 @@
     </div>
 </div>
 
+<!-- Features Section -->
+<section class="features-section">
+    <div class="section-header">
+        <h2 class="section-title">Why <span class="highlight">Choose Us</span></h2>
+        <p class="section-subtitle">Everything you need to crush your fitness goals</p>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+                    <line x1="16" y1="8" x2="2" y2="22"></line>
+                    <line x1="17.5" y1="15" x2="9" y2="15"></line>
+                </svg>
+            </div>
+            <h3>Personal Training</h3>
+            <p>Get matched with expert trainers who customize plans just for you.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            <h3>Group Classes</h3>
+            <p>Join our high-energy classes and feed off the community vibe.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            <h3>Progress Tracking</h3>
+            <p>Visualize your gains with our advanced analytics and tracking tools.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Trainers Section -->
+<section class="trainers-section">
+    <div class="section-header">
+        <h2 class="section-title">Meet Our <span class="highlight">Elite Trainers</span></h2>
+    </div>
+    
+    <div class="trainers-grid">
+        <!-- Placeholder Trainers -->
+        <div class="trainer-card">
+            <div class="trainer-image">
+                <div class="trainer-placeholder">JD</div>
+            </div>
+            <h3>John Doe</h3>
+            <p class="trainer-spec">Strength & Conditioning</p>
+        </div>
+        
+        <div class="trainer-card">
+            <div class="trainer-image">
+                <div class="trainer-placeholder">JS</div>
+            </div>
+            <h3>Jane Smith</h3>
+            <p class="trainer-spec">HIIT & Cardio</p>
+        </div>
+        
+        <div class="trainer-card">
+            <div class="trainer-image">
+                <div class="trainer-placeholder">MJ</div>
+            </div>
+            <h3>Mike Johnson</h3>
+            <p class="trainer-spec">Yoga & Mobility</p>
+        </div>
+    </div>
+</section>
+
 <!-- Quick Actions / Dashboard for Logged In Users -->
 {% if current_user.is_authenticated %}
 <div class="dashboard-preview">
@@ -35,28 +118,5 @@
         <a href="{{ url_for('profile.view_profile') }}" class="btn btn-secondary">View Profile</a>
     </div>
 </div>
-
-<style>
-    .dashboard-preview {
-        margin-top: 60px;
-        position: relative;
-        z-index: 2;
-        background: var(--color-surface);
-        padding: 2rem;
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--color-card-border);
-    }
-
-    .dashboard-preview h2 {
-        font-size: 24px;
-        margin-bottom: 20px;
-        color: var(--color-white);
-    }
-
-    .dashboard-actions {
-        display: flex;
-        gap: 20px;
-    }
-</style>
 {% endif %}
 {% endblock %}

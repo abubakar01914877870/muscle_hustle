@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}{% if group %}Edit{% else %}Create{% endif %} Group - Muscle Hustle{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <div class="page-header">
+        <a href="{{ url_for('planner.groups_list') }}" class="back-link">← Back to Groups</a>
+        <h1>{% if group %}Edit{% else %}Create New{% endif %} Group</h1>
+    </div>
+
+    <form method="POST" class="group-form card p-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+        <div class="form-group mb-4">
+            <label for="name" class="form-label">Group Name</label>
+            <input type="text" id="name" name="name" class="form-input" value="{{ group.name if group else '' }}"
+                placeholder="e.g., Leg Day, Morning Cardio" required>
+        </div>
+
+        <div class="form-group mb-4">
+            <label class="form-label mb-2">Select Exercises</label>
+            <div class="exercise-selector">
+                <input type="text" id="exerciseSearch" class="form-input mb-3" placeholder="Search exercises...">
+
+                <div class="exercises-list">
+                    {% for exercise in exercises %}
+                    <label class="exercise-item-checkbox">
+                        <input type="checkbox" name="exercise_ids" value="{{ exercise._id }}" {% if group and
+                            exercise._id in group.exercise_ids %}checked{% endif %}>
+                        <div class="exercise-info">
+                            <span class="ex-name">{{ exercise.name }}</span>
+                            <span class="ex-muscle text-muted text-sm">{{ exercise.muscle_group }}</span>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Group</button>
+            <a href="{{ url_for('planner.groups_list') }}" class="btn btn-text">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .exercise-selector {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        background: var(--surface-ground);
+    }
+
+    .exercises-list {
+        max-height: 400px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .exercise-item-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        background: var(--surface-card);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .exercise-item-checkbox:hover {
+        background: var(--surface-hover);
+    }
+
+    .exercise-item-checkbox input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .exercise-info {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+
+<script>
+    document.getElementById('exerciseSearch').addEventListener('input', function (e) {
+        const term = e.target.value.toLowerCase();
+        const items = document.querySelectorAll('.exercise-item-checkbox');
+
+        items.forEach(item => {
+            const name = item.querySelector('.ex-name').textContent.toLowerCase();
+            const muscle = item.querySelector('.ex-muscle').textContent.toLowerCase();
+
+            if (name.includes(term) || muscle.includes(term)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

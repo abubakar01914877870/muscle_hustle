@@ -31,6 +31,25 @@ A comprehensive Flask-based fitness tracking application with user authenticatio
 - Organized profile sections
 - Easy navigation
 
+## Environment Setup
+
+It is recommended to use a virtual environment to manage dependencies.
+
+1.  **Create a virtual environment:**
+    ```bash
+    python3 -m venv venv
+    ```
+
+2.  **Activate the virtual environment:**
+    - On Linux/macOS:
+      ```bash
+      source venv/bin/activate
+      ```
+    - On Windows:
+      ```bash
+      venv\Scripts\activate
+      ```
+
 ## Setup Instructions
 
 ### First Time Setup (Development)
