@@ -222,6 +222,17 @@ a {
   margin: 20px 20px;
 }
 
+.nav-section-title {
+  padding: 12px 24px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  font-family: var(--font-family-heading);
+}
+
 .sidebar-footer {
   margin-top: auto;
   padding: 0 40px;

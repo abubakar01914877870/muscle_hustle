@@ -4,34 +4,41 @@
 
 {% block content %}
 <div class="container" style="max-width: 800px;">
-    <div class="page-header">
-        <a href="{{ url_for('planner.groups_list') }}" class="back-link">← Back to Groups</a>
-        <h1>{% if group %}Edit{% else %}Create New{% endif %} Group</h1>
+    <div class="form-header">
+        <h1 class="page-title">{% if group %}Edit{% else %}Create New{% endif %} Group</h1>
+        <a href="{{ url_for('planner.groups_list') }}" class="back-link">
+            &larr; Back to Groups
+        </a>
     </div>
 
-    <form method="POST" class="group-form card p-4">
+    <form method="POST" id="groupForm" class="group-form-card">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-        <div class="form-group mb-4">
+        <!-- Group Name Section -->
+        <div class="form-section">
             <label for="name" class="form-label">Group Name</label>
             <input type="text" id="name" name="name" class="form-input" value="{{ group.name if group else '' }}"
-                placeholder="e.g., Leg Day, Morning Cardio" required>
+                placeholder="e.g., Leg Day, Full Body Blast" required>
         </div>
 
-        <div class="form-group mb-4">
-            <label class="form-label mb-2">Select Exercises</label>
-            <div class="exercise-selector">
-                <input type="text" id="exerciseSearch" class="form-input mb-3" placeholder="Search exercises...">
+        <!-- Exercises Section -->
+        <div class="form-section">
+            <label class="form-label">Select Exercises</label>
+            <p class="text-sm text-muted mb-3">Check the exercises you want to include in this group.</p>
 
-                <div class="exercises-list">
+            <div class="exercises-list-container">
+                <div class="exercises-grid">
                     {% for exercise in exercises %}
-                    <label class="exercise-item-checkbox">
+                    <label
+                        class="exercise-checkbox-card {% if group and exercise._id in group.exercise_ids %}selected{% endif %}">
                         <input type="checkbox" name="exercise_ids" value="{{ exercise._id }}" {% if group and
-                            exercise._id in group.exercise_ids %}checked{% endif %}>
+                            exercise._id in group.exercise_ids %}checked{% endif %}
+                            onchange="this.parentElement.classList.toggle('selected', this.checked)">
                         <div class="exercise-info">
-                            <span class="ex-name">{{ exercise.name }}</span>
-                            <span class="ex-muscle text-muted text-sm">{{ exercise.muscle_group }}</span>
+                            <span class="exercise-name">{{ exercise.name }}</span>
+                            <span class="exercise-muscle">{{ exercise.muscle_group }}</span>
                         </div>
+                        <div class="check-indicator"></div>
                     </label>
                     {% endfor %}
                 </div>
@@ -39,69 +46,163 @@
         </div>
 
         <div class="form-actions">
+            <a href="{{ url_for('planner.groups_list') }}" class="btn btn-secondary">Cancel</a>
             <button type="submit" class="btn btn-primary">Save Group</button>
-            <a href="{{ url_for('planner.groups_list') }}" class="btn btn-text">Cancel</a>
         </div>
     </form>
 </div>
 
 <style>
-    .exercise-selector {
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-md);
-        padding: 1rem;
-        background: var(--surface-ground);
-    }
-
-    .exercises-list {
-        max-height: 400px;
-        overflow-y: auto;
+    /* Scoped Styles for Group Form */
+    .form-header {
         display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .exercise-item-checkbox {
-        display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 1rem;
-        padding: 0.75rem;
-        background: var(--surface-card);
-        border-radius: var(--radius-sm);
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--color-white, #fff);
+    }
+
+    .back-link {
+        color: var(--color-text-secondary, #aaa);
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+        color: var(--color-primary, #fff);
+    }
+
+    .group-form-card {
+        background: var(--surface-card, #1e1e24);
+        border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+        border-radius: 12px;
+        padding: 2rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--color-text, #fff);
+        font-size: 0.95rem;
+    }
+
+    .form-input {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+        border-color: var(--color-primary, #3b82f6);
+        outline: none;
+    }
+
+    /* Exercises List Styles */
+    .exercises-list-container {
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+        border-radius: 8px;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .exercises-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .exercise-checkbox-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background: var(--surface-hover, #2a2a35);
+        border: 1px solid transparent;
+        border-radius: 8px;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: all 0.2s;
+        position: relative;
     }
 
-    .exercise-item-checkbox:hover {
-        background: var(--surface-hover);
+    .exercise-checkbox-card:hover {
+        background: rgba(255, 255, 255, 0.1);
     }
 
-    .exercise-item-checkbox input[type="checkbox"] {
-        width: 1.25rem;
-        height: 1.25rem;
+    .exercise-checkbox-card.selected {
+        background: rgba(59, 130, 246, 0.15);
+        border-color: var(--color-primary, #3b82f6);
+    }
+
+    .exercise-checkbox-card input[type="checkbox"] {
+        display: none;
     }
 
     .exercise-info {
         display: flex;
         flex-direction: column;
     }
+
+    .exercise-name {
+        font-weight: 500;
+        color: #fff;
+    }
+
+    .exercise-muscle {
+        font-size: 0.8rem;
+        color: var(--color-text-secondary, #aaa);
+    }
+
+    .check-indicator {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid #555;
+        transition: all 0.2s;
+    }
+
+    .exercise-checkbox-card.selected .check-indicator {
+        background: var(--color-primary, #3b82f6);
+        border-color: var(--color-primary, #3b82f6);
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    /* Scrollbar */
+    .exercises-list-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .exercises-list-container::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .exercises-list-container::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+    }
 </style>
-
-<script>
-    document.getElementById('exerciseSearch').addEventListener('input', function (e) {
-        const term = e.target.value.toLowerCase();
-        const items = document.querySelectorAll('.exercise-item-checkbox');
-
-        items.forEach(item => {
-            const name = item.querySelector('.ex-name').textContent.toLowerCase();
-            const muscle = item.querySelector('.ex-muscle').textContent.toLowerCase();
-
-            if (name.includes(term) || muscle.includes(term)) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    });
-</script>
 {% endblock %}

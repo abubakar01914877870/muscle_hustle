@@ -97,7 +97,12 @@ def init_db(app):
             db.progress_entries.create_index('created_at')
             
             # Exercises collection indexes
-            db.exercises.create_index('name')
+            # Note: 'name' index may already exist with unique constraint and collation
+            # from previous setup, so we skip it if it conflicts
+            try:
+                db.exercises.create_index('name')
+            except Exception:
+                pass  # Index already exists with different settings
             db.exercises.create_index('muscle')
             db.exercises.create_index('equipment')
             

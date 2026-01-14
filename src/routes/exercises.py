@@ -5,6 +5,7 @@ from ..models.exercise_mongo import Exercise
 from ..database import get_db
 from ..utils.image_handler import resize_image
 import re
+import json
 
 exercises_bp = Blueprint('exercises', __name__, url_prefix='/exercises')
 
@@ -111,6 +112,32 @@ def add():
             print(f"DEBUG: Creating exercise with media_type='{media_type}', has_image='{image_data is not None}', video_url='{youtube_url}'")
             
             try:
+                # Get Wger-specific fields from form (hidden fields)
+                wger_id = request.form.get('wger_id')
+                wger_uuid = request.form.get('wger_uuid')
+                muscles_primary = request.form.getlist('muscles_primary')
+                equipment_list = request.form.getlist('equipment_list')
+                license_author = request.form.get('license_author', '')
+                
+                # Parse wger_images and wger_videos from hidden JSON fields
+                wger_images_json = request.form.get('wger_images', '[]')
+                wger_videos_json = request.form.get('wger_videos', '[]')
+                try:
+                    wger_images = json.loads(wger_images_json) if wger_images_json else []
+                except:
+                    wger_images = []
+                try:
+                    wger_videos = json.loads(wger_videos_json) if wger_videos_json else []
+                except:
+                    wger_videos = []
+                
+                # Parse wger_raw_response from hidden JSON field
+                wger_raw_response_json = request.form.get('wger_raw_response', '')
+                try:
+                    wger_raw_response = json.loads(wger_raw_response_json) if wger_raw_response_json else None
+                except:
+                    wger_raw_response = None
+                
                 Exercise.create(
                     db=db,
                     name=request.form.get('name'),
@@ -128,7 +155,16 @@ def add():
                     image_data=image_data,
                     image_type=image_type,
                     video_url=youtube_url,
-                    created_by=str(current_user.id)
+                    created_by=str(current_user.id),
+                    # Wger-specific fields
+                    wger_id=int(wger_id) if wger_id else None,
+                    wger_uuid=wger_uuid,
+                    muscles_primary=muscles_primary,
+                    equipment_list=equipment_list,
+                    wger_images=wger_images,
+                    wger_videos=wger_videos,
+                    license_author=license_author,
+                    wger_raw_response=wger_raw_response
                 )
                 
                 flash('Exercise added successfully!', 'success')
@@ -144,17 +180,33 @@ def add():
     # Check for pre-fill data from import (GET request)
     prefill_data = {}
     if request.method == 'GET' and request.args.get('from_import'):
+        # Parse JSON arrays from URL params
+        def parse_json_param(param_name):
+            val = request.args.get(param_name, '[]')
+            try:
+                return json.loads(val) if val else []
+            except:
+                return []
+        
         prefill_data = {
             'name': request.args.get('name', ''),
             'description': request.args.get('description', ''),
             'muscle': request.args.get('muscle', ''),
             'equipment': request.args.get('equipment', ''),
-            'secondary_muscles': request.args.getlist('secondary_muscles'),
+            'secondary_muscles': parse_json_param('secondary_muscles'),
+            'muscles_primary': parse_json_param('muscles_primary'),
+            'equipment_list': parse_json_param('equipment_list'),
+            'wger_images': parse_json_param('wger_images'),
+            'wger_videos': parse_json_param('wger_videos'),
             'instructions': request.args.get('instructions', ''),
             'difficulty': request.args.get('difficulty', ''),
             'type': request.args.get('type', ''),
             'reps_sets': request.args.get('reps_sets', ''),
             'tips': request.args.get('tips', ''),
+            'wger_id': request.args.get('wger_id', ''),
+            'wger_uuid': request.args.get('wger_uuid', ''),
+            'license_author': request.args.get('license_author', ''),
+            'wger_raw_response': request.args.get('wger_raw_response', ''),
             'from_import': True
         }
     

@@ -72,6 +72,24 @@
                     Profile
                 </a>
 
+                <div class="nav-divider"></div>
+                <div class="nav-section-title">Planner</div>
+                <a href="{{ url_for('planner.calendar_view') }}"
+                    class="nav-item {% if request.endpoint == 'planner.calendar_view' %}active{% endif %}">
+                    <span class="nav-indicator"></span>
+                    📅 Calendar
+                </a>
+                <a href="{{ url_for('planner.groups_list') }}"
+                    class="nav-item {% if request.endpoint in ['planner.groups_list', 'planner.create_group', 'planner.edit_group'] %}active{% endif %}">
+                    <span class="nav-indicator"></span>
+                    💪 Exercise Groups
+                </a>
+                <a href="{{ url_for('planner.tracker_view') }}"
+                    class="nav-item {% if request.endpoint == 'planner.tracker_view' %}active{% endif %}">
+                    <span class="nav-indicator"></span>
+                    ✅ Daily Tracker
+                </a>
+
                 {% if current_user.is_trainer %}
                 <a href="{{ url_for('trainer.edit_profile') }}"
                     class="nav-item {% if request.endpoint == 'trainer.edit_profile' %}active{% endif %}">
@@ -127,12 +145,7 @@
                 </button>
 
                 <div class="top-right">
-                    {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('planner.dashboard') }}" class="btn btn-primary btn-sm"
-                        style="margin-right: 1rem;">
-                        📅 My Plan
-                    </a>
-                    {% endif %}
+                    <!-- Planner links moved to sidebar -->
                 </div>
             </header>
 

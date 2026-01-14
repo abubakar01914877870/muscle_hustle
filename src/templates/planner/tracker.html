@@ -137,7 +137,7 @@
                 checkbox.innerHTML = '✓';
                 card.classList.add('completed');
             }
-            alert('Could not update status.');
+            console.error('Could not update status:', e);
         }
     }
 </script>

@@ -6,7 +6,8 @@ pymongo
 dnspython
 Pillow
 gunicorn
-firebase-admin
+firebase-admin==6.2.0
+google-api-core<2.16.0
 hypothesis
 pytest
 bleach

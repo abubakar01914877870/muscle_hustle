@@ -29,6 +29,15 @@ class Exercise:
         self.created_by = exercise_dict.get('created_by')
         self.created_at = exercise_dict.get('created_at', datetime.utcnow())
         self.updated_at = exercise_dict.get('updated_at', datetime.utcnow())
+        # Wger-specific fields
+        self.wger_id = exercise_dict.get('wger_id')
+        self.wger_uuid = exercise_dict.get('wger_uuid')
+        self.muscles_primary = exercise_dict.get('muscles_primary', [])
+        self.equipment_list = exercise_dict.get('equipment_list', [])
+        self.wger_images = exercise_dict.get('wger_images', [])
+        self.wger_videos = exercise_dict.get('wger_videos', [])
+        self.license_author = exercise_dict.get('license_author')
+        self.wger_raw_response = exercise_dict.get('wger_raw_response')  # Full Wger API response
     
     @property
     def id(self):
@@ -62,7 +71,16 @@ class Exercise:
             'video_url': self.video_url,
             'created_by': self.created_by,
             'created_at': self.created_at,
-            'updated_at': self.updated_at
+            'updated_at': self.updated_at,
+            # Wger-specific fields
+            'wger_id': self.wger_id,
+            'wger_uuid': self.wger_uuid,
+            'muscles_primary': self.muscles_primary,
+            'equipment_list': self.equipment_list,
+            'wger_images': self.wger_images,
+            'wger_videos': self.wger_videos,
+            'license_author': self.license_author,
+            'wger_raw_response': self.wger_raw_response
         }
     
     @staticmethod
@@ -145,7 +163,16 @@ class Exercise:
             'video_url': kwargs.get('video_url'),
             'created_by': kwargs.get('created_by'),
             'created_at': datetime.utcnow(),
-            'updated_at': datetime.utcnow()
+            'updated_at': datetime.utcnow(),
+            # Wger-specific fields
+            'wger_id': kwargs.get('wger_id'),
+            'wger_uuid': kwargs.get('wger_uuid'),
+            'muscles_primary': kwargs.get('muscles_primary', []),
+            'equipment_list': kwargs.get('equipment_list', []),
+            'wger_images': kwargs.get('wger_images', []),
+            'wger_videos': kwargs.get('wger_videos', []),
+            'license_author': kwargs.get('license_author'),
+            'wger_raw_response': kwargs.get('wger_raw_response')
         }
         result = db.exercises.insert_one(exercise_dict)
         exercise_dict['_id'] = result.inserted_id

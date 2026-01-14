@@ -100,6 +100,8 @@ class CalendarAssignment:
         self.user_id = assign_dict.get('user_id')
         self.date_str = assign_dict.get('date_str') # Format YYYY-MM-DD
         self.exercise_group_id = assign_dict.get('exercise_group_id')
+        self.assignment_type = assign_dict.get('assignment_type', 'workout') # 'workout' or 'rest'
+        self.series_id = assign_dict.get('series_id') # UUID string for recurring events
         self.created_at = assign_dict.get('created_at', datetime.utcnow())
         
         # Hydrated fields (optional)
@@ -109,8 +111,7 @@ class CalendarAssignment:
     def id(self):
         return str(self._id)
         
-    @staticmethod
-    def create(db, user_id, date_obj, group_id):
+    def create(db, user_id, date_obj, group_id=None, assignment_type='workout', series_id=None):
         # Ensure unique assignment per group per day? Or allow multiple?
         # User requirement: "user can assign his group of exercize to a day."
         date_str = date_obj.strftime('%Y-%m-%d') if isinstance(date_obj, (datetime, date)) else date_obj
@@ -118,9 +119,16 @@ class CalendarAssignment:
         assign_dict = {
             'user_id': ObjectId(user_id),
             'date_str': date_str,
-            'exercise_group_id': ObjectId(group_id),
+            'assignment_type': assignment_type,
             'created_at': datetime.utcnow()
         }
+        
+        if series_id:
+            assign_dict['series_id'] = series_id
+        
+        if group_id:
+            assign_dict['exercise_group_id'] = ObjectId(group_id)
+            
         result = db.calendar_assignments.insert_one(assign_dict)
         assign_dict['_id'] = result.inserted_id
         return CalendarAssignment(assign_dict)
@@ -139,7 +147,7 @@ class CalendarAssignment:
         docs = list(db.calendar_assignments.find(query))
         
         # Get unique group IDs to fetch names in one go
-        group_ids = list(set(d['exercise_group_id'] for d in docs))
+        group_ids = list(set(d.get('exercise_group_id') for d in docs if d.get('exercise_group_id')))
         
         group_map = {}
         if group_ids:
@@ -149,7 +157,8 @@ class CalendarAssignment:
                 
         for doc in docs:
             item = CalendarAssignment(doc)
-            item.group_name = group_map.get(doc['exercise_group_id'], "Unknown Group")
+            if item.exercise_group_id:
+                item.group_name = group_map.get(doc['exercise_group_id'], "Unknown Group")
             assignments.append(item)
             
         return assignments
@@ -163,7 +172,7 @@ class CalendarAssignment:
         assignments = []
         
         docs = list(db.calendar_assignments.find(query))
-        group_ids = list(set(d['exercise_group_id'] for d in docs))
+        group_ids = list(set(d.get('exercise_group_id') for d in docs if d.get('exercise_group_id')))
         
         group_map = {}
         if group_ids:
@@ -173,7 +182,8 @@ class CalendarAssignment:
                 
         for doc in docs:
             item = CalendarAssignment(doc)
-            item.group_name = group_map.get(doc['exercise_group_id'], "Unknown Group")
+            if item.exercise_group_id:
+                item.group_name = group_map.get(doc['exercise_group_id'], "Unknown Group")
             assignments.append(item)
             
         return assignments
@@ -182,6 +192,31 @@ class CalendarAssignment:
     def delete(db, assignment_id):
         db.calendar_assignments.delete_one({'_id': ObjectId(assignment_id)})
         return True
+    
+    @staticmethod
+    def delete_by_date(db, user_id, date_obj):
+        """Delete all assignments for a specific user and date"""
+        date_str = date_obj.strftime('%Y-%m-%d') if isinstance(date_obj, (datetime, date)) else date_obj
+        query = {
+            'user_id': ObjectId(user_id),
+            'date_str': date_str
+        }
+        result = db.calendar_assignments.delete_many(query)
+        return result.deleted_count
+
+    @staticmethod
+    def delete_series(db, user_id, series_id, start_date_str):
+        """Delete this assignment and all future ones in the series"""
+        if not series_id:
+            return False
+            
+        query = {
+            'user_id': ObjectId(user_id),
+            'series_id': series_id,
+            'date_str': {'$gte': start_date_str}
+        }
+        result = db.calendar_assignments.delete_many(query)
+        return result.deleted_count > 0
 
 
 class WorkoutLog:

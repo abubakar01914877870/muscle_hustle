@@ -108,41 +108,91 @@ def prepare_import(exercise_id):
         flash('Exercise not found in Wger API', 'error')
         return redirect(url_for('admin_import.browse'))
     
-    # Extract name from translations
+    # Extract name and description from translations (English = language 2)
     translations = exercise_info.get('translations', [])
-    if translations:
-        name = translations[0].get('name', f"Exercise {exercise_id}")
-        description = translations[0].get('description', '')
+    english_translation = None
+    for t in translations:
+        if t.get('language') == 2:  # English
+            english_translation = t
+            break
+    if not english_translation and translations:
+        english_translation = translations[0]
+    
+    if english_translation:
+        name = english_translation.get('name', f"Exercise {exercise_id}")
+        description = english_translation.get('description', '')
     else:
         name = f"Exercise {exercise_id}"
         description = ''
     
-    # Get category
+    # Get category (primary muscle group)
     category_data = exercise_info.get('category', {})
     muscle = category_data.get('name', 'Other') if isinstance(category_data, dict) else 'Other'
     
-    # Get equipment
-    equipment_data = exercise_info.get('equipment', [])
-    equipment = equipment_data[0].get('name', 'Bodyweight') if equipment_data else 'Bodyweight'
+    # Get primary muscles from API 'muscles' array
+    muscles_data = exercise_info.get('muscles', [])
+    muscles_primary = []
+    for m in muscles_data:
+        # Prefer name_en (English name) if available, else use name
+        muscle_name = m.get('name_en') or m.get('name', '')
+        if muscle_name:
+            muscles_primary.append(muscle_name)
     
     # Get secondary muscles
-    muscles_secondary = exercise_info.get('muscles_secondary', [])
-    secondary_muscles_list = [m.get('name') for m in muscles_secondary] if muscles_secondary else []
+    muscles_secondary_data = exercise_info.get('muscles_secondary', [])
+    secondary_muscles_list = []
+    for m in muscles_secondary_data:
+        muscle_name = m.get('name_en') or m.get('name', '')
+        if muscle_name:
+            secondary_muscles_list.append(muscle_name)
+    
+    # Get ALL equipment (not just first one)
+    equipment_data = exercise_info.get('equipment', [])
+    equipment_list = [e.get('name', 'Bodyweight') for e in equipment_data if e.get('name')]
+    equipment = equipment_list[0] if equipment_list else 'Bodyweight'
+    
+    # Get images from Wger
+    images_data = exercise_info.get('images', [])
+    wger_images = []
+    for img in images_data:
+        img_url = img.get('image')
+        if img_url:
+            wger_images.append(img_url)
+    
+    # Get videos from Wger
+    videos_data = exercise_info.get('videos', [])
+    wger_videos = []
+    for vid in videos_data:
+        vid_url = vid.get('video')
+        if vid_url:
+            wger_videos.append(vid_url)
+    
+    # Get license and attribution info
+    license_author = exercise_info.get('license_author', '')
+    wger_uuid = exercise_info.get('uuid', '')
     
     # Redirect to add exercise form with pre-filled data as query parameters
+    import json
     from urllib.parse import urlencode
     params = {
         'from_import': 'true',
         'wger_id': exercise_id,
+        'wger_uuid': wger_uuid,
         'name': name,
         'muscle': muscle,
         'equipment': equipment,
-        'secondary_muscles': secondary_muscles_list,
+        'muscles_primary': json.dumps(muscles_primary),
+        'secondary_muscles': json.dumps(secondary_muscles_list),
+        'equipment_list': json.dumps(equipment_list),
+        'wger_images': json.dumps(wger_images),
+        'wger_videos': json.dumps(wger_videos),
+        'license_author': license_author,
         'description': description,
         'instructions': description,
         'difficulty': 'Intermediate',
         'type': 'Strength',
-        'reps_sets': '3 sets x 8-12 reps'
+        'reps_sets': '3 sets x 8-12 reps',
+        'wger_raw_response': json.dumps(exercise_info)  # Store full Wger API response
     }
     
     return redirect(url_for('exercises.add') + '?' + urlencode(params))

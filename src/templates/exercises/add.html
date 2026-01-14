@@ -186,7 +186,79 @@
 <div class="form-container">
   <form method="POST" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <!-- Wger-specific hidden fields -->
+    {% if prefill %}
+    <input type="hidden" name="wger_id" value="{{ prefill.get('wger_id', '') }}" />
+    <input type="hidden" name="wger_uuid" value="{{ prefill.get('wger_uuid', '') }}" />
+    <input type="hidden" name="wger_images" value="{{ prefill.get('wger_images', []) | tojson }}" />
+    <input type="hidden" name="wger_videos" value="{{ prefill.get('wger_videos', []) | tojson }}" />
+    <input type="hidden" name="license_author" value="{{ prefill.get('license_author', '') }}" />
+    <input type="hidden" name="wger_raw_response" value="{{ prefill.get('wger_raw_response', '') }}" />
+    {% for muscle in prefill.get('muscles_primary', []) %}
+    <input type="hidden" name="muscles_primary" value="{{ muscle }}" />
+    {% endfor %}
+    {% for equip in prefill.get('equipment_list', []) %}
+    <input type="hidden" name="equipment_list" value="{{ equip }}" />
+    {% endfor %}
+    {% endif %}
+
     <div class="form-grid">
+      <!-- Wger Image Preview (if importing from Wger) -->
+      {% if prefill and prefill.get('wger_images') %}
+      <div class="form-group full-width">
+        <label class="form-label">Wger Exercise Images</label>
+        <div
+          style="display: flex; gap: var(--space-12); flex-wrap: wrap; padding: var(--space-12); background: var(--color-background); border-radius: var(--radius-base); border: 1px solid var(--color-border);">
+          {% for img_url in prefill.get('wger_images', []) %}
+          <img src="{{ img_url }}" alt="Exercise image"
+            style="max-width: 200px; max-height: 150px; object-fit: contain; border-radius: var(--radius-base);" />
+          {% endfor %}
+        </div>
+        <small style="color: var(--color-text-secondary); margin-top: var(--space-4); display: block;">Images from Wger
+          database will be linked automatically</small>
+      </div>
+      {% endif %}
+
+      <!-- Wger Attribution (if importing from Wger) -->
+      {% if prefill and prefill.get('license_author') %}
+      <div class="form-group full-width">
+        <label class="form-label">Attribution</label>
+        <div
+          style="padding: var(--space-8) var(--space-12); background: var(--color-background); border-radius: var(--radius-base); border: 1px solid var(--color-border); color: var(--color-text-secondary); font-size: var(--font-size-sm);">
+          Credit: {{ prefill.get('license_author') }}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Muscles from API (display only) -->
+      {% if prefill and prefill.get('muscles_primary') %}
+      <div class="form-group full-width">
+        <label class="form-label">Primary Muscles (from Wger)</label>
+        <div style="display: flex; gap: var(--space-8); flex-wrap: wrap;">
+          {% for muscle in prefill.get('muscles_primary', []) %}
+          <span
+            style="padding: var(--space-4) var(--space-12); background: var(--color-primary); color: white; border-radius: var(--radius-full); font-size: var(--font-size-sm);">{{
+            muscle }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Equipment from API (display only) -->
+      {% if prefill and prefill.get('equipment_list') and prefill.get('equipment_list')|length > 1 %}
+      <div class="form-group full-width">
+        <label class="form-label">All Equipment (from Wger)</label>
+        <div style="display: flex; gap: var(--space-8); flex-wrap: wrap;">
+          {% for equip in prefill.get('equipment_list', []) %}
+          <span
+            style="padding: var(--space-4) var(--space-12); background: var(--color-secondary); color: var(--color-text); border-radius: var(--radius-full); font-size: var(--font-size-sm); border: 1px solid var(--color-border);">{{
+            equip }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
       <div class="form-group full-width">
         <label class="form-label required" for="name">Exercise Name</label>
         <input type="text" id="name" name="name" class="form-control" value="{{ prefill.get('name', '') }}" required>

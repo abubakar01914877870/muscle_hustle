@@ -4,6 +4,7 @@ from src.database import get_db
 from src.models.planner import ExerciseGroup, CalendarAssignment, WorkoutLog
 from src.models.exercise_mongo import Exercise
 from datetime import datetime, timedelta
+import uuid
 
 planner_bp = Blueprint('planner', __name__, url_prefix='/planner')
 
@@ -107,11 +108,23 @@ def api_assignments():
     if request.method == 'POST':
         data = request.json
         date_str = data.get('date')
-        group_id = data.get('group_id')
+        
+        # New inputs
+        group_ids = data.get('group_ids', []) # List of IDs
+        is_rest_day = data.get('is_rest_day', False)
+        
+        # Backward compatibility or fallback
+        if not group_ids and data.get('group_id'):
+            group_ids = [data.get('group_id')]
+            
         repeat_option = data.get('repeat', 'none') # none, weekly_4, weekly_12, weekly_52
         
-        if not date_str or not group_id:
-            return jsonify({'error': 'Missing data'}), 400
+        if not date_str:
+            return jsonify({'error': 'Missing date'}), 400
+        
+        # Validation: Allow empty selection to imply "Clear Day"
+        # if not is_rest_day and not group_ids:
+        #      return jsonify({'error': 'Select at least one group or mark as rest day'}), 400
             
         try:
             start_date = datetime.strptime(date_str, '%Y-%m-%d')
@@ -120,22 +133,42 @@ def api_assignments():
 
         # Logic for repeats
         dates_to_assign = [start_date]
+        series_id = None
+        
+        if repeat_option in ['weekly_4', 'weekly_12']:
+            series_id = str(uuid.uuid4())
+            
         if repeat_option == 'weekly_4':
             for i in range(1, 4):
                 dates_to_assign.append(start_date + timedelta(weeks=i))
         elif repeat_option == 'weekly_12':
             for i in range(1, 12):
                 dates_to_assign.append(start_date + timedelta(weeks=i))
-        elif repeat_option == 'weekly_52': # "Unlimited" / 1 Year
-             for i in range(1, 52):
-                dates_to_assign.append(start_date + timedelta(weeks=i))
         
         created_count = 0
         for d in dates_to_assign:
-            CalendarAssignment.create(db, current_user.id, d, group_id)
-            created_count += 1
+            # For the PRIMARY date (start_date), we always REPLACE existing assignments.
+            # This fixes the duplication bug and allows "Deleting" by unchecking all.
+            # For future dates (repeats), we conservatively APPEND (except for Rest Days maybe?), 
+            # but to keep it simple and safe for now: 
+            # Let's enforce replacement for the start date ONLY. 
+            # Implementing full series replacement is complex without more UI.
             
-        return jsonify({'message': f'Created {created_count} assignments', 'dates': [d.strftime('%Y-%m-%d') for d in dates_to_assign]})
+            if d == start_date:
+                CalendarAssignment.delete_by_date(db, current_user.id, d)
+                
+            # If is_rest_day, we probably want to clear conflicts on future dates too?
+            # For now, let's stick to start_date replacement to ensure the immediate UI interaction works perfectly.
+                
+            if is_rest_day:
+                CalendarAssignment.create(db, current_user.id, d, assignment_type='rest', series_id=series_id)
+                created_count += 1
+            else:
+                for gid in group_ids:
+                    CalendarAssignment.create(db, current_user.id, d, group_id=gid, assignment_type='workout', series_id=series_id)
+                    created_count += 1
+            
+        return jsonify({'message': f'Updated assignments', 'dates': [d.strftime('%Y-%m-%d') for d in dates_to_assign]})
 
     # GET
     start = request.args.get('start')
@@ -144,10 +177,37 @@ def api_assignments():
     
     return jsonify([{
         'id': a.id,
-        'title': a.group_name,
+        'title': a.group_name if hasattr(a, 'group_name') else 'Rest Day',
         'start': a.date_str,
-        'group_id': str(a.exercise_group_id)
+        'group_id': str(a.exercise_group_id) if a.exercise_group_id else None,
+        'type': a.assignment_type,
+        'series_id': a.series_id if hasattr(a, 'series_id') else None
     } for a in assignments])
+
+@planner_bp.route('/api/assignments/<assignment_id>', methods=['DELETE'])
+@login_required
+def delete_assignment(assignment_id):
+    """Delete a specific calendar assignment or series"""
+    db = get_db()
+    mode = request.args.get('mode', 'single') # single, future
+    
+    if mode == 'future':
+        # Need to find the assignment first to get series_id and date
+        # Assuming we can find by ID. The previous find_by_id doesn't exist on CalendarAssignment?
+        # Let's inspect model. It doesn't have find_by_id. We can use find_one safely here.
+        from bson import ObjectId
+        assignment = db.calendar_assignments.find_one({'_id': ObjectId(assignment_id)})
+        
+        if assignment:
+            series_id = assignment.get('series_id')
+            date_str = assignment.get('date_str')
+            if series_id:
+                CalendarAssignment.delete_series(db, current_user.id, series_id, date_str)
+                return jsonify({'success': True})
+    
+    # Fallback to single delete
+    CalendarAssignment.delete(db, assignment_id)
+    return jsonify({'success': True})
 
 # --- Tracker Routes ---
 
