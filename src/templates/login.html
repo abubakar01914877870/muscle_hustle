@@ -1,37 +1,319 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}Login - Muscle Hustle{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Muscle Hustle</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block content %}
-<section class="form-section" style="max-width: 500px; margin-left: auto; margin-right: auto;">
-    <div style="text-align: center; margin-bottom: var(--space-24);">
-        <div style="font-size: 64px; margin-bottom: var(--space-16);">💪</div>
-        <h2 style="margin-bottom: var(--space-8);">Welcome Back, Champion!</h2>
-        <p style="color: var(--color-text-secondary); font-size: var(--font-size-md);">Ready to crush your goals? Let's go! 🔥</p>
+        /* Light Theme */
+        :root {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --accent-orange: #FF6B35;
+            --accent-blue: #4A5568;
+            --text-primary: #2D3748;
+            --text-secondary: #6B7280;
+            --border-color: #E5E7EB;
+            --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar */
+        .app-top-bar {
+            background: var(--bg-primary);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .app-logo svg {
+            color: var(--accent-orange);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Main Content */
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+        }
+
+        .login-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 32px 24px;
+            box-shadow: var(--shadow-md);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .login-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent-orange);
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--accent-orange);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #E55A2B;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .signup-link a {
+            color: var(--accent-orange);
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 2px solid var(--accent-orange);
+        }
+
+        .signup-link a:hover {
+            opacity: 0.8;
+        }
+
+        /* Flash Messages */
+        .flash {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.875rem;
+        }
+
+        .flash-error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FCA5A5;
+        }
+
+        .flash-success {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #6EE7B7;
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            .login-card {
+                padding: 40px 32px;
+            }
+
+            .login-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="app-top-bar">
+        <a href="{{ url_for('main.home') }}" class="app-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6.5 6.5l11 11M17.5 6.5l-11 11"></path>
+                <circle cx="12" cy="12" r="1"></circle>
+            </svg>
+            <span>Muscle Hustle</span>
+        </a>
+        <a href="{{ url_for('main.home') }}" class="btn-back">Back</a>
     </div>
-    
-    <form method="POST" action="{{ url_for('auth.login') }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <div class="form-grid" style="grid-template-columns: 1fr;">
-            <div class="form-group">
-                <label class="form-label" for="email">EMAIL</label>
-                <input type="email" id="email" name="email" class="form-control" required placeholder="your@email.com" style="font-size: var(--font-size-md);">
+
+    <!-- Main Content -->
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">💪</div>
+                <h1 class="login-title">Welcome Back!</h1>
+                <p class="login-subtitle">Ready to crush your goals?</p>
             </div>
-            <div class="form-group">
-                <label class="form-label" for="password">PASSWORD</label>
-                <input type="password" id="password" name="password" class="form-control" required placeholder="Enter your password" style="font-size: var(--font-size-md);">
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">
+                {{ message }}
             </div>
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: var(--space-12); cursor: pointer; color: var(--color-text-secondary);">
-                    <input type="checkbox" name="remember" value="true" style="width: 20px; height: 20px; accent-color: var(--color-primary);">
-                    <span style="font-size: var(--font-size-sm); font-weight: var(--font-weight-medium);">Keep me logged in</span>
-                </label>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Login Form -->
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-input" required placeholder="your@email.com"
+                        autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" required
+                        placeholder="Enter your password">
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="remember" name="remember" value="true">
+                        <label for="remember">Keep me logged in</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Let's Go! 🚀
+                </button>
+            </form>
+
+            <div class="signup-link">
+                New here? <a href="{{ url_for('auth.signup') }}">Start Your Journey</a>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; font-size: var(--font-size-lg); margin-top: var(--space-16);">Let's Go! 🚀</button>
-    </form>
-    <p style="text-align: center; margin-top: var(--space-24); color: var(--color-text-secondary); font-size: var(--font-size-md);">
-        New here? <a href="{{ url_for('auth.signup') }}" style="color: var(--color-primary); font-weight: var(--font-weight-bold); text-decoration: none; border-bottom: 2px solid var(--color-primary);">Start Your Journey</a>
-    </p>
-</section>
-{% endblock %}
+    </div>
+</body>
+
+</html>

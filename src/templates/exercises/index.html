@@ -3,15 +3,13 @@
 {% block title %}All Exercises - Muscle Hustle{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='design-system.css') }}">
 
 <style>
-  .exercise-header-banner {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-    color: var(--color-white);
-    padding: var(--space-24) var(--space-32);
-    margin: calc(var(--space-24) * -1) calc(var(--space-32) * -1) var(--space-32);
-    box-shadow: var(--shadow-md);
+  .exercise-header {
+    background: #FFFFFF;
+    padding: 24px;
+    margin: -24px -24px 32px;
+    border-bottom: 1px solid #E5E7EB;
   }
 
   .exercise-header-content {
@@ -20,13 +18,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: var(--space-24);
+    gap: 24px;
   }
 
   .exercise-title {
-    font-size: var(--font-size-3xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-white);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2D3748;
+    margin: 0;
   }
 
   .header-search {
@@ -35,81 +34,27 @@
 
   .header-search input {
     width: 100%;
-    padding: var(--space-10) var(--space-16);
-    border: none;
-    border-radius: var(--radius-full);
-    font-size: var(--font-size-md);
-    background-color: rgba(255, 255, 255, 0.2);
-    color: var(--color-white);
+    padding: 12px 16px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #F8F9FA;
+    color: #2D3748;
+    transition: all 0.2s;
   }
 
   .header-search input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
+    color: #9CA3AF;
   }
 
   .header-search input:focus {
     outline: none;
-    background-color: rgba(255, 255, 255, 0.3);
+    border-color: #FF6B35;
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
   }
 
-  .filter-section {
-    margin-bottom: var(--space-32);
-  }
 
-  .filter-group {
-    margin-bottom: var(--space-24);
-  }
-
-  .filter-group h3 {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-semibold);
-    margin-bottom: var(--space-12);
-  }
-
-  .filter-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-8);
-  }
-
-  .filter-btn {
-    padding: var(--space-8) var(--space-16);
-    border: 1px solid var(--color-border);
-    background-color: var(--color-surface);
-    color: var(--color-text);
-    border-radius: var(--radius-full);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    cursor: pointer;
-    transition: all var(--duration-fast) var(--ease-standard);
-    text-decoration: none;
-  }
-
-  .filter-btn:hover {
-    background-color: var(--color-secondary);
-  }
-
-  .filter-btn.active {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    border-color: var(--color-primary);
-  }
-
-  .clear-filters {
-    padding: var(--space-8) var(--space-16);
-    border: 1px solid var(--color-border);
-    background-color: var(--color-surface);
-    color: var(--color-text);
-    border-radius: var(--radius-base);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    cursor: pointer;
-    transition: all var(--duration-fast) var(--ease-standard);
-  }
-
-  .clear-filters:hover {
-    background-color: var(--color-secondary-hover);
-  }
 
   .exercise-count {
     font-size: var(--font-size-xl);
@@ -190,7 +135,7 @@
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-medium);
     text-transform: uppercase;
-    letter-spacing: 0.05em);
+    letter-spacing: 0.05em;
   }
 
   .badge-muscle {
@@ -285,7 +230,7 @@
   }
 </style>
 
-<div class="exercise-header-banner">
+<div class="exercise-header">
   <div class="exercise-header-content">
     <h1 class="exercise-title">💪 All Exercises</h1>
     <div class="header-search">
@@ -296,66 +241,43 @@
   </div>
 </div>
 
-<div class="filter-section">
-  <div class="filter-group">
-    <h3>Filter by Muscle Group</h3>
-    <div class="filter-buttons">
-      {% for muscle in ['Abs', 'Back', 'Biceps', 'Cardio', 'Chest', 'Forearms', 'Glutes', 'Shoulders', 'Triceps', 'Upper Legs', 'Lower Legs'] %}
-        <a href="{{ url_for('exercises.index', muscle=muscle, search=search_query) }}" 
-           class="filter-btn {% if muscle in active_filters.muscle %}active{% endif %}">
-          {{ muscle }}
-        </a>
-      {% endfor %}
-    </div>
-  </div>
-
-  <div class="filter-group">
-    <h3>Filter by Equipment</h3>
-    <div class="filter-buttons">
-      {% for equipment in ['Body Weight', 'Bands', 'Barbell', 'Bench', 'Dumbbell', 'Exercise Ball', 'EZ Curl Bar', 'Kettlebell', 'Cardio Machine', 'Strength Machine', 'Pullup Bar', 'Weight Plate'] %}
-        <a href="{{ url_for('exercises.index', equipment=equipment, search=search_query) }}" 
-           class="filter-btn {% if equipment in active_filters.equipment %}active{% endif %}">
-          {{ equipment }}
-        </a>
-      {% endfor %}
-    </div>
-  </div>
-
-  <a href="{{ url_for('exercises.index') }}" class="clear-filters">Clear Filters</a>
-</div>
 
 <div class="exercise-count">{{ exercises|length }} EXERCISE{% if exercises|length != 1 %}S{% endif %} FOUND</div>
 
 <div class="exercise-grid">
   {% for exercise in exercises %}
-    <div class="exercise-card" onclick="window.location='{{ url_for('exercises.detail', exercise_id=exercise.id) }}'">
-      <div class="exercise-thumbnail">
-        {% if exercise.media_type == 'image' and exercise.image_data %}
-          <img src="{{ exercise.get_image_url() }}" alt="{{ exercise.name }}">
-        {% elif exercise.media_type == 'video' and exercise.video_url %}
-          <iframe src="{{ exercise.video_url }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        {% else %}
-          <span class="placeholder">💪</span>
-        {% endif %}
-      </div>
-      <div class="exercise-content">
-        <h3 class="exercise-name">{{ exercise.name }}</h3>
-        <div class="exercise-badges">
-          <span class="badge badge-muscle">{{ exercise.muscle }}</span>
-          <span class="badge badge-equipment">{{ exercise.equipment }}</span>
-          <span class="badge badge-difficulty">{{ exercise.difficulty }}</span>
-        </div>
-        <p class="exercise-description">{{ exercise.description }}</p>
-        <a href="{{ url_for('exercises.detail', exercise_id=exercise.id) }}" class="view-details-btn" onclick="event.stopPropagation()">View Details</a>
-      </div>
+  <div class="exercise-card" onclick="window.location='{{ url_for('exercises.detail', exercise_id=exercise.id) }}'">
+    <div class="exercise-thumbnail">
+      {% if exercise.media_type == 'image' and exercise.image_data %}
+      <img src="{{ exercise.get_image_url() }}" alt="{{ exercise.name }}">
+      {% elif exercise.media_type == 'video' and exercise.video_url %}
+      <iframe src="{{ exercise.video_url }}" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+      {% else %}
+      <span class="placeholder">💪</span>
+      {% endif %}
     </div>
+    <div class="exercise-content">
+      <h3 class="exercise-name">{{ exercise.name }}</h3>
+      <div class="exercise-badges">
+        <span class="badge badge-muscle">{{ exercise.muscle }}</span>
+        <span class="badge badge-equipment">{{ exercise.equipment }}</span>
+        <span class="badge badge-difficulty">{{ exercise.difficulty }}</span>
+      </div>
+      <p class="exercise-description">{{ exercise.description }}</p>
+      <a href="{{ url_for('exercises.detail', exercise_id=exercise.id) }}" class="view-details-btn"
+        onclick="event.stopPropagation()">View Details</a>
+    </div>
+  </div>
   {% else %}
-    <p>No exercises found. {% if current_user.is_admin %}<a href="{{ url_for('exercises.add') }}">Add the first exercise</a>{% endif %}</p>
+  <p>No exercises found. {% if current_user.is_admin %}<a href="{{ url_for('exercises.add') }}">Add the first
+      exercise</a>{% endif %}</p>
   {% endfor %}
 </div>
 
 {% if current_user.is_authenticated and current_user.is_admin %}
-  <a href="{{ url_for('exercises.add') }}" class="fab">+</a>
+<a href="{{ url_for('exercises.add') }}" class="fab">+</a>
 {% endif %}
 
 {% endblock %}
