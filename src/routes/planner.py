@@ -209,6 +209,15 @@ def delete_assignment(assignment_id):
     CalendarAssignment.delete(db, assignment_id)
     return jsonify({'success': True})
 
+@planner_bp.route('/api/assignments/clear-all', methods=['DELETE'])
+@login_required
+def clear_all_assignments():
+    """Delete all calendar assignments for the current user"""
+    from bson import ObjectId
+    db = get_db()
+    result = db.calendar_assignments.delete_many({'user_id': ObjectId(current_user.id)})
+    return jsonify({'success': True, 'deleted_count': result.deleted_count})
+
 # --- Tracker Routes ---
 
 @planner_bp.route('/tracker')
@@ -253,8 +262,12 @@ def tracker_view():
                 'group_name': group.name,
                 'exercises': exercises
             })
+    
+    # Format date for display (e.g., "Wednesday, Jan 15")
+    date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+    date_formatted = date_obj.strftime('%A, %b %d')
             
-    return render_template('planner/tracker.html', date=date_str, daily_plan=daily_plan)
+    return render_template('planner/tracker.html', date=date_str, date_formatted=date_formatted, daily_plan=daily_plan)
 
 @planner_bp.route('/api/log', methods=['POST'])
 @login_required

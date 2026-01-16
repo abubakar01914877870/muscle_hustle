@@ -25,6 +25,9 @@
                 </svg>
             </button>
             <button class="btn-today" onclick="goToToday()">Today</button>
+            <button class="btn-clear-all" onclick="confirmClearAll()">
+                <i class="fas fa-trash-alt"></i> Clear All
+            </button>
         </div>
     </div>
 
@@ -62,6 +65,7 @@
         </div>
         <div class="modal-body">
             <form id="assignmentForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" id="selectedDate" name="date">
 
                 <div class="form-group">
@@ -77,6 +81,14 @@
                             <span class="toggle-slider"></span>
                         </label>
                         <span class="toggle-label">Mark as Rest Day</span>
+                    </div>
+                </div>
+
+                <!-- Currently Assigned Groups -->
+                <div class="form-group" id="currentAssignmentsContainer" style="display: none;">
+                    <label>Currently Assigned</label>
+                    <div class="current-assignments-list" id="currentAssignmentsList">
+                        <!-- Dynamically populated -->
                     </div>
                 </div>
 
@@ -101,7 +113,6 @@
                             </label>
                             {% endfor %}
                         </div>
-                        <div class="selected-tags" id="selected-tags"></div>
                     </div>
                 </div>
 
@@ -143,6 +154,32 @@
             <div style="text-align: center; margin-top: 15px;">
                 <a href="#" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;"
                     onclick="closeDeleteModal()">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clear All Confirmation Modal -->
+<div class="modal-overlay" id="clearAllModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>⚠️ Clear All Assignments</h3>
+            <button class="close-btn" onclick="closeClearAllModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p style="color: #DC2626; font-weight: 600; margin-bottom: 16px;">
+                WARNING: This will permanently delete ALL your calendar assignments!
+            </p>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                This action cannot be undone. All your workout schedules will be removed from the calendar.
+            </p>
+            <div class="modal-actions" style="justify-content: flex-end; gap: 12px;">
+                <button class="btn-cancel" onclick="closeClearAllModal()">Cancel</button>
+                <button class="btn-save" style="background-color: #DC2626;" onclick="executeClearAll()">
+                    <i class="fas fa-trash-alt"></i> Yes, Clear All
+                </button>
             </div>
         </div>
     </div>
@@ -274,6 +311,31 @@
         color: #202124;
     }
 
+    .btn-clear-all {
+        background: transparent;
+        border: 1px solid #DC2626;
+        color: #DC2626;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-clear-all:hover {
+        background: #DC2626;
+        border-color: #DC2626;
+        color: white;
+    }
+
+    .btn-clear-all i {
+        font-size: 0.85rem;
+    }
+
     #currentWeekRange {
         color: var(--text-primary);
         font-size: 0.95rem;
@@ -381,16 +443,16 @@
     .event-pill {
         background: #3c4043;
         /* Fallback gray */
-        color: #fff;
+        color: var(--text-primary);
         padding: 6px 16px;
         border-radius: 50px;
         /* Pill shape */
         font-size: 0.9rem;
-        font-weight: 500;
+        font-weight: 600;
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         border-left: 4px solid;
         /* Color indicator */
     }
@@ -398,23 +460,26 @@
     /* Dynamic colors handled by JS or pre-defined classes */
     .pill-red {
         border-color: #ea4335;
-        background: rgba(234, 67, 53, 0.2);
-        text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+        background: rgba(234, 67, 53, 0.15);
+        color: #991B1B;
     }
 
     .pill-purple {
         border-color: #a142f4;
-        background: rgba(161, 66, 244, 0.2);
+        background: rgba(161, 66, 244, 0.15);
+        color: #6B21A8;
     }
 
     .pill-blue {
         border-color: #4285f4;
-        background: rgba(66, 133, 244, 0.2);
+        background: rgba(66, 133, 244, 0.15);
+        color: #1E40AF;
     }
 
     .pill-orange {
         border-color: #fa7b17;
-        background: rgba(250, 123, 23, 0.2);
+        background: rgba(250, 123, 23, 0.15);
+        color: #9A3412;
     }
 
     /* Rest Day Block */
@@ -422,11 +487,11 @@
         width: 100%;
         background: rgba(52, 168, 83, 0.15);
         border: 1px solid #34a853;
-        color: #81c995;
+        color: #065F46;
         padding: 8px 16px;
         border-radius: 8px;
         text-align: center;
-        font-weight: 500;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 1px;
         display: flex;
@@ -1048,6 +1113,91 @@
         opacity: 1;
     }
 
+    /* Current Assignments List */
+    .current-assignments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+    }
+
+    .current-assignment-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        transition: all 0.2s;
+    }
+
+    .current-assignment-item:hover {
+        border-color: var(--accent-blue);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .assignment-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .assignment-name {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .assignment-meta {
+        font-size: 0.8125rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .repeat-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        background: rgba(255, 107, 53, 0.1);
+        color: var(--accent-blue);
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .btn-remove-assignment {
+        background: #FEE2E2;
+        color: #991B1B;
+        border: 1px solid #FCA5A5;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    .btn-remove-assignment:hover {
+        background: #FCA5A5;
+        transform: translateY(-1px);
+    }
+
+    .empty-assignments {
+        text-align: center;
+        padding: 16px;
+        color: var(--text-tertiary);
+        font-size: 0.875rem;
+    }
+
     .modal-actions {
         display: flex;
         justify-content: flex-end;
@@ -1534,20 +1684,68 @@
 
         // Populate from existing assignments
         const existing = window.dailyAssignments[dateStr];
+        const currentAssignmentsContainer = document.getElementById('currentAssignmentsContainer');
+        const currentAssignmentsList = document.getElementById('currentAssignmentsList');
+
+        // Clear current assignments list
+        currentAssignmentsList.innerHTML = '';
+
         if (existing && existing.length > 0) {
             // Check for Rest Day
             const isRest = existing.some(a => a.type === 'rest');
             if (isRest) {
                 restToggle.checked = true;
+                currentAssignmentsContainer.style.display = 'none';
             } else {
-                // Check Workouts
+                // Show current assignments
+                currentAssignmentsContainer.style.display = 'block';
+
+                // Populate current assignments list
                 existing.forEach(a => {
                     if (a.group_id) {
                         const cb = document.querySelector(`input[name="group_ids"][value="${a.group_id}"]`);
                         if (cb) cb.checked = true;
+
+                        // Create assignment item
+                        const item = document.createElement('div');
+                        item.className = 'current-assignment-item';
+                        item.dataset.assignmentId = a.id;
+                        item.dataset.seriesId = a.series_id || '';
+
+                        const info = document.createElement('div');
+                        info.className = 'assignment-info';
+
+                        const name = document.createElement('div');
+                        name.className = 'assignment-name';
+                        name.textContent = a.title || 'Workout';
+
+                        const meta = document.createElement('div');
+                        meta.className = 'assignment-meta';
+
+                        if (a.series_id) {
+                            const badge = document.createElement('span');
+                            badge.className = 'repeat-badge';
+                            badge.innerHTML = '🔁 Repeating';
+                            meta.appendChild(badge);
+                        }
+
+                        info.appendChild(name);
+                        info.appendChild(meta);
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.className = 'btn-remove-assignment';
+                        removeBtn.textContent = 'Remove';
+                        removeBtn.onclick = () => removeCurrentAssignment(a.id, a.series_id, a.group_id);
+
+                        item.appendChild(info);
+                        item.appendChild(removeBtn);
+                        currentAssignmentsList.appendChild(item);
                     }
                 });
             }
+        } else {
+            currentAssignmentsContainer.style.display = 'none';
         }
 
         toggleRestDay(); // Update UI state based on checked status
@@ -1562,14 +1760,11 @@
     function toggleRestDay() {
         const isRestDay = document.getElementById('restDayToggle').checked;
         const groupContainer = document.getElementById('groupSelectContainer');
-        const repeatContainer = document.getElementById('repeatContainer');
 
         if (isRestDay) {
             groupContainer.style.display = 'none';
-            repeatContainer.style.display = 'none';
         } else {
             groupContainer.style.display = 'block';
-            repeatContainer.style.display = 'block';
         }
     }
 
@@ -1584,23 +1779,13 @@
 
     function updateSelectedWorkouts() {
         const checkboxes = document.querySelectorAll('.multiselect-option input[type="checkbox"]');
-        const selectedTags = document.getElementById('selected-tags');
         const selectedText = document.querySelector('.selected-text');
 
-        selectedTags.innerHTML = '';
         let selectedCount = 0;
 
         checkboxes.forEach(checkbox => {
             if (checkbox.checked) {
                 selectedCount++;
-                const label = checkbox.parentElement.querySelector('.option-label').textContent;
-                const tag = document.createElement('div');
-                tag.className = 'selected-tag';
-                tag.innerHTML = `
-                    ${label}
-                    <span class="tag-remove" onclick="removeTag('${checkbox.value}')">×</span>
-                `;
-                selectedTags.appendChild(tag);
             }
         });
 
@@ -1655,9 +1840,10 @@
         };
 
         try {
+            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
             const res = await fetch('/planner/api/assignments', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                 body: JSON.stringify(payload)
             });
 
@@ -1702,13 +1888,14 @@
 
     async function performDelete(mode) {
         try {
+            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
             const url = mode === 'future' ?
                 `/planner/api/assignments/${currentDeleteId}?mode=future` :
                 `/planner/api/assignments/${currentDeleteId}`;
 
             const res = await fetch(url, {
                 method: 'DELETE',
-                headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
+                headers: { 'X-CSRFToken': csrfToken }
             });
             if (res.ok) {
                 renderView();
@@ -1718,6 +1905,77 @@
                 console.error('Failed to delete assignment');
             }
         } catch (e) { console.error(e); }
+    }
+
+    // Remove current assignment from modal
+    function removeCurrentAssignment(assignmentId, seriesId, groupId) {
+        if (seriesId) {
+            // Has repeating series - ask user
+            if (confirm('This is a repeating workout. Delete all future occurrences?')) {
+                currentDeleteId = assignmentId;
+                performDelete('future');
+            } else {
+                // Just uncheck the checkbox for this day
+                const cb = document.querySelector(`input[name="group_ids"][value="${groupId}"]`);
+                if (cb) cb.checked = false;
+                // Remove from UI
+                const item = document.querySelector(`.current-assignment-item[data-assignment-id="${assignmentId}"]`);
+                if (item) item.remove();
+
+                // Check if list is empty
+                const list = document.getElementById('currentAssignmentsList');
+                if (list.children.length === 0) {
+                    document.getElementById('currentAssignmentsContainer').style.display = 'none';
+                }
+            }
+        } else {
+            // Single assignment - just uncheck and remove
+            const cb = document.querySelector(`input[name="group_ids"][value="${groupId}"]`);
+            if (cb) cb.checked = false;
+
+            // Remove from UI
+            const item = document.querySelector(`.current-assignment-item[data-assignment-id="${assignmentId}"]`);
+            if (item) item.remove();
+
+            // Check if list is empty
+            const list = document.getElementById('currentAssignmentsList');
+            if (list.children.length === 0) {
+                document.getElementById('currentAssignmentsContainer').style.display = 'none';
+            }
+        }
+    }
+
+    // Clear all assignments - open modal
+    function confirmClearAll() {
+        document.getElementById('clearAllModal').classList.add('active');
+    }
+
+    function closeClearAllModal() {
+        document.getElementById('clearAllModal').classList.remove('active');
+    }
+
+    async function executeClearAll() {
+        try {
+            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+            const res = await fetch('/planner/api/assignments/clear-all', {
+                method: 'DELETE',
+                headers: { 'X-CSRFToken': csrfToken }
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                closeClearAllModal();
+
+                // Refresh the calendar view
+                renderView();
+                window.dailyAssignments = {};
+                fetchAssignments();
+            } else {
+                console.error('Failed to clear assignments');
+            }
+        } catch (error) {
+            console.error('Error clearing assignments:', error);
+        }
     }
 </script>
 {% endblock %}

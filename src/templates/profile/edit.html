@@ -2,139 +2,420 @@
 
 {% block title %}Edit Profile - Muscle Hustle{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Profile Edit Page Styles - Light Theme */
+    .profile-edit-page {
+        background: var(--bg-secondary);
+        min-height: 100vh;
+    }
+
+    /* Override base content wrapper */
+    .content-wrapper {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-top: 0 !important;
+        max-width: none !important;
+    }
+
+    /* Edit Content */
+    .edit-content {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 16px;
+    }
+
+    /* Page Header */
+    .edit-header {
+        background: var(--bg-primary);
+        padding: 20px 16px;
+        margin: 0 -16px 16px -16px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .edit-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 4px 0;
+    }
+
+    .edit-subtitle {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    /* Form Sections */
+    .edit-form-section {
+        background: var(--bg-primary);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .edit-section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .edit-section-icon {
+        font-size: 1.25rem;
+    }
+
+    .edit-section-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* Form Groups */
+    .edit-form-group {
+        margin-bottom: 20px;
+    }
+
+    .edit-form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .edit-form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: var(--text-primary);
+    }
+
+    .edit-form-input,
+    .edit-form-select,
+    .edit-form-textarea {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 1rem;
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        transition: all 0.2s;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+
+    .edit-form-input:focus,
+    .edit-form-select:focus,
+    .edit-form-textarea:focus {
+        border-color: var(--accent-orange);
+        outline: none;
+        background-color: var(--bg-primary);
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+
+    .edit-form-textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    /* Form Row (for side-by-side fields on larger screens) */
+    .edit-form-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    /* Form Actions */
+    .edit-form-actions {
+        background: var(--bg-primary);
+        padding: 16px;
+        margin: 0 -16px;
+        border-top: 1px solid var(--border-color);
+        position: sticky;
+        bottom: 64px;
+        /* Account for bottom nav on mobile */
+        display: flex;
+        gap: 12px;
+        flex-direction: column;
+    }
+
+    .edit-btn-primary {
+        background: var(--accent-orange);
+        color: white;
+        padding: 14px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        width: 100%;
+    }
+
+    .edit-btn-primary:hover {
+        background: #E55A2B;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+    }
+
+    .edit-btn-secondary {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 14px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.2s;
+        cursor: pointer;
+        text-align: center;
+        width: 100%;
+    }
+
+    .edit-btn-secondary:hover {
+        background: var(--bg-secondary);
+    }
+
+    /* Tablet & Desktop Responsive */
+    @media (min-width: 768px) {
+        .edit-content {
+            max-width: 800px;
+            padding: 24px;
+        }
+
+        .edit-header {
+            margin: 0 -24px 24px -24px;
+            padding: 24px;
+        }
+
+        .edit-form-row {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .edit-form-actions {
+            flex-direction: row;
+            margin: 0 -24px;
+            padding: 20px 24px;
+            bottom: 0;
+            /* No bottom nav on desktop */
+        }
+
+        .edit-btn-primary,
+        .edit-btn-secondary {
+            width: auto;
+            flex: 1;
+        }
+
+        .edit-form-section {
+            padding: 24px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .edit-content {
+            max-width: 1000px;
+            padding: 32px;
+        }
+
+        .edit-header {
+            margin: 0 -32px 32px -32px;
+            padding: 32px;
+        }
+
+        .edit-form-actions {
+            margin: 0 -32px;
+            padding: 24px 32px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<form method="POST" action="{{ url_for('profile.edit_profile') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-    <!-- Personal Information -->
-    <section class="form-section">
-        <div class="section-header">
-            <span class="section-icon">👤</span>
-            <h2>Personal Information</h2>
+<div class="profile-edit-page">
+    <div class="edit-content">
+        <!-- Page Header -->
+        <div class="edit-header">
+            <h1 class="edit-title">Edit Profile</h1>
+            <p class="edit-subtitle">Update your personal information and preferences</p>
         </div>
-            
-            <div class="form-group">
-                <label for="full_name">Full Name</label>
-                <input type="text" id="full_name" name="full_name" value="{{ user.full_name or '' }}">
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="date_of_birth">Date of Birth</label>
-                    <input type="date" id="date_of_birth" name="date_of_birth" value="{{ user.date_of_birth.strftime('%Y-%m-%d') if user.date_of_birth else '' }}">
+
+        <form method="POST" action="{{ url_for('profile.edit_profile') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <!-- Personal Information -->
+            <div class="edit-form-section">
+                <div class="edit-section-header">
+                    <span class="edit-section-icon">👤</span>
+                    <h2 class="edit-section-title">Personal Information</h2>
                 </div>
-                
-                <div class="form-group">
-                    <label for="gender">Gender</label>
-                    <select id="gender" name="gender">
+
+                <div class="edit-form-group">
+                    <label for="full_name" class="edit-form-label">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" class="edit-form-input"
+                        value="{{ user.full_name or '' }}" placeholder="Enter your full name">
+                </div>
+
+                <div class="edit-form-row">
+                    <div class="edit-form-group">
+                        <label for="date_of_birth" class="edit-form-label">Date of Birth</label>
+                        <input type="date" id="date_of_birth" name="date_of_birth" class="edit-form-input"
+                            value="{{ user.date_of_birth.strftime('%Y-%m-%d') if user.date_of_birth else '' }}">
+                    </div>
+
+                    <div class="edit-form-group">
+                        <label for="gender" class="edit-form-label">Gender</label>
+                        <select id="gender" name="gender" class="edit-form-select">
+                            <option value="">Select...</option>
+                            <option value="male" {% if user.gender=='male' %}selected{% endif %}>Male</option>
+                            <option value="female" {% if user.gender=='female' %}selected{% endif %}>Female</option>
+                            <option value="other" {% if user.gender=='other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="phone" class="edit-form-label">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="edit-form-input" value="{{ user.phone or '' }}"
+                        placeholder="+1 234 567 8900">
+                </div>
+            </div>
+
+            <!-- Physical Measurements -->
+            <div class="edit-form-section">
+                <div class="edit-section-header">
+                    <span class="edit-section-icon">📊</span>
+                    <h2 class="edit-section-title">Physical Measurements</h2>
+                </div>
+
+                <div class="edit-form-row">
+                    <div class="edit-form-group">
+                        <label for="height" class="edit-form-label">Height (cm)</label>
+                        <input type="number" id="height" name="height" step="0.1" class="edit-form-input"
+                            value="{{ user.height or '' }}" placeholder="175">
+                    </div>
+
+                    <div class="edit-form-group">
+                        <label for="weight" class="edit-form-label">Current Weight (kg)</label>
+                        <input type="number" id="weight" name="weight" step="0.1" class="edit-form-input"
+                            value="{{ user.weight or '' }}" placeholder="70">
+                    </div>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="target_weight" class="edit-form-label">Target Weight (kg)</label>
+                    <input type="number" id="target_weight" name="target_weight" step="0.1" class="edit-form-input"
+                        value="{{ user.target_weight or '' }}" placeholder="65">
+                </div>
+            </div>
+
+            <!-- Fitness Information -->
+            <div class="edit-form-section">
+                <div class="edit-section-header">
+                    <span class="edit-section-icon">🎯</span>
+                    <h2 class="edit-section-title">Fitness Information</h2>
+                </div>
+
+                <div class="edit-form-row">
+                    <div class="edit-form-group">
+                        <label for="fitness_level" class="edit-form-label">Fitness Level</label>
+                        <select id="fitness_level" name="fitness_level" class="edit-form-select">
+                            <option value="">Select...</option>
+                            <option value="beginner" {% if user.fitness_level=='beginner' %}selected{% endif %}>Beginner
+                            </option>
+                            <option value="intermediate" {% if user.fitness_level=='intermediate' %}selected{% endif %}>
+                                Intermediate</option>
+                            <option value="advanced" {% if user.fitness_level=='advanced' %}selected{% endif %}>Advanced
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="edit-form-group">
+                        <label for="fitness_goal" class="edit-form-label">Fitness Goal</label>
+                        <select id="fitness_goal" name="fitness_goal" class="edit-form-select">
+                            <option value="">Select...</option>
+                            <option value="weight_loss" {% if user.fitness_goal=='weight_loss' %}selected{% endif %}>
+                                Weight Loss</option>
+                            <option value="muscle_gain" {% if user.fitness_goal=='muscle_gain' %}selected{% endif %}>
+                                Muscle Gain</option>
+                            <option value="maintenance" {% if user.fitness_goal=='maintenance' %}selected{% endif %}>
+                                Maintenance</option>
+                            <option value="endurance" {% if user.fitness_goal=='endurance' %}selected{% endif %}>
+                                Endurance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="edit-form-row">
+                    <div class="edit-form-group">
+                        <label for="activity_level" class="edit-form-label">Activity Level</label>
+                        <select id="activity_level" name="activity_level" class="edit-form-select">
+                            <option value="">Select...</option>
+                            <option value="sedentary" {% if user.activity_level=='sedentary' %}selected{% endif %}>
+                                Sedentary</option>
+                            <option value="lightly_active" {% if user.activity_level=='lightly_active' %}selected{%
+                                endif %}>Lightly Active</option>
+                            <option value="moderately_active" {% if user.activity_level=='moderately_active'
+                                %}selected{% endif %}>Moderately Active</option>
+                            <option value="very_active" {% if user.activity_level=='very_active' %}selected{% endif %}>
+                                Very Active</option>
+                            <option value="extremely_active" {% if user.activity_level=='extremely_active' %}selected{%
+                                endif %}>Extremely Active</option>
+                        </select>
+                    </div>
+
+                    <div class="edit-form-group">
+                        <label for="workout_frequency" class="edit-form-label">Workout Frequency (days/week)</label>
+                        <input type="number" id="workout_frequency" name="workout_frequency" min="0" max="7"
+                            class="edit-form-input" value="{{ user.workout_frequency or '' }}" placeholder="3">
+                    </div>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="preferred_workout_time" class="edit-form-label">Preferred Workout Time</label>
+                    <select id="preferred_workout_time" name="preferred_workout_time" class="edit-form-select">
                         <option value="">Select...</option>
-                        <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
-                        <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
-                        <option value="other" {% if user.gender == 'other' %}selected{% endif %}>Other</option>
+                        <option value="morning" {% if user.preferred_workout_time=='morning' %}selected{% endif %}>
+                            Morning</option>
+                        <option value="afternoon" {% if user.preferred_workout_time=='afternoon' %}selected{% endif %}>
+                            Afternoon</option>
+                        <option value="evening" {% if user.preferred_workout_time=='evening' %}selected{% endif %}>
+                            Evening</option>
                     </select>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" value="{{ user.phone or '' }}">
-            </div>
-        </div>
 
-        <div class="form-section">
-            <h3>Physical Measurements</h3>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="height">Height (cm)</label>
-                    <input type="number" id="height" name="height" step="0.1" value="{{ user.height or '' }}">
+            <!-- Health Information -->
+            <div class="edit-form-section">
+                <div class="edit-section-header">
+                    <span class="edit-section-icon">🏥</span>
+                    <h2 class="edit-section-title">Health Information</h2>
                 </div>
-                
-                <div class="form-group">
-                    <label for="weight">Current Weight (kg)</label>
-                    <input type="number" id="weight" name="weight" step="0.1" value="{{ user.weight or '' }}">
-                </div>
-                
-                <div class="form-group">
-                    <label for="target_weight">Target Weight (kg)</label>
-                    <input type="number" id="target_weight" name="target_weight" step="0.1" value="{{ user.target_weight or '' }}">
-                </div>
-            </div>
-        </div>
 
-        <div class="form-section">
-            <h3>Fitness Information</h3>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="fitness_level">Fitness Level</label>
-                    <select id="fitness_level" name="fitness_level">
-                        <option value="">Select...</option>
-                        <option value="beginner" {% if user.fitness_level == 'beginner' %}selected{% endif %}>Beginner</option>
-                        <option value="intermediate" {% if user.fitness_level == 'intermediate' %}selected{% endif %}>Intermediate</option>
-                        <option value="advanced" {% if user.fitness_level == 'advanced' %}selected{% endif %}>Advanced</option>
-                    </select>
+                <div class="edit-form-group">
+                    <label for="medical_conditions" class="edit-form-label">Medical Conditions</label>
+                    <textarea id="medical_conditions" name="medical_conditions" class="edit-form-textarea"
+                        placeholder="List any medical conditions or health concerns...">{{ user.medical_conditions or '' }}</textarea>
                 </div>
-                
-                <div class="form-group">
-                    <label for="fitness_goal">Fitness Goal</label>
-                    <select id="fitness_goal" name="fitness_goal">
-                        <option value="">Select...</option>
-                        <option value="weight_loss" {% if user.fitness_goal == 'weight_loss' %}selected{% endif %}>Weight Loss</option>
-                        <option value="muscle_gain" {% if user.fitness_goal == 'muscle_gain' %}selected{% endif %}>Muscle Gain</option>
-                        <option value="maintenance" {% if user.fitness_goal == 'maintenance' %}selected{% endif %}>Maintenance</option>
-                        <option value="endurance" {% if user.fitness_goal == 'endurance' %}selected{% endif %}>Endurance</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="activity_level">Activity Level</label>
-                    <select id="activity_level" name="activity_level">
-                        <option value="">Select...</option>
-                        <option value="sedentary" {% if user.activity_level == 'sedentary' %}selected{% endif %}>Sedentary</option>
-                        <option value="lightly_active" {% if user.activity_level == 'lightly_active' %}selected{% endif %}>Lightly Active</option>
-                        <option value="moderately_active" {% if user.activity_level == 'moderately_active' %}selected{% endif %}>Moderately Active</option>
-                        <option value="very_active" {% if user.activity_level == 'very_active' %}selected{% endif %}>Very Active</option>
-                        <option value="extremely_active" {% if user.activity_level == 'extremely_active' %}selected{% endif %}>Extremely Active</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="workout_frequency">Workout Frequency (days/week)</label>
-                    <input type="number" id="workout_frequency" name="workout_frequency" min="0" max="7" value="{{ user.workout_frequency or '' }}">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="preferred_workout_time">Preferred Workout Time</label>
-                <select id="preferred_workout_time" name="preferred_workout_time">
-                    <option value="">Select...</option>
-                    <option value="morning" {% if user.preferred_workout_time == 'morning' %}selected{% endif %}>Morning</option>
-                    <option value="afternoon" {% if user.preferred_workout_time == 'afternoon' %}selected{% endif %}>Afternoon</option>
-                    <option value="evening" {% if user.preferred_workout_time == 'evening' %}selected{% endif %}>Evening</option>
-                </select>
-            </div>
-        </div>
 
-        <div class="form-section">
-            <h3>Health Information</h3>
-            
-            <div class="form-group">
-                <label for="medical_conditions">Medical Conditions</label>
-                <textarea id="medical_conditions" name="medical_conditions" rows="3">{{ user.medical_conditions or '' }}</textarea>
+                <div class="edit-form-group">
+                    <label for="dietary_restrictions" class="edit-form-label">Dietary Restrictions</label>
+                    <textarea id="dietary_restrictions" name="dietary_restrictions" class="edit-form-textarea"
+                        placeholder="List any dietary restrictions or allergies...">{{ user.dietary_restrictions or '' }}</textarea>
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="dietary_restrictions">Dietary Restrictions</label>
-                <textarea id="dietary_restrictions" name="dietary_restrictions" rows="3">{{ user.dietary_restrictions or '' }}</textarea>
-            </div>
-        </div>
 
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a href="{{ url_for('profile.view_profile') }}" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
+            <!-- Form Actions -->
+            <div class="edit-form-actions">
+                <button type="submit" class="edit-btn-primary">💾 Save Changes</button>
+                <a href="{{ url_for('profile.view_profile') }}" class="edit-btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

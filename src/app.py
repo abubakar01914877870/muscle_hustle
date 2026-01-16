@@ -1,7 +1,8 @@
 import os
-from flask import Flask
+from flask import Flask, request
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
+from flask_cors import CORS
 from .database import init_db, get_db
 from .models.user_mongo import User
 from .routes.auth import auth
@@ -30,7 +31,24 @@ def nl2br_filter(s):
     return Markup(str(escape(s)).replace('\n', '<br>\n'))
 
 # CSRF Protection
+app.config['WTF_CSRF_CHECK_DEFAULT'] = False  # Disable CSRF by default
 csrf = CSRFProtect(app)
+
+# Enable CSRF only for non-API routes
+@app.before_request
+def enable_csrf_for_web():
+    if not request.path.startswith('/api/'):
+        csrf.protect()
+
+# CORS Configuration for Mobile API
+CORS(app, resources={
+    r"/api/*": {
+        "origins": "*",  # Configure specific origins in production
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "expose_headers": ["Content-Type", "Authorization"]
+    }
+})
 
 # Initialize MongoDB
 init_db(app)
@@ -71,6 +89,19 @@ app.register_blueprint(admin_import_bp)
 
 from .routes.mobile import mobile_bp
 app.register_blueprint(mobile_bp)
+
+# Register API blueprints
+from .routes.api.api_auth import bp as api_auth_bp
+from .routes.api.api_workouts import bp as api_workouts_bp
+from .routes.api.api_exercises import bp as api_exercises_bp
+from .routes.api.api_progress import bp as api_progress_bp
+from .routes.api.api_diet import bp as api_diet_bp
+
+app.register_blueprint(api_auth_bp)
+app.register_blueprint(api_workouts_bp)
+app.register_blueprint(api_exercises_bp)
+app.register_blueprint(api_progress_bp)
+app.register_blueprint(api_diet_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)

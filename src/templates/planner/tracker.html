@@ -3,100 +3,446 @@
 {% block title %}Daily Tracker - Muscle Hustle{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='tracker.css') }}">
+<style>
+    /* Daily Tracker Page Styles - Light Theme */
+    .tracker-page {
+        background: var(--bg-secondary);
+        min-height: 100vh;
+    }
+
+    /* Override base content wrapper */
+    .content-wrapper {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-top: 0 !important;
+        max-width: none !important;
+    }
+
+    /* Tracker Content */
+    .tracker-content {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 16px;
+    }
+
+    /* Page Header */
+    .tracker-header {
+        background: var(--bg-primary);
+        padding: 20px 16px 16px 16px;
+        margin: 0 -16px 16px -16px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .tracker-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 16px 0;
+        text-align: center;
+    }
+
+    /* Date Navigation */
+    .date-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .date-nav-btn {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--text-primary);
+        font-size: 1.25rem;
+    }
+
+    .date-nav-btn:hover {
+        background: var(--accent-orange);
+        color: white;
+        border-color: var(--accent-orange);
+    }
+
+    .date-display {
+        flex: 1;
+        text-align: center;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    /* Progress Card */
+    .progress-card {
+        background: var(--bg-primary);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-md);
+        text-align: center;
+    }
+
+    .progress-circle-container {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 16px auto;
+    }
+
+    .progress-circle {
+        transform: rotate(-90deg);
+    }
+
+    .progress-circle-bg {
+        fill: none;
+        stroke: var(--bg-secondary);
+        stroke-width: 8;
+    }
+
+    .progress-circle-fill {
+        fill: none;
+        stroke: var(--accent-orange);
+        stroke-width: 8;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.5s ease;
+    }
+
+    .progress-percentage {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent-orange);
+    }
+
+    .progress-icon {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+
+    .progress-text {
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    /* Exercise Cards */
+    .exercise-card {
+        background: var(--bg-primary);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: var(--shadow-md);
+        transition: all 0.2s;
+    }
+
+    .exercise-card.completed {
+        background: var(--bg-secondary);
+    }
+
+    .exercise-main {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .exercise-checkbox {
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--border-color);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+
+    .exercise-checkbox.checked {
+        background: var(--accent-orange);
+        border-color: var(--accent-orange);
+        color: white;
+    }
+
+    .exercise-checkbox:hover {
+        border-color: var(--accent-orange);
+    }
+
+    .exercise-info {
+        flex: 1;
+    }
+
+    .exercise-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 4px 0;
+    }
+
+    .exercise-meta {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .exercise-expand {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 4px;
+        font-size: 1.25rem;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+
+    .exercise-expand:hover {
+        color: var(--accent-orange);
+    }
+
+    .exercise-expand.open {
+        transform: rotate(180deg);
+    }
+
+    /* Exercise Details */
+    .exercise-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        margin-top: 0;
+    }
+
+    .exercise-details.show {
+        max-height: 500px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .detail-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .exercise-details p {
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        line-height: 1.6;
+        margin: 0 0 12px 0;
+    }
+
+    .exercise-details a {
+        color: var(--accent-orange);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .exercise-details a:hover {
+        text-decoration: underline;
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: var(--bg-primary);
+        border-radius: 12px;
+        padding: 48px 24px;
+        text-align: center;
+        box-shadow: var(--shadow-md);
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+    }
+
+    .empty-state h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 8px 0;
+    }
+
+    .empty-state p {
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    /* Tablet & Desktop Responsive */
+    @media (min-width: 768px) {
+        .tracker-content {
+            max-width: 800px;
+            padding: 24px;
+        }
+
+        .tracker-header {
+            margin: 0 -24px 24px -24px;
+            padding: 24px;
+        }
+
+        .date-nav-btn {
+            width: 48px;
+            height: 48px;
+        }
+
+        .progress-circle-container {
+            width: 140px;
+            height: 140px;
+        }
+
+        .progress-percentage {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .tracker-content {
+            max-width: 1000px;
+            padding: 32px;
+        }
+
+        .tracker-header {
+            margin: 0 -32px 32px -32px;
+            padding: 32px;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="tracker-container">
-    <div class="tracker-header">
-        <h1 class="tracker-title">Daily Tracker</h1>
-        <input type="date" id="datePicker" class="date-selector" value="{{ date }}">
-    </div>
-
-    {% if daily_plan %}
-    <div class="task-list">
-        {% for group in daily_plan %}
-        {% for exercise in group.exercises %}
-        <div class="task-card {% if exercise.is_completed %}completed{% endif %}" id="card-{{ exercise.id }}">
-            <div class="task-main-row">
-                <!-- Checkbox -->
-                <div class="task-checkbox {% if exercise.is_completed %}checked{% endif %}"
-                    onclick="toggleTask('{{ exercise.id }}')">
-                    {% if exercise.is_completed %}✓{% endif %}
+<div class="tracker-page">
+    <div class="tracker-content">
+        <!-- Page Header with Date Navigation -->
+        <div class="tracker-header">
+            <h1 class="tracker-title">Daily Tracker</h1>
+            <div class="date-nav">
+                <button class="date-nav-btn" onclick="navigateDay(-1)" title="Previous Day">
+                    ←
+                </button>
+                <div class="date-display" id="dateDisplay">
+                    {{ date_formatted }}
                 </div>
+                <button class="date-nav-btn" onclick="navigateDay(1)" title="Next Day">
+                    →
+                </button>
+            </div>
+        </div>
 
-                <!-- Content -->
-                <div class="task-content">
-                    <h3 class="task-title">{{ exercise.name }}</h3>
-                    <!-- Reps/Sets or Duration -->
-                    <div class="task-meta">
-                        {% if exercise.reps_sets %}
-                        {{ exercise.reps_sets }}
-                        {% else %}
-                        3 sets x 10 reps <!-- Placeholder if empty -->
-                        {% endif %}
+        {% if daily_plan %}
+        <!-- Progress Card -->
+        <div class="progress-card">
+            <div class="progress-icon">🎯</div>
+            <div class="progress-circle-container">
+                <svg class="progress-circle" width="120" height="120" viewBox="0 0 120 120">
+                    <circle class="progress-circle-bg" cx="60" cy="60" r="52"></circle>
+                    <circle class="progress-circle-fill" cx="60" cy="60" r="52" id="progressCircle"
+                        stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+                </svg>
+                <div class="progress-percentage" id="progressPercentage">0%</div>
+            </div>
+            <p class="progress-text" id="progressText">0 of 0 exercises completed</p>
+        </div>
+
+        <!-- Exercise List -->
+        <div class="exercise-list">
+            {% for group in daily_plan %}
+            {% for exercise in group.exercises %}
+            <div class="exercise-card {% if exercise.is_completed %}completed{% endif %}" id="card-{{ exercise.id }}">
+                <div class="exercise-main">
+                    <div class="exercise-checkbox {% if exercise.is_completed %}checked{% endif %}"
+                        onclick="toggleTask('{{ exercise.id }}')">
+                        {% if exercise.is_completed %}✓{% endif %}
                     </div>
-                </div>
 
-                <!-- Expand/Details -->
-                <div class="task-actions">
-                    <button class="btn-details" onclick="toggleDetails('{{ exercise.id }}', this)">
+                    <div class="exercise-info">
+                        <h3 class="exercise-name">{{ exercise.name }}</h3>
+                        <p class="exercise-meta">
+                            {% if exercise.reps_sets %}
+                            {{ exercise.reps_sets }}
+                            {% else %}
+                            3 sets x 10 reps
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <button class="exercise-expand" onclick="toggleDetails('{{ exercise.id }}', this)">
                         ▼
                     </button>
                 </div>
-            </div>
 
-            <!-- Hidden Details -->
-            <div class="task-details" id="details-{{ exercise.id }}">
-                {% if exercise.instructions %}
-                <span class="detail-label">Instructions</span>
-                <p>{{ exercise.instructions }}</p>
-                {% endif %}
+                <!-- Exercise Details -->
+                <div class="exercise-details" id="details-{{ exercise.id }}">
+                    {% if exercise.instructions %}
+                    <span class="detail-label">Instructions</span>
+                    <p>{{ exercise.instructions }}</p>
+                    {% endif %}
 
-                {% if exercise.tips %}
-                <span class="detail-label">Tips</span>
-                <p>{{ exercise.tips }}</p>
-                {% endif %}
+                    {% if exercise.tips %}
+                    <span class="detail-label">Tips</span>
+                    <p>{{ exercise.tips }}</p>
+                    {% endif %}
 
-                <div style="margin-top: 1rem;">
-                    <a href="{{ url_for('exercises.detail', exercise_id=exercise.id) }}"
-                        style="color: var(--tracker-accent); text-decoration: none; font-weight: 600;">View Full
-                        Exercise →</a>
+                    <div>
+                        <a href="{{ url_for('exercises.detail', exercise_id=exercise.id) }}">
+                            View Full Exercise →
+                        </a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
+            {% endfor %}
         </div>
-        {% endfor %}
-        {% endfor %}
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-state-icon">☕</div>
+            <h3>Rest Day</h3>
+            <p>No workouts assigned for this date.</p>
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <div class="empty-state-white">
-        <span class="icon">☕</span>
-        <h3>Rest Day</h3>
-        <p>No workouts assigned for this date.</p>
-    </div>
-    {% endif %}
 </div>
 
 <script>
-    // Date Picker Logic
-    document.getElementById('datePicker').addEventListener('change', function (e) {
-        window.location.href = "{{ url_for('planner.tracker_view') }}?date=" + e.target.value;
-    });
+    // Hidden date input for navigation
+    const currentDate = "{{ date }}";
 
-    // Toggle Details
+    // Navigate to previous/next day
+    function navigateDay(offset) {
+        const date = new Date(currentDate);
+        date.setDate(date.getDate() + offset);
+        const newDate = date.toISOString().split('T')[0];
+        window.location.href = "{{ url_for('planner.tracker_view') }}?date=" + newDate;
+    }
+
+    // Toggle exercise details
     function toggleDetails(id, btn) {
         const details = document.getElementById('details-' + id);
         details.classList.toggle('show');
         btn.classList.toggle('open');
     }
 
-    // Toggle Completion (Logic ported from previous version)
+    // Toggle exercise completion
     async function toggleTask(exerciseId) {
         const card = document.getElementById('card-' + exerciseId);
-        const checkbox = card.querySelector('.task-checkbox');
+        const checkbox = card.querySelector('.exercise-checkbox');
 
         const isChecked = !checkbox.classList.contains('checked');
-        const date = document.getElementById('datePicker').value;
 
         // UI Update
         if (isChecked) {
@@ -109,6 +455,9 @@
             card.classList.remove('completed');
         }
 
+        // Update progress
+        updateProgress();
+
         // Backend Call
         try {
             const response = await fetch('/planner/api/log', {
@@ -118,7 +467,7 @@
                     'X-CSRFToken': "{{ csrf_token() }}"
                 },
                 body: JSON.stringify({
-                    date: date,
+                    date: currentDate,
                     exercise_id: exerciseId,
                     completed: isChecked
                 })
@@ -137,8 +486,32 @@
                 checkbox.innerHTML = '✓';
                 card.classList.add('completed');
             }
+            updateProgress();
             console.error('Could not update status:', e);
         }
     }
+
+    // Update progress indicator
+    function updateProgress() {
+        const cards = document.querySelectorAll('.exercise-card');
+        const total = cards.length;
+        const completed = document.querySelectorAll('.exercise-card.completed').length;
+        const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        // Update percentage text
+        document.getElementById('progressPercentage').textContent = percentage + '%';
+        document.getElementById('progressText').textContent = `${completed} of ${total} exercises completed`;
+
+        // Update circle progress
+        const circle = document.getElementById('progressCircle');
+        const circumference = 326.73; // 2 * PI * 52
+        const offset = circumference - (percentage / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+    }
+
+    // Initialize progress on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        updateProgress();
+    });
 </script>
 {% endblock %}

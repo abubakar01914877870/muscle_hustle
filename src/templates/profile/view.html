@@ -2,151 +2,580 @@
 
 {% block title %}My Profile - Muscle Hustle{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Profile Page Styles - Light Theme */
+    :root {
+        --bg-primary: #FFFFFF;
+        --bg-secondary: #F8F9FA;
+        --bg-tertiary: #F1F3F5;
+        --accent-orange: #FF6B35;
+        --accent-blue: #4A5568;
+        --accent-charcoal: #2D3748;
+        --text-primary: #2D3748;
+        --text-secondary: #6B7280;
+        --text-tertiary: #9CA3AF;
+        --border-color: #E5E7EB;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .profile-page {
+        background: var(--bg-secondary);
+        min-height: 100vh;
+    }
+
+    /* Override base content wrapper for profile page */
+    .content-wrapper {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-top: 0 !important;
+        max-width: none !important;
+    }
+
+    .profile-top-bar h1 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .back-btn,
+    .settings-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .back-btn:hover,
+    .settings-btn:hover {
+        background: var(--bg-secondary);
+    }
+
+    /* Profile Content */
+    .profile-content {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 16px;
+    }
+
+    /* Profile Header Card */
+    .profile-header-card {
+        background: var(--bg-primary);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-md);
+        text-align: center;
+    }
+
+    .profile-avatar-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 16px;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: var(--accent-orange);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 2rem;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.05);
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 4px 0;
+    }
+
+    .profile-email {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0 0 20px 0;
+    }
+
+    .upload-hint {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+        margin: 8px 0 0 0;
+    }
+
+    /* Action Buttons */
+    .profile-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-profile-primary {
+        background: var(--accent-orange);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-profile-primary:hover {
+        background: #E55A2B;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+    }
+
+    .btn-profile-secondary {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-profile-secondary:hover {
+        background: var(--bg-secondary);
+    }
+
+    .btn-remove {
+        background: transparent;
+        border: 1px solid #EF4444;
+        color: #EF4444;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.75rem;
+        transition: all 0.2s;
+        cursor: pointer;
+        margin-top: 12px;
+    }
+
+    .btn-remove:hover {
+        background: #FEE2E2;
+    }
+
+    /* Stats Row */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .stat-card {
+        background: var(--bg-primary);
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: var(--bg-primary);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .info-card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .info-card-icon {
+        width: 24px;
+        height: 24px;
+        color: var(--accent-orange);
+    }
+
+    .info-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-value {
+        font-size: 0.9375rem;
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .info-value-full {
+        font-size: 0.9375rem;
+        color: var(--text-primary);
+        line-height: 1.6;
+    }
+
+    .bmi-display {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .bmi-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-orange);
+    }
+
+    .bmi-category {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        padding: 4px 12px;
+        background: var(--bg-secondary);
+        border-radius: 12px;
+    }
+
+    /* Desktop Responsive */
+    @media (min-width: 768px) {
+        .profile-content {
+            max-width: 800px;
+            padding: 24px;
+        }
+
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .stats-row {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .profile-actions {
+            gap: 12px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .profile-content {
+            max-width: 1000px;
+            padding: 32px;
+        }
+
+        .profile-header-card {
+            padding: 32px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            font-size: 2.5rem;
+        }
+    }
+
+    /* Hidden file input */
+    #profilePictureForm {
+        display: none;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- Profile Hero Section -->
-<section class="profile-hero">
-    <div class="profile-image-large" onclick="document.getElementById('profilePictureInput').click()" style="cursor: pointer;">
-        {% if user.profile_picture %}
-            <img src="{{ user.get_profile_picture_url() }}" alt="Profile Picture">
-        {% elif user.full_name %}
-            <span>{{ user.full_name.split()[0][0] }}{{ user.full_name.split()[-1][0] if user.full_name.split()|length > 1 else '' }}</span>
-        {% else %}
-            <span>{{ user.email[0]|upper }}</span>
-        {% endif %}
-    </div>
-    <form id="profilePictureForm" method="POST" action="{{ url_for('profile.upload_picture') }}" enctype="multipart/form-data" style="display: none;">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <input type="file" id="profilePictureInput" name="profile_picture" accept="image/*" onchange="document.getElementById('profilePictureForm').submit();">
-    </form>
-    <p class="upload-hint">Click image to change profile picture</p>
-    {% if user.profile_picture %}
-    <form method="POST" action="{{ url_for('profile.remove_picture') }}" style="margin-top: var(--space-8);">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <button type="submit" class="btn btn-secondary" style="font-size: var(--font-size-sm); padding: var(--space-6) var(--space-12);" onclick="return confirm('Remove profile picture?');">Remove Picture</button>
-    </form>
-    {% endif %}
-    <h2 style="font-size: var(--font-size-3xl); margin-bottom: var(--space-8); margin-top: var(--space-16);">{{ user.full_name or user.email }}</h2>
-    <p style="color: var(--color-text-secondary); margin-bottom: var(--space-20);">{{ user.email }}</p>
-    <div class="profile-actions">
-        <a href="{{ url_for('profile.edit_profile') }}" class="btn btn-primary">✏️ Edit Profile</a>
-        <a href="{{ url_for('profile.change_password') }}" class="btn btn-secondary">🔒 Change Password</a>
-    </div>
-</section>
+<div class="profile-page">
+    <!-- Profile Content -->
+    <div class="profile-content">
+        <!-- Profile Header Card -->
+        <div class="profile-header-card">
+            <div class="profile-avatar-container">
+                <div class="profile-avatar" onclick="document.getElementById('profilePictureInput').click()">
+                    {% if user.profile_picture %}
+                    <img src="{{ user.get_profile_picture_url() }}" alt="Profile Picture">
+                    {% elif user.full_name %}
+                    <span>{{ user.full_name.split()[0][0] }}{{ user.full_name.split()[-1][0] if
+                        user.full_name.split()|length > 1 else '' }}</span>
+                    {% else %}
+                    <span>{{ user.email[0]|upper }}</span>
+                    {% endif %}
+                </div>
+            </div>
 
-<!-- Personal Information -->
-<section class="card">
-    <div class="section-header">
-        <span class="section-icon">👤</span>
-        <h2>Personal Information</h2>
-    </div>
-    <div class="profile-grid">
-        <div class="profile-item">
-            <label>Full Name</label>
-            <span>{{ user.full_name or 'Not set' }}</span>
-        </div>
-        <div class="profile-item">
-            <label>Email</label>
-            <span>{{ user.email }}</span>
-        </div>
-        <div class="profile-item">
-            <label>Date of Birth</label>
-            <span>{{ user.date_of_birth.strftime('%B %d, %Y') if user.date_of_birth else 'Not set' }}</span>
-        </div>
-        <div class="profile-item">
-            <label>Age</label>
-            <span>{{ user.calculate_age() or 'Not set' }}</span>
-        </div>
-        <div class="profile-item">
-            <label>Gender</label>
-            <span>{{ user.gender.title() if user.gender else 'Not set' }}</span>
-        </div>
-        <div class="profile-item">
-            <label>Phone</label>
-            <span>{{ user.phone or 'Not set' }}</span>
-        </div>
-    </div>
-</section>
+            <form id="profilePictureForm" method="POST" action="{{ url_for('profile.upload_picture') }}"
+                enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <input type="file" id="profilePictureInput" name="profile_picture" accept="image/*"
+                    onchange="document.getElementById('profilePictureForm').submit();">
+            </form>
 
-<!-- Physical Measurements -->
-<section class="card">
-    <div class="section-header">
-        <span class="section-icon">📊</span>
-        <h2>Physical Measurements</h2>
-    </div>
-    <div class="profile-grid">
-        <div class="profile-item">
-            <label>Height</label>
-            <span>{{ user.height ~ ' cm' if user.height else 'Not set' }}</span>
+            <p class="upload-hint">Click image to change profile picture</p>
+
+            <h2 class="profile-name">{{ user.full_name or user.email }}</h2>
+            <p class="profile-email">{{ user.email }}</p>
+
+            <div class="profile-actions">
+                <a href="{{ url_for('profile.edit_profile') }}" class="btn-profile-primary">
+                    ✏️ Edit Profile
+                </a>
+                <a href="{{ url_for('profile.change_password') }}" class="btn-profile-secondary">
+                    🔒 Change Password
+                </a>
+            </div>
+
+            {% if user.profile_picture %}
+            <form method="POST" action="{{ url_for('profile.remove_picture') }}" style="margin-top: 12px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn-remove" onclick="return confirm('Remove profile picture?');">Remove
+                    Picture</button>
+            </form>
+            {% endif %}
         </div>
-        <div class="profile-item">
-            <label>Weight</label>
-            <span>{{ user.weight ~ ' kg' if user.weight else 'Not set' }}</span>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            {% if user.calculate_bmi() %}
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value">{{ user.calculate_bmi() }}</div>
+                <div class="stat-label">BMI</div>
+            </div>
+            {% endif %}
+
+            {% if user.weight %}
+            <div class="stat-card">
+                <div class="stat-icon">⚖️</div>
+                <div class="stat-value">{{ user.weight }}</div>
+                <div class="stat-label">Weight (kg)</div>
+            </div>
+            {% endif %}
+
+            {% if user.target_weight %}
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value">{{ user.target_weight }}</div>
+                <div class="stat-label">Target (kg)</div>
+            </div>
+            {% endif %}
+
+            {% if user.workout_frequency %}
+            <div class="stat-card">
+                <div class="stat-icon">💪</div>
+                <div class="stat-value">{{ user.workout_frequency }}</div>
+                <div class="stat-label">Days/Week</div>
+            </div>
+            {% endif %}
         </div>
-        <div class="profile-item">
-            <label>Target Weight</label>
-            <span>{{ user.target_weight ~ ' kg' if user.target_weight else 'Not set' }}</span>
-        </div>
-        {% if user.calculate_bmi() %}
-        <div class="profile-item">
-            <label>BMI</label>
-            <div class="bmi-display" style="margin-top: var(--space-8);">
-                <div class="bmi-value">{{ user.calculate_bmi() }}</div>
-                <div class="bmi-category">
-                    {% set bmi = user.calculate_bmi() %}
-                    {% if bmi < 18.5 %}Underweight
-                    {% elif bmi < 25 %}Normal
-                    {% elif bmi < 30 %}Overweight
-                    {% else %}Obese{% endif %}
+
+        <!-- Personal Information -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <h3 class="info-card-title">Personal Information</h3>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Full Name</span>
+                    <span class="info-value">{{ user.full_name or 'Not set' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ user.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Date of Birth</span>
+                    <span class="info-value">{{ user.date_of_birth.strftime('%B %d, %Y') if user.date_of_birth else 'Not
+                        set' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Age</span>
+                    <span class="info-value">{{ user.calculate_age() or 'Not set' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Gender</span>
+                    <span class="info-value">{{ user.gender.title() if user.gender else 'Not set' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone</span>
+                    <span class="info-value">{{ user.phone or 'Not set' }}</span>
                 </div>
             </div>
         </div>
-        {% endif %}
-    </div>
-</section>
 
-<!-- Fitness Information -->
-<section class="card">
-    <div class="section-header">
-        <span class="section-icon">🎯</span>
-        <h2>Fitness Information</h2>
-    </div>
-    <div class="profile-grid">
-        <div class="profile-item">
-            <label>Fitness Level</label>
-            <span>{{ user.fitness_level.replace('_', ' ').title() if user.fitness_level else 'Not set' }}</span>
+        <!-- Physical Measurements -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <h3 class="info-card-title">Physical Measurements</h3>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Height</span>
+                    <span class="info-value">{{ user.height ~ ' cm' if user.height else 'Not set' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Weight</span>
+                    <span class="info-value">{{ user.weight ~ ' kg' if user.weight else 'Not set' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Target Weight</span>
+                    <span class="info-value">{{ user.target_weight ~ ' kg' if user.target_weight else 'Not set'
+                        }}</span>
+                </div>
+                {% if user.calculate_bmi() %}
+                <div class="info-item">
+                    <span class="info-label">BMI Status</span>
+                    <div class="bmi-display">
+                        <span class="bmi-value">{{ user.calculate_bmi() }}</span>
+                        <span class="bmi-category">
+                            {% set bmi = user.calculate_bmi() %}
+                            {% if bmi < 18.5 %}Underweight {% elif bmi < 25 %}Normal {% elif bmi < 30 %}Overweight {%
+                                else %}Obese{% endif %} </span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
         </div>
-        <div class="profile-item">
-            <label>Fitness Goal</label>
-            <span>{{ user.fitness_goal.replace('_', ' ').title() if user.fitness_goal else 'Not set' }}</span>
-        </div>
-        <div class="profile-item">
-            <label>Activity Level</label>
-            <span>{{ user.activity_level.replace('_', ' ').title() if user.activity_level else 'Not set' }}</span>
-        </div>
-        <div class="profile-item">
-            <label>Workout Frequency</label>
-            <span>{{ user.workout_frequency ~ ' days/week' if user.workout_frequency else 'Not set' }}</span>
-        </div>
-        <div class="profile-item">
-            <label>Preferred Workout Time</label>
-            <span>{{ user.preferred_workout_time.title() if user.preferred_workout_time else 'Not set' }}</span>
-        </div>
-    </div>
-</section>
 
-<!-- Health Information -->
-<section class="card">
-    <div class="section-header">
-        <span class="section-icon">🏥</span>
-        <h2>Health Information</h2>
+        <!-- Fitness Information -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <circle cx="12" cy="12" r="6"></circle>
+                    <circle cx="12" cy="12" r="2"></circle>
+                </svg>
+                <h3 class="info-card-title">Fitness Information</h3>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Fitness Level</span>
+                    <span class="info-value">{{ user.fitness_level.replace('_', ' ').title() if user.fitness_level else
+                        'Not set' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Fitness Goal</span>
+                    <span class="info-value">{{ user.fitness_goal.replace('_', ' ').title() if user.fitness_goal else
+                        'Not set' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Activity Level</span>
+                    <span class="info-value">{{ user.activity_level.replace('_', ' ').title() if user.activity_level
+                        else 'Not set' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Workout Frequency</span>
+                    <span class="info-value">{{ user.workout_frequency ~ ' days/week' if user.workout_frequency else
+                        'Not set' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Preferred Workout Time</span>
+                    <span class="info-value">{{ user.preferred_workout_time.title() if user.preferred_workout_time else
+                        'Not set' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Information -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <svg class="info-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+                <h3 class="info-card-title">Health Information</h3>
+            </div>
+            <div class="info-item" style="margin-bottom: 16px;">
+                <span class="info-label">Medical Conditions</span>
+                <p class="info-value-full">{{ user.medical_conditions or 'None specified' }}</p>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Dietary Restrictions</span>
+                <p class="info-value-full">{{ user.dietary_restrictions or 'None specified' }}</p>
+            </div>
+        </div>
     </div>
-    <div class="profile-item-full" style="margin-bottom: var(--space-16);">
-        <label style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-8); display: block;">Medical Conditions</label>
-        <p style="color: var(--color-text); margin: 0;">{{ user.medical_conditions or 'None specified' }}</p>
-    </div>
-    <div class="profile-item-full">
-        <label style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-8); display: block;">Dietary Restrictions</label>
-        <p style="color: var(--color-text); margin: 0;">{{ user.dietary_restrictions or 'None specified' }}</p>
-    </div>
-</section>
+</div>
 {% endblock %}

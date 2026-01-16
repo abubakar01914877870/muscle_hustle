@@ -4,6 +4,15 @@ A comprehensive Flask-based fitness tracking application with user authenticatio
 
 ## Features
 
+## Deployment option 
+
+- https://share.streamlit.io/
+- https://www.pythonanywhere.com/
+
+## current public url 
+
+- https://muscle-hustle.onrender.com/
+
 ### Authentication
 - User registration with email validation
 - Secure password hashing using Werkzeug
