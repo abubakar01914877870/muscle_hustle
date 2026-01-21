@@ -1,470 +1,338 @@
 {% extends "base.html" %}
 
-{% block title %}Blog - Muscle Hustle{% endblock %}
+{% block title %}Community Insights - Muscle Hustle{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --accent-orange: #FF6B35;
+        --accent-charcoal: #2D3748;
+        --text-secondary: #6B7280;
+        --radius-lg: 24px;
+        --radius-md: 16px;
+        --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .blog-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px;
+    }
+
+    /* Header Section */
+    .blog-header {
+        text-align: center;
+        margin-bottom: 60px;
+        position: relative;
+    }
+
+    .blog-header::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        background: var(--accent-orange);
+        margin: 20px auto 0;
+        border-radius: 2px;
+    }
+
+    .blog-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        margin-bottom: 16px;
+        letter-spacing: -0.02em;
+    }
+
+    .blog-subtitle {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* Blog Grid */
+    .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 40px;
+    }
+
+    .blog-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-card);
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border-color: rgba(255, 107, 53, 0.3);
+    }
+
+    .card-image {
+        height: 240px;
+        background: var(--bg-secondary);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .blog-card:hover .card-image img {
+        transform: scale(1.05);
+    }
+
+    .card-content {
+        padding: 32px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .post-meta {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--accent-orange);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .post-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        margin-bottom: 12px;
+        line-height: 1.3;
+    }
+
+    .post-excerpt {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 24px;
+        flex: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 24px;
+        border-top: 1px solid var(--border-color);
+        font-size: 0.9rem;
+        color: var(--text-tertiary);
+    }
+
+    .author-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: var(--accent-charcoal);
+    }
+
+    .read-more-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 700;
+        color: var(--accent-orange);
+        transition: gap 0.2s;
+    }
+
+    .blog-card:hover .read-more-btn {
+        gap: 10px;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 100px 20px;
+        background: var(--bg-secondary);
+        border-radius: var(--radius-lg);
+        border: 2px dashed var(--border-color);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 24px;
+        opacity: 0.5;
+    }
+
+    /* Pagination */
+    .pagination {
+        margin-top: 60px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .page-btn {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .page-btn.active {
+        background: var(--accent-orange);
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+
+    .page-btn:not(.active) {
+        background: white;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+    }
+
+    .page-btn:not(.active):hover {
+        border-color: var(--accent-orange);
+        color: var(--accent-orange);
+    }
+
+    @media (max-width: 768px) {
+        .blog-title {
+            font-size: 2.25rem;
+        }
+
+        .blog-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .card-image {
+            height: 200px;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1>Fitness & Lifestyle Blog</h1>
-    <p>Discover tips, insights, and inspiration for your fitness journey</p>
-</div>
+<div class="blog-container">
+    <header class="blog-header">
+        <h1 class="blog-title">Community Insights</h1>
+        <p class="blog-subtitle">Expert fitness advice, nutrition tips, and success stories from our certified trainers
+            and community.</p>
+    </header>
 
-{% if db_error %}
-    <div class="error-state">
-        <div class="error-state-icon">⚠️</div>
-        <h2>Unable to Load Blog Posts</h2>
-        <p>{{ error_message or "We're experiencing technical difficulties. Please try again later." }}</p>
-        <div class="error-actions">
-            <button onclick="window.location.reload()" class="btn btn-primary">
-                🔄 Try Again
-            </button>
-            <a href="{{ url_for('main.home') }}" class="btn btn-secondary">
-                🏠 Go Home
-            </a>
-        </div>
-    </div>
-{% elif posts %}
-    <div class="blog-posts-grid">
+    {% if posts %}
+    <div class="blog-grid">
         {% for post in posts %}
-            <article class="blog-post-card">
-                <div class="blog-post-header">
-                    <h2 class="blog-post-title">
-                        <a href="{{ url_for('blog.blog_post', post_id=post.id) }}" target="_blank">
-                            {{ post.title }}
-                        </a>
-                    </h2>
-                    <div class="blog-post-meta">
-                        <span class="blog-post-author">By {{ post.author_name }}</span>
-                        <span class="blog-post-date">
-                            {{ post.published_at.strftime('%B %d, %Y') if post.published_at else post.created_at.strftime('%B %d, %Y') }}
-                        </span>
-                        {% if post.view_count > 0 %}
-                            <span class="blog-post-views">{{ post.view_count }} views</span>
-                        {% endif %}
-                    </div>
+        <a href="{{ url_for('blog.blog_post', post_id=post.id) }}" class="blog-card">
+            <div class="card-image">
+                {% if post.images and post.images[0].download_url %}
+                <img src="{{ post.images[0].download_url }}" alt="{{ post.title }}" loading="lazy">
+                {% else %}
+                <div
+                    style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #FF6B35 0%, #FF8F6B 100%); color: white; font-size: 3rem;">
+                    📝
                 </div>
-                
-                {% if post.images %}
-                    <div class="blog-post-featured-image">
-                        <img src="{{ post.images[0].download_url }}" 
-                             alt="{{ post.images[0].alt_text or post.title }}"
-                             loading="lazy"
-                             decoding="async"
-                             class="lazy-image"
-                             data-src="{{ post.images[0].download_url }}"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                        <div class="image-error" style="display: none;">
-                            <div class="image-error-icon">🖼️</div>
-                            <p>Image temporarily unavailable</p>
-                        </div>
-                    </div>
                 {% endif %}
-                
-                <div class="blog-post-excerpt">
-                    {% if post.content_type == 'html' %}
-                        {{ post.content[:300]|striptags }}...
-                    {% else %}
-                        {{ post.content[:300] }}...
+            </div>
+            <div class="card-content">
+                <div class="post-meta">
+                    <span style="display: flex; align-items: center; gap: 4px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        {{ post.created_at.strftime('%b %d, %Y') }}
+                    </span>
+                    {% if post.tags %}
+                    <span style="color: var(--border-color);">•</span>
+                    <span>{{ post.tags[0] }}</span>
                     {% endif %}
                 </div>
-                
-                {% if post.tags %}
-                    <div class="blog-post-tags">
-                        {% for tag in post.tags[:3] %}
-                            <span class="blog-tag">{{ tag }}</span>
-                        {% endfor %}
-                        {% if post.tags|length > 3 %}
-                            <span class="blog-tag-more">+{{ post.tags|length - 3 }} more</span>
-                        {% endif %}
-                    </div>
-                {% endif %}
-                
-                <div class="blog-post-actions">
-                    <a href="{{ url_for('blog.blog_post', post_id=post.id) }}" 
-                       class="btn btn-primary" target="_blank">
-                        Read More
-                    </a>
+
+                <h2 class="post-title">{{ post.title }}</h2>
+
+                <div class="post-excerpt">
+                    {% if post.content_type == 'html' %}
+                    {{ post.content[:200]|striptags }}...
+                    {% else %}
+                    {{ post.content[:200] }}...
+                    {% endif %}
                 </div>
-            </article>
+
+                <div class="card-footer">
+                    <div class="author-info">
+                        <div
+                            style="width: 28px; height: 28px; background: var(--bg-tertiary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+                            {{ post.author_name[0]|upper }}
+                        </div>
+                        {{ post.author_name.split('@')[0] }}
+                    </div>
+                    <span class="read-more-btn">
+                        Read Article
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M5 12h14m-7-7l7 7-7 7" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+        </a>
         {% endfor %}
     </div>
-{% else %}
-    <div class="empty-state">
-        <div class="empty-state-icon">📝</div>
-        <h2>No Blog Posts Yet</h2>
-        <p>Check back soon for fitness tips, workout guides, and lifestyle content!</p>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="pagination">
+        {% if has_prev %}
+        <a href="{{ url_for('blog.blog_list', page=page-1) }}" class="page-btn">←</a>
+        {% endif %}
+
+        {% for p in range(1, total_pages + 1) %}
+        <a href="{{ url_for('blog.blog_list', page=p) }}" class="page-btn {% if p == page %}active{% endif %}">{{ p
+            }}</a>
+        {% endfor %}
+
+        {% if has_next %}
+        <a href="{{ url_for('blog.blog_list', page=page+1) }}" class="page-btn">→</a>
+        {% endif %}
     </div>
-{% endif %}
+    {% endif %}
 
-{% if posts and total_pages > 1 %}
-    <nav class="blog-pagination" aria-label="Blog pagination">
-        <div class="pagination-info">
-            <span>Page {{ page }} of {{ total_pages }} ({{ total_posts }} posts)</span>
-        </div>
-        <div class="pagination-controls">
-            {% if has_prev %}
-                <a href="{{ url_for('blog.blog_list', page=page-1) }}" class="btn btn-secondary pagination-btn">
-                    ← Previous
-                </a>
-            {% endif %}
-            
-            {% set start_page = [1, page - 2]|max %}
-            {% set end_page = [total_pages, page + 2]|min %}
-            
-            {% if start_page > 1 %}
-                <a href="{{ url_for('blog.blog_list', page=1) }}" class="btn btn-outline pagination-btn">1</a>
-                {% if start_page > 2 %}
-                    <span class="pagination-ellipsis">...</span>
-                {% endif %}
-            {% endif %}
-            
-            {% for p in range(start_page, end_page + 1) %}
-                {% if p == page %}
-                    <span class="btn btn-primary pagination-btn pagination-current">{{ p }}</span>
-                {% else %}
-                    <a href="{{ url_for('blog.blog_list', page=p) }}" class="btn btn-outline pagination-btn">{{ p }}</a>
-                {% endif %}
-            {% endfor %}
-            
-            {% if end_page < total_pages %}
-                {% if end_page < total_pages - 1 %}
-                    <span class="pagination-ellipsis">...</span>
-                {% endif %}
-                <a href="{{ url_for('blog.blog_list', page=total_pages) }}" class="btn btn-outline pagination-btn">{{ total_pages }}</a>
-            {% endif %}
-            
-            {% if has_next %}
-                <a href="{{ url_for('blog.blog_list', page=page+1) }}" class="btn btn-secondary pagination-btn">
-                    Next →
-                </a>
-            {% endif %}
-        </div>
-    </nav>
-{% endif %}
-
-<style>
-.blog-posts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.blog-post-card {
-    background: var(--color-surface);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.blog-post-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-.blog-post-header {
-    padding: 1.5rem 1.5rem 1rem;
-}
-
-.blog-post-title {
-    margin: 0 0 0.5rem;
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.3;
-}
-
-.blog-post-title a {
-    color: var(--color-text);
-    text-decoration: none;
-}
-
-.blog-post-title a:hover {
-    color: var(--color-primary);
-}
-
-.blog-post-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-}
-
-.blog-post-featured-image {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-}
-
-.blog-post-featured-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.blog-post-excerpt {
-    padding: 1rem 1.5rem;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-}
-
-.blog-post-tags {
-    padding: 0 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.blog-tag {
-    background: var(--color-surface);
-    color: var(--color-text-secondary);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
-
-.blog-tag-more {
-    background: var(--primary-color);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
-
-.blog-post-actions {
-    padding: 1rem 1.5rem 1.5rem;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--color-text-secondary);
-}
-
-.empty-state-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-}
-
-.empty-state h2 {
-    color: var(--color-text);
-    margin-bottom: 0.5rem;
-}
-
-.error-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: var(--color-surface);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin: 2rem 0;
-}
-
-.error-state-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-}
-
-.error-state h2 {
-    color: var(--color-text);
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-}
-
-.error-state p {
-    color: var(--color-text-secondary);
-    margin-bottom: 2rem;
-    line-height: 1.6;
-}
-
-.error-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.image-error {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 200px;
-    background: var(--color-surface);
-    color: var(--color-text-secondary);
-    border-radius: 8px;
-}
-
-.image-error-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    opacity: 0.5;
-}
-
-.image-error p {
-    font-size: 0.875rem;
-    margin: 0;
-}
-
-/* Pagination styles */
-.blog-pagination {
-    margin: 3rem 0 2rem;
-    text-align: center;
-}
-
-.pagination-info {
-    margin-bottom: 1rem;
-    color: var(--color-text-secondary);
-    font-size: 0.875rem;
-}
-
-.pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.pagination-btn {
-    min-width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.pagination-current {
-    cursor: default;
-}
-
-.pagination-ellipsis {
-    padding: 0 0.5rem;
-    color: var(--color-text-secondary);
-}
-
-.btn-outline {
-    background: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-text);
-}
-
-.btn-outline:hover {
-    background: var(--color-surface);
-    border-color: var(--color-primary);
-    color: var(--primary-color);
-}
-
-/* Lazy loading optimization */
-.lazy-image {
-    transition: opacity 0.3s ease;
-}
-
-.lazy-image[data-loaded="false"] {
-    opacity: 0.5;
-}
-
-.lazy-image[data-loaded="true"] {
-    opacity: 1;
-}
-
-/* Performance optimizations */
-.blog-post-featured-image img {
-    will-change: transform;
-    transform: translateZ(0); /* Force hardware acceleration */
-}
-
-.blog-post-card {
-    contain: layout style paint; /* CSS containment for better performance */
-}
-
-/* Reduce animations on low-end devices */
-@media (prefers-reduced-motion: reduce) {
-    .blog-post-card {
-        transition: none;
-    }
-    
-    .lazy-image {
-        transition: none;
-    }
-}
-
-/* Optimize for touch devices */
-@media (hover: none) and (pointer: coarse) {
-    .blog-post-card:hover {
-        transform: none;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .pagination-btn {
-        min-height: 48px; /* Better touch targets */
-    }
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .blog-posts-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    
-    .blog-post-meta {
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-    
-    .pagination-controls {
-        gap: 0.25rem;
-    }
-    
-    .pagination-btn {
-        min-width: 40px;
-        height: 40px;
-        font-size: 0.875rem;
-    }
-}
-</style>
-
-<script>
-// Enhanced lazy loading with Intersection Observer
-document.addEventListener('DOMContentLoaded', function() {
-    // Lazy loading for images
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.setAttribute('data-loaded', 'true');
-                    observer.unobserve(img);
-                }
-            });
-        }, {
-            rootMargin: '50px 0px', // Start loading 50px before image comes into view
-            threshold: 0.1
-        });
-
-        document.querySelectorAll('.lazy-image').forEach(img => {
-            img.setAttribute('data-loaded', 'false');
-            imageObserver.observe(img);
-        });
-    }
-
-    // Preload next page on hover for better UX
-    const nextPageLink = document.querySelector('a[href*="page=' + ({{ page }} + 1) + '"]');
-    if (nextPageLink) {
-        nextPageLink.addEventListener('mouseenter', function() {
-            const link = document.createElement('link');
-            link.rel = 'prefetch';
-            link.href = this.href;
-            document.head.appendChild(link);
-        }, { once: true });
-    }
-});
-</script>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📰</div>
+        <h3 style="font-size: 1.5rem; color: var(--accent-charcoal); margin-bottom: 12px;">No Articles Yet</h3>
+        <p style="color: var(--text-secondary); max-width: 400px; margin: 0 auto;">
+            Our trainers are crafting amazing content for you. Check back soon for the latest insights!
+        </p>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

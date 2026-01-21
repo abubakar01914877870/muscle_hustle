@@ -10,10 +10,13 @@ def list_gyms():
     gyms = Gym.find_all(db)
     return render_template('gyms/list.html', gyms=gyms)
 
-@gym_bp.route('/<gym_id>')
-def detail(gym_id):
+@gym_bp.route('/<slug>')
+def detail(slug):
     db = get_db()
-    gym = Gym.find_by_id(db, gym_id)
+    gym = Gym.find_by_slug(db, slug)
     if not gym:
-        return render_template('404.html'), 404
+        # Fallback to ID for backward compatibility during transition
+        gym = Gym.find_by_id(db, slug)
+        if not gym:
+            return render_template('404.html'), 404
     return render_template('gyms/detail.html', gym=gym)

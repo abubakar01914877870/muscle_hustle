@@ -1,92 +1,340 @@
 {% extends "base.html" %}
 
-{% block title %}{{ gym.name }}{% endblock %}
+{% block title %}{{ gym.name }} - Muscle Hustle{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --accent-orange: #FF6B35;
+        --accent-charcoal: #2D3748;
+        --text-secondary: #6B7280;
+        --radius-lg: 24px;
+        --radius-md: 16px;
+        --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.05);
+        --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hero Section */
+    .gym-hero {
+        position: relative;
+        height: 500px;
+        margin-top: -24px;
+        /* Offset content wrapper padding */
+        margin-left: -24px;
+        margin-right: -24px;
+        overflow: hidden;
+        border-bottom-left-radius: 40px;
+        border-bottom-right-radius: 40px;
+        background: var(--accent-charcoal);
+    }
+
+    .gym-hero-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.7;
+    }
+
+    .gym-hero-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 80px 48px;
+        background: linear-gradient(to top, rgba(45, 55, 72, 0.9), transparent);
+        color: white;
+    }
+
+    .gym-hero-name {
+        font-size: 4rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-bottom: 12px;
+        line-height: 1.1;
+    }
+
+    .gym-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--accent-orange);
+        padding: 8px 20px;
+        border-radius: 99px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+
+    /* Layout */
+    .detail-layout {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 48px;
+        margin-top: 48px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Main Content */
+    .section-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-title::before {
+        content: '';
+        width: 4px;
+        height: 24px;
+        background: var(--accent-orange);
+        border-radius: 2px;
+    }
+
+    .description {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: var(--text-secondary);
+        margin-bottom: 48px;
+        padding-right: 20px;
+    }
+
+    /* Gallery */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 60px;
+    }
+
+    .gallery-item {
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        height: 280px;
+        box-shadow: var(--shadow- प्रीमियम);
+    }
+
+    .gallery-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .gallery-img:hover {
+        transform: scale(1.08);
+    }
+
+    /* Sidebar / Contact Card */
+    .contact-card {
+        background: white;
+        padding: 40px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-premium);
+        position: sticky;
+        top: 24px;
+    }
+
+    .contact-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+        color: var(--accent-charcoal);
+    }
+
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .info-item {
+        display: flex;
+        gap: 16px;
+    }
+
+    .info-icon {
+        width: 44px;
+        height: 44px;
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-orange);
+        flex-shrink: 0;
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .info-value {
+        font-size: 1rem;
+        color: var(--text-primary);
+        font-weight: 500;
+        line-height: 1.4;
+    }
+
+    .action-btns {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 16px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        transition: var(--transition);
+        font-size: 0.95rem;
+    }
+
+    .btn-primary {
+        background: var(--accent-orange);
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3);
+    }
+
+    .btn-secondary {
+        background: var(--bg-tertiary);
+        color: var(--accent-charcoal);
+        border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+        background: var(--border-color);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .detail-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .contact-card {
+            position: static;
+        }
+
+        .gym-hero {
+            height: 400px;
+            border-radius: 0;
+        }
+
+        .gym-hero-name {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .gallery-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .gym-hero-overlay {
+            padding: 40px 24px;
+        }
+
+        .gym-hero-name {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="content-wrapper">
-    <!-- Breadcrumb -->
-    <div class="gym-detail-breadcrumb">
-        <a href="{{ url_for('main.home') }}">Home</a>
-        <span>›</span>
-        <a href="{{ url_for('gym.list_gyms') }}">Gyms</a>
-        <span>›</span>
-        <span>{{ gym.name }}</span>
-    </div>
-
+<div class="gym-detail-wrapper">
     <!-- Hero Section -->
-    <div class="gym-detail-hero">
-        {% if gym.images and gym.images|length > 0 %}
-        <img src="{{ gym.images[0] }}" alt="{{ gym.name }}" class="gym-detail-hero-image">
-        {% else %}
-        <div class="gym-detail-hero-image"
-            style="background: linear-gradient(135deg, var(--color-navy-800), var(--color-navy-700));"></div>
+    <div class="gym-hero">
+        {% if gym.images %}
+        <img src="{{ gym.images[0] }}" alt="{{ gym.name }}" class="gym-hero-img">
         {% endif %}
-        <div class="gym-detail-hero-overlay">
-            <h1 class="gym-detail-hero-title">{{ gym.name }}</h1>
+        <div class="gym-hero-overlay">
+            <div class="gym-hero-badge">Verified Partner</div>
+            <h1 class="gym-hero-name">{{ gym.name }}</h1>
         </div>
     </div>
 
-    <!-- Two Column Layout -->
-    <div class="gym-detail-layout">
-        <!-- Main Content -->
-        <div class="gym-detail-main">
-            <!-- About Section -->
-            <div class="gym-detail-section">
-                <h2>About</h2>
-                <div class="gym-detail-description">
+    <!-- Main Content -->
+    <div class="detail-layout">
+        <div class="detail-main">
+            <section class="desc-section">
+                <h2 class="section-title">The Facility</h2>
+                <div class="description">
                     {{ gym.description | nl2br }}
                 </div>
-            </div>
+            </section>
 
-            <!-- Image Gallery -->
-            {% if gym.images and gym.images|length > 1 %}
-            <div class="gym-detail-section">
-                <h2>Gallery</h2>
-                <div class="gym-gallery">
+            {% if gym.images|length > 1 %}
+            <section class="gallery-section">
+                <h2 class="section-title">Gym Gallery</h2>
+                <div class="gallery-grid">
                     {% for image in gym.images[1:] %}
-                    <div class="gym-gallery-item">
-                        <img src="{{ image }}" alt="{{ gym.name }} Image {{ loop.index + 1 }}"
-                            class="gym-gallery-image">
+                    <div class="gallery-item">
+                        <img src="{{ image }}" alt="Gallery image" class="gallery-img">
                     </div>
                     {% endfor %}
                 </div>
-            </div>
+            </section>
             {% endif %}
         </div>
 
         <!-- Sidebar -->
-        <div class="gym-detail-sidebar">
-            <div class="gym-detail-contact-card">
-                <h3>Location & Contact</h3>
+        <div class="detail-sidebar">
+            <div class="contact-card">
+                <h3 class="contact-title">Contact Details</h3>
 
-                <div class="gym-detail-contact-info">
-                    <div class="gym-detail-contact-item">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
-                            </path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        <span>{{ gym.address }}</span>
+                <div class="contact-info">
+                    <div class="info-item">
+                        <div class="info-icon">📍</div>
+                        <div>
+                            <div class="info-label">Location</div>
+                            <div class="info-value">{{ gym.address }}</div>
+                        </div>
                     </div>
 
-                    <div class="gym-detail-contact-item">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
-                            </path>
-                        </svg>
-                        <span>{{ gym.phone }}</span>
+                    <div class="info-item">
+                        <div class="info-icon">📞</div>
+                        <div>
+                            <div class="info-label">Phone Number</div>
+                            <div class="info-value">{{ gym.phone }}</div>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">⏰</div>
+                        <div>
+                            <div class="info-label">Status</div>
+                            <div class="info-value">Open Now · 24/7</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="gym-detail-actions">
-                    <a href="{{ gym.google_map_link }}" target="_blank" class="gym-action-btn gym-btn-primary">
-                        Get Directions
+                <div class="action-btns">
+                    <a href="{{ gym.google_map_link }}" target="_blank" class="btn btn-primary">
+                        Get Open in Maps
                     </a>
-                    <a href="tel:{{ gym.phone }}" class="gym-action-btn gym-btn-secondary">
-                        Call Now
+                    <a href="tel:{{ gym.phone }}" class="btn btn-secondary">
+                        Call {{ gym.phone }}
                     </a>
                 </div>
             </div>

@@ -50,6 +50,23 @@ class Exercise:
             return f"data:{self.image_type};base64,{self.image_data}"
         return None
     
+    @property
+    def youtube_id(self):
+        """Extract YouTube ID from video_url"""
+        if not self.video_url:
+            return None
+        
+        # Regex for YouTube ID extraction (supports watch, embed, short links)
+        regex = r'(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})'
+        try:
+            match = re.search(regex, self.video_url)
+            if match:
+                return match.group(1)
+        except Exception:
+            pass
+            
+        return None
+    
     def to_dict(self):
         """Convert exercise to dictionary"""
         return {

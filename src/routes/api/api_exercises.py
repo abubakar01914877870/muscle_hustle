@@ -16,14 +16,14 @@ def exercise_to_dict(exercise):
     return {
         'id': exercise.id,
         'name': exercise.name,
-        'description': exercise.description,
-        'category': exercise.category,
-        'muscle_group': exercise.muscle_group,
+        'description': exercise.description or exercise.instructions, # Fallback
+        'category': exercise.type, # Map type to category
+        'muscle_group': exercise.muscle, # Map muscle to muscle_group
         'equipment': exercise.equipment,
         'instructions': exercise.instructions,
-        'image_url': exercise.image_url,
+        'image_url': exercise.get_image_url(), # Use method
         'video_url': exercise.video_url,
-        'is_custom': exercise.is_custom,
+        'is_custom': exercise.created_by != 'wger_import', # Infer from created_by
         'created_at': exercise.created_at.isoformat() if exercise.created_at else None
     }
 
@@ -46,10 +46,10 @@ def list_exercises(current_user):
         query = {}
         
         if category:
-            query['category'] = category
+            query['type'] = category
         
-        if muscle_group:
-            query['muscle_group'] = muscle_group
+        if muscle_group and muscle_group != 'All':
+            query['muscle'] = muscle_group
         
         if search:
             query['name'] = {'$regex': search, '$options': 'i'}

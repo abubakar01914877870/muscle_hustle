@@ -234,6 +234,22 @@
             border: 1px solid #FCD34D;
         }
 
+        /* Bottom Navigation (Mobile Only) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0;
+            z-index: 100;
+        }
+
         /* Desktop */
         @media (min-width: 1024px) {
             .sidebar {
@@ -252,24 +268,13 @@
             }
 
             .bottom-nav {
-                display: none;
+                display: flex;
+                left: 250px;
             }
-        }
 
-        /* Bottom Navigation (Mobile Only) */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 64px;
-            background: var(--bg-primary);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 8px 0;
-            z-index: 100;
+            .content-wrapper {
+                padding-bottom: 88px;
+            }
         }
 
         .bottom-nav-item {
@@ -320,72 +325,80 @@
             </div>
 
             <nav class="sidebar-nav">
+
+                {% if current_user.is_authenticated %}
                 <div class="nav-section">
                     <a href="{{ url_for('main.home') }}"
                         class="nav-link {% if request.endpoint == 'main.home' %}active{% endif %}">
-                        Home
+                        Dashboard
                     </a>
-                    <a href="{{ url_for('blog.blog_list') }}"
-                        class="nav-link {% if request.endpoint == 'blog.blog_list' %}active{% endif %}">
-                        Blog
+                </div>
+
+                <div class="nav-divider"></div>
+                <div class="nav-section-title">My Training</div>
+                <div class="nav-section">
+                    <a href="{{ url_for('planner.calendar_view') }}"
+                        class="nav-link {% if request.endpoint in ['planner.calendar_view', 'mobile.week_view'] %}active{% endif %}">
+                        Schedule
                     </a>
+                    <a href="{{ url_for('planner.groups_list') }}"
+                        class="nav-link {% if request.endpoint in ['planner.groups_list', 'planner.create_group', 'planner.edit_group'] %}active{% endif %}">
+                        My Workouts
+                    </a>
+                    <a href="{{ url_for('progress.index') }}"
+                        class="nav-link {% if request.endpoint == 'progress.index' %}active{% endif %}">
+                        Progress
+                    </a>
+                    <a href="{{ url_for('planner.tracker_view') }}"
+                        class="nav-link {% if request.endpoint == 'planner.tracker_view' %}active{% endif %}">
+                        Log Workout
+                    </a>
+                </div>
+                {% else %}
+                <div class="nav-section">
+                    <a href="{{ url_for('main.home') }}"
+                        class="nav-link {% if request.endpoint == 'main.home' %}active{% endif %}">Home</a>
+                    <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
+                    <a href="{{ url_for('auth.signup') }}" class="nav-link">Sign Up</a>
+                </div>
+                {% endif %}
+
+                <div class="nav-divider"></div>
+                <div class="nav-section-title">Discover</div>
+                <div class="nav-section">
                     <a href="{{ url_for('exercises.index') }}"
                         class="nav-link {% if request.endpoint == 'exercises.index' %}active{% endif %}">
-                        All Exercises
-                    </a>
-                    <a href="{{ url_for('gym.list_gyms') }}"
-                        class="nav-link {% if request.endpoint == 'gym.list_gyms' %}active{% endif %}">
-                        Gyms
+                        Exercises
                     </a>
                     <a href="{{ url_for('trainer.list_trainers') }}"
                         class="nav-link {% if request.endpoint in ['trainer.list_trainers', 'trainer.view_profile'] %}active{% endif %}">
                         Trainers
                     </a>
+                    <a href="{{ url_for('gym.list_gyms') }}"
+                        class="nav-link {% if request.endpoint == 'gym.list_gyms' %}active{% endif %}">
+                        Gyms
+                    </a>
+                    <a href="{{ url_for('blog.blog_list') }}"
+                        class="nav-link {% if request.endpoint == 'blog.blog_list' %}active{% endif %}">
+                        Community
+                    </a>
                 </div>
 
                 {% if current_user.is_authenticated %}
                 <div class="nav-divider"></div>
+                <div class="nav-section-title">Account</div>
                 <div class="nav-section">
-                    <a href="{{ url_for('mobile.week_view') }}"
-                        class="nav-link {% if request.endpoint == 'mobile.week_view' %}active{% endif %}">
-                        Weekly Plan
-                    </a>
-                    <a href="{{ url_for('progress.index') }}"
-                        class="nav-link {% if request.endpoint == 'progress.index' %}active{% endif %}">
-                        Progress Tracker
-                    </a>
                     <a href="{{ url_for('profile.view_profile') }}"
                         class="nav-link {% if request.endpoint == 'profile.view_profile' %}active{% endif %}">
                         Profile
                     </a>
+                    {% if current_user.is_trainer or current_user.is_admin %}
+                    <a href="{{ url_for('admin_trainer.list_trainers') }}"
+                        class="nav-link {% if request.endpoint.startswith('admin_trainer.') %}active{% endif %}">
+                        Manage Trainer Profile
+                    </a>
+                    {% endif %}
                 </div>
-
-                <div class="nav-divider"></div>
-                <div class="nav-section-title">Planner</div>
-                <div class="nav-section">
-                    <a href="{{ url_for('planner.calendar_view') }}"
-                        class="nav-link {% if request.endpoint == 'planner.calendar_view' %}active{% endif %}">
-                        📅 Calendar
-                    </a>
-                    <a href="{{ url_for('planner.groups_list') }}"
-                        class="nav-link {% if request.endpoint in ['planner.groups_list', 'planner.create_group', 'planner.edit_group'] %}active{% endif %}">
-                        💪 Exercise Groups
-                    </a>
-                    <a href="{{ url_for('planner.tracker_view') }}"
-                        class="nav-link {% if request.endpoint == 'planner.tracker_view' %}active{% endif %}">
-                        ✅ Daily Tracker
-                    </a>
-                </div>
-
-                {% if current_user.is_trainer %}
-                <div class="nav-divider"></div>
-                <div class="nav-section">
-                    <a href="{{ url_for('trainer.edit_profile') }}"
-                        class="nav-link {% if request.endpoint == 'trainer.edit_profile' %}active{% endif %}">
-                        Edit Trainer Profile
-                    </a>
-                </div>
-                {% endif %}
 
                 {% if current_user.is_admin %}
                 <div class="nav-divider"></div>
@@ -393,19 +406,23 @@
                 <div class="nav-section">
                     <a href="{{ url_for('admin.user_list') }}"
                         class="nav-link {% if request.endpoint == 'admin.user_list' %}active{% endif %}">
-                        User Management
+                        Users
                     </a>
                     <a href="{{ url_for('admin_blog.blog_dashboard') }}"
                         class="nav-link {% if request.endpoint == 'admin_blog.blog_dashboard' %}active{% endif %}">
-                        Blog Management
+                        Blog
                     </a>
                     <a href="{{ url_for('admin_gym.list_gyms') }}"
                         class="nav-link {% if request.endpoint == 'admin_gym.list_gyms' %}active{% endif %}">
-                        Gym Management
+                        Gyms
                     </a>
                     <a href="{{ url_for('admin_import.browse') }}"
                         class="nav-link {% if request.endpoint == 'admin_import.browse' %}active{% endif %}">
                         Import Exercises
+                    </a>
+                    <a href="{{ url_for('admin_trainer.list_trainers') }}"
+                        class="nav-link {% if request.endpoint == 'admin_trainer.list_trainers' %}active{% endif %}">
+                        Trainers
                     </a>
                 </div>
                 {% endif %}
@@ -413,12 +430,6 @@
                 <div class="nav-divider"></div>
                 <div class="nav-section">
                     <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
-                </div>
-                {% else %}
-                <div class="nav-divider"></div>
-                <div class="nav-section">
-                    <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
-                    <a href="{{ url_for('auth.signup') }}" class="nav-link">Sign Up</a>
                 </div>
                 {% endif %}
             </nav>

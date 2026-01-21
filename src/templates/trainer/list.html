@@ -2,27 +2,242 @@
 
 {% block title %}Our Trainers - Muscle Hustle{% endblock %}
 
-{% block content %}
-<div class="content-wrapper">
+{% block extra_css %}
+<style>
+    :root {
+        --accent-orange: #FF6B35;
+        --accent-charcoal: #2D3748;
+        --text-secondary: #6B7280;
+        --radius-lg: 24px;
+        --radius-md: 16px;
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
+    .trainers-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-top: 20px;
+    }
+
+    /* Page Header */
+    .page-header {
+        margin-bottom: 48px;
+        text-align: left;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .page-header h1 {
+        font-size: 2.75rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        letter-spacing: -0.02em;
+        margin-bottom: 12px;
+    }
+
+    .page-header p {
+        font-size: 1.15rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+    }
+
+    /* Trainers Grid */
+    .trainer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 32px;
+        margin-bottom: 60px;
+    }
+
+    /* Trainer Card */
+    .trainer-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        padding: 40px 24px;
+        text-align: center;
+        transition: var(--transition);
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+
+    .trainer-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+        border-color: var(--accent-orange);
+    }
+
+    .trainer-card-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin-bottom: 24px;
+        padding: 4px;
+        background: linear-gradient(135deg, var(--accent-orange) 0%, #FFA07A 100%);
+        box-shadow: 0 8px 16px rgba(255, 107, 53, 0.2);
+    }
+
+    .trainer-card-image img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+    }
+
+    .trainer-card-initials {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: var(--bg-tertiary);
+        color: var(--accent-charcoal);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 800;
+        border: 4px solid white;
+    }
+
+    .trainer-card-name {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        margin-bottom: 8px;
+    }
+
+    .trainer-card-tagline {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+
+    .trainer-card-specializations {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+
+    .spec-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 4px 12px;
+        background: var(--bg-secondary);
+        color: var(--accent-charcoal);
+        border-radius: 99px;
+        border: 1px solid var(--border-color);
+        transition: var(--transition);
+    }
+
+    .trainer-card:hover .spec-badge {
+        background: rgba(255, 107, 53, 0.1);
+        border-color: var(--accent-orange);
+        color: var(--accent-orange);
+    }
+
+    .trainer-card-stats {
+        margin-top: auto;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .stat-box {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--accent-orange);
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .view-profile-btn {
+        margin-top: 24px;
+        font-weight: 700;
+        color: var(--accent-orange);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .trainer-card:hover .view-profile-btn {
+        gap: 12px;
+    }
+
+    /* Empty State */
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 80px 40px;
+        background: white;
+        border-radius: 24px;
+        border: 2px dashed var(--border-color);
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 2rem;
+        }
+
+        .trainer-grid {
+            gap: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="trainers-container">
     <!-- Page Header -->
-    <div class="page-header">
-        <h1 class="page-title">Our Trainers</h1>
-        <p class="page-subtitle">Meet our certified fitness professionals</p>
-    </div>
+    <header class="page-header">
+        <h1>Our Trainers</h1>
+        <p>Empowering your fitness journey with expert guidance. Find the perfect coach to reach your goals.</p>
+    </header>
 
     <!-- Trainers Grid -->
     {% if trainers %}
     <div class="trainer-grid">
         {% for trainer in trainers %}
-        <a href="{{ url_for('trainer.view_profile', trainer_id=trainer.id) }}" class="trainer-card" target="_blank">
-
+        <a href="{{ url_for('trainer.view_profile', slug=trainer.slug) }}" class="trainer-card">
             <div class="trainer-card-image">
                 {% if trainer.profile_picture %}
                 <img src="{{ trainer.get_profile_picture_url() }}" alt="{{ trainer.full_name or trainer.email }}">
                 {% elif trainer.full_name %}
                 <div class="trainer-card-initials">
-                    {{ trainer.full_name.split()[0][0] }}{{ trainer.full_name.split()[-1][0] if
+                    {{ trainer.full_name.split()[0][0] or '' }}{{ trainer.full_name.split()[-1][0] if
                     trainer.full_name.split()|length > 1 else '' }}
                 </div>
                 {% else %}
@@ -31,10 +246,12 @@
             </div>
 
             <div class="trainer-card-content">
-                <h3 class="trainer-card-name">{{ trainer.full_name or trainer.email }}</h3>
+                <h3 class="trainer-card-name">{{ trainer.full_name or trainer.email.split('@')[0] }}</h3>
 
                 {% if trainer.trainer_profile.get('tagline') %}
-                <p class="trainer-card-tagline">{{ trainer.trainer_profile.get('tagline') }}</p>
+                <p class="trainer-card-tagline">"{{ trainer.trainer_profile.get('tagline') }}"</p>
+                {% else %}
+                <p class="trainer-card-tagline">Certified Fitness Professional</p>
                 {% endif %}
 
                 {% if trainer.get_trainer_specializations() %}
@@ -48,17 +265,19 @@
                 </div>
                 {% endif %}
 
-                {% if trainer.trainer_profile.get('years_of_experience') %}
                 <div class="trainer-card-stats">
                     <div class="stat-box">
-                        <div class="stat-value">{{ trainer.trainer_profile.get('years_of_experience') }}+</div>
-                        <div class="stat-label">Years</div>
+                        <div class="stat-value">{{ trainer.trainer_profile.get('years_of_experience', 1) }}+</div>
+                        <div class="stat-label">Years of Experience</div>
                     </div>
                 </div>
-                {% endif %}
 
-                <div class="trainer-card-action">
-                    <span class="view-profile-btn">View Profile →</span>
+                <div class="view-profile-btn">
+                    View Full Profile
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
                 </div>
             </div>
         </a>
@@ -66,7 +285,10 @@
     </div>
     {% else %}
     <div class="empty-state">
-        <p>No trainers available at the moment. Check back soon!</p>
+        <span style="font-size: 4rem; margin-bottom: 24px; display: block;">👟</span>
+        <h3 style="font-size: 1.75rem; color: var(--accent-charcoal); margin-bottom: 12px;">No trainers available</h3>
+        <p style="color: var(--text-secondary); max-width: 400px; margin: 0 auto;">We're currently expanding our
+            professional team. Check back soon!</p>
     </div>
     {% endif %}
 </div>

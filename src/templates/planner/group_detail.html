@@ -1,0 +1,588 @@
+{% extends "base.html" %}
+
+{% block title %}{{ group.name }} - My Workouts{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --accent-orange: #FF6B35;
+        --accent-charcoal: #2D3748;
+        --text-secondary: #6B7280;
+        --radius-lg: 24px;
+        --radius-md: 16px;
+        --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .workout-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 24px;
+    }
+
+    /* Header */
+    .page-header {
+        margin-bottom: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .header-content h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        margin: 0 0 8px;
+        letter-spacing: -0.02em;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-decoration: none;
+        margin-bottom: 16px;
+        transition: var(--transition);
+    }
+
+    .back-link:hover {
+        color: var(--accent-charcoal);
+        transform: translateX(-4px);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    /* Layout Grid */
+    .workout-grid {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 40px;
+        align-items: start;
+    }
+
+    /* Exercise List */
+    .exercises-list {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    .exercise-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-card);
+        transition: var(--transition);
+    }
+
+    .exercise-card:hover {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border-color: rgba(255, 107, 53, 0.2);
+    }
+
+    /* Video Section */
+    .video-wrapper {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%;
+        /* 16:9 Aspect Ratio */
+        background: black;
+    }
+
+    .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    .no-video-placeholder {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg-secondary);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+    }
+
+    .content-padding {
+        padding: 32px;
+    }
+
+    /* Exercise Header */
+    .exercise-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .exercise-title-group {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .exercise-number {
+        width: 32px;
+        height: 32px;
+        background: var(--accent-charcoal);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .exercise-name {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        background: rgba(255, 107, 53, 0.1);
+        color: var(--accent-orange);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+        padding: 20px;
+        background: var(--bg-secondary);
+        border-radius: 16px;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    .stat-value {
+        font-size: 1rem;
+        color: var(--accent-charcoal);
+        font-weight: 700;
+    }
+
+    /* Instructions */
+    .instructions-toggle {
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: none;
+        padding: 0;
+        color: var(--accent-orange);
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.95rem;
+    }
+
+    .instructions-content {
+        display: none;
+        margin-top: 16px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        font-size: 1rem;
+        padding-top: 16px;
+        border-top: 1px dashed var(--border-color);
+    }
+
+    .instructions-content.show {
+        display: block;
+    }
+
+    /* Sidebar */
+    .summary-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        box-shadow: var(--shadow-card);
+        border: 1px solid var(--border-color);
+        position: sticky;
+        top: 24px;
+    }
+
+    .summary-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        margin-bottom: 24px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .summary-row span:last-child {
+        color: var(--accent-charcoal);
+        font-weight: 700;
+    }
+
+    .btn-start {
+        width: 100%;
+        padding: 16px;
+        background: var(--accent-orange);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+        text-decoration: none;
+        margin-top: 24px;
+    }
+
+    .btn-start:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 40px rgba(255, 107, 53, 0.3);
+    }
+
+    .action-btn {
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .btn-edit {
+        background: white;
+        border: 1px solid var(--border-color);
+        color: var(--accent-charcoal);
+    }
+
+    .btn-edit:hover {
+        border-color: var(--accent-charcoal);
+    }
+
+    .btn-delete {
+        background: #FEF2F2;
+        border: 1px solid #FECACA;
+        color: #DC2626;
+        cursor: pointer;
+    }
+
+    .btn-delete:hover {
+        background: #FEE2E2;
+        border-color: #F87171;
+    }
+
+    @media (max-width: 900px) {
+        .workout-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-card {
+            order: -1;
+            position: static;
+            margin-bottom: 32px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.75);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.hidden {
+        display: none;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        max-width: 400px;
+        width: 90%;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .modal-title {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+        color: var(--accent-charcoal);
+        font-weight: 800;
+    }
+
+    .modal-body {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        line-height: 1.5;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--text-secondary);
+        border: 1px solid var(--border-color);
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+        background: var(--bg-secondary);
+        color: var(--accent-charcoal);
+    }
+
+    .btn-danger {
+        background: #DC2626;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-danger:hover {
+        background: #b91c1c;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="workout-container">
+    <a href="{{ url_for('planner.groups_list') }}" class="back-link">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+            </path>
+        </svg>
+        Back to Workouts
+    </a>
+
+    <header class="page-header">
+        <div class="header-content">
+            <h1>{{ group.name }}</h1>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('planner.edit_group', group_id=group.id) }}" class="action-btn btn-edit">
+                Edit Workout
+            </a>
+            <button onclick="confirmDelete('{{ group.id }}')" class="action-btn btn-delete">
+                Delete
+            </button>
+        </div>
+    </header>
+
+    <div class="workout-grid">
+        <!-- Exercise List -->
+        <div class="exercises-list">
+            {% for exercise in exercises %}
+            <article class="exercise-card">
+                <!-- Video Section -->
+                <div class="video-wrapper">
+                    {% if exercise.youtube_id %}
+                    <iframe src="https://www.youtube.com/embed/{{ exercise.youtube_id }}"
+                        title="{{ exercise.name }} Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                    {% elif exercise.video_url %}
+                    <div class="no-video-placeholder">
+                        <span style="font-size: 2rem;">🔗</span>
+                        <p><a href="{{ exercise.video_url }}" target="_blank" style="color: var(--accent-orange);">Watch
+                                Video on External Site</a></p>
+                    </div>
+                    {% else %}
+                    <div class="no-video-placeholder">
+                        <span style="font-size: 3rem;">🏋️</span>
+                        <p>No video available</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="content-padding">
+                    <div class="exercise-header">
+                        <div class="exercise-title-group">
+                            <div class="exercise-number">{{ loop.index }}</div>
+                            <h2 class="exercise-name">{{ exercise.name }}</h2>
+                        </div>
+                        <span class="badge">{{ exercise.muscle_group }}</span>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Equipment</span>
+                            <span class="stat-value">{{ exercise.equipment or 'None' }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Sets & Reps</span>
+                            <span class="stat-value">{{ exercise.reps_sets or '3 x 10' }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Difficulty</span>
+                            <span class="stat-value">{{ exercise.difficulty or 'Intermediate' }}</span>
+                        </div>
+                    </div>
+
+                    {% if exercise.instructions or exercise.description %}
+                    <button class="instructions-toggle" onclick="this.nextElementSibling.classList.toggle('show')">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        View Instructions
+                    </button>
+                    <div class="instructions-content">
+                        {{ exercise.instructions or exercise.description }}
+                    </div>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar-col">
+            <div class="summary-card">
+                <h3 class="summary-title">Workout Summary</h3>
+
+                <div class="summary-row">
+                    <span>Total Exercises</span>
+                    <span>{{ exercises|length }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Est. Duration</span>
+                    <span>{{ exercises|length * 5 + 10 }} mins</span>
+                </div>
+                <div class="summary-row">
+                    <span>Focus</span>
+                    <span>
+                        {% set muscles = [] %}
+                        {% for ex in exercises %}
+                        {% if ex.muscle_group not in muscles %}{% set _ = muscles.append(ex.muscle_group) %}{% endif %}
+                        {% endfor %}
+                        {{ muscles|join(', ') if muscles|length < 3 else 'Full Body' }} </span>
+                </div>
+
+                <a href="#" class="btn-start">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Start Workout
+                </a>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- Hidden Delete Form -->
+<form id="delete-form-{{ group.id }}" action="{{ url_for('planner.delete_group', group_id=group.id) }}" method="POST"
+    style="display:none;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+</form>
+
+<div id="deleteModal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h3 class="modal-title">Delete Workout?</h3>
+        <p class="modal-body">Are you sure you want to delete <strong>{{ group.name }}</strong>? This action cannot be
+            undone.</p>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="executeDelete()">Delete Workout</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let groupToDeleteId = null;
+
+    function confirmDelete(groupId) {
+        groupToDeleteId = groupId;
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        groupToDeleteId = null;
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+
+    function executeDelete() {
+        if (groupToDeleteId) {
+            const form = document.getElementById('delete-form-' + groupToDeleteId);
+            if (form) form.submit();
+        }
+    }
+
+    // Close modal on outside click
+    document.getElementById('deleteModal').addEventListener('click', function (e) {
+        if (e.target === this) closeModal();
+    });
+</script>
+{% endblock %}

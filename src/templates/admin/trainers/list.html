@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Trainers - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --accent-orange: #FF6B35;
+        --accent-charcoal: #2D3748;
+        --text-secondary: #6B7280;
+        --radius-lg: 24px;
+        --radius-md: 16px;
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-top: 20px;
+    }
+
+    /* Header Section */
+    .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .admin-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        margin: 0;
+    }
+
+    /* Main Table Section */
+    .admin-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .admin-table th {
+        background: var(--bg-secondary);
+        padding: 20px 24px;
+        text-align: left;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .admin-table td {
+        padding: 24px;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+    }
+
+    .admin-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .trainer-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .trainer-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: var(--bg-tertiary);
+        border: 2px solid var(--border-color);
+    }
+
+    .trainer-name {
+        font-weight: 700;
+        color: var(--accent-charcoal);
+    }
+
+    .trainer-email {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 99px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .status-published {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10B981;
+    }
+
+    .status-draft {
+        background: rgba(107, 114, 128, 0.1);
+        color: #6B7280;
+    }
+
+    .action-btns {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+    }
+
+    .btn-action {
+        padding: 8px 16px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-edit {
+        background: var(--bg-secondary);
+        color: var(--accent-charcoal);
+        border: 1px solid var(--border-color);
+    }
+
+    .btn-edit:hover {
+        background: var(--accent-orange);
+        color: white;
+        border-color: var(--accent-orange);
+    }
+
+    .btn-view {
+        color: var(--accent-orange);
+    }
+
+    /* Mobile View */
+    @media (max-width: 768px) {
+
+        .admin-table th:nth-child(2),
+        .admin-table td:nth-child(2) {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <header class="admin-header">
+        <h1>Trainer Management</h1>
+    </header>
+
+    {% if current_user.is_trainer and not current_user.is_admin %}
+    <!-- Self Management Banner for Trainers (This should be handled by route redirect but just in case) -->
+    <div
+        style="background: rgba(255, 107, 53, 0.05); padding: 30px; border-radius: 24px; border: 1px solid rgba(255, 107, 53, 0.2); margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h2 style="margin: 0 0 8px 0; color: var(--accent-charcoal);">Manage Your Profile</h2>
+            <p style="margin: 0; color: var(--text-secondary);">Keep your certifications and bio updated for potential
+                clients.</p>
+        </div>
+        <a href="{{ url_for('admin_trainer.edit_trainer', slug=current_user.slug) }}" class="btn-action"
+            style="background: var(--accent-orange); color: white;">Edit Profile</a>
+    </div>
+    {% endif %}
+
+    {% if current_user.is_admin %}
+    <div class="admin-card">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Trainer</th>
+                    <th>Specializations</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trainer in trainers %}
+                <tr>
+                    <td>
+                        <div class="trainer-info">
+                            {% if trainer.profile_picture %}
+                            <img src="{{ trainer.get_profile_picture_url() }}" class="trainer-avatar">
+                            {% else %}
+                            <div class="trainer-avatar"
+                                style="display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--text-tertiary);">
+                                {{ trainer.full_name[0] if trainer.full_name else trainer.email[0]|upper }}
+                            </div>
+                            {% endif %}
+                            <div>
+                                <div class="trainer-name">{{ trainer.full_name or "Unnamed Trainer" }}</div>
+                                <div class="trainer-email">{{ trainer.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                            {% for spec in trainer.get_trainer_specializations()[:2] %}
+                            <span
+                                style="font-size: 0.7rem; padding: 4px 10px; background: var(--bg-tertiary); border-radius: 6px; color: var(--text-secondary);">{{
+                                spec }}</span>
+                            {% endfor %}
+                            {% if trainer.get_trainer_specializations()|length > 2 %}
+                            <span style="color: var(--text-tertiary); font-size: 0.7rem;">+{{
+                                trainer.get_trainer_specializations()|length - 2 }} more</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        {% if trainer.is_trainer_profile_published() %}
+                        <span class="status-badge status-published">
+                            <span style="width: 8px; height: 8px; background: currentColor; border-radius: 50%;"></span>
+                            Published
+                        </span>
+                        {% else %}
+                        <span class="status-badge status-draft">
+                            <span style="width: 8px; height: 8px; background: currentColor; border-radius: 50%;"></span>
+                            Draft
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{{ url_for('trainer.view_profile', slug=trainer.slug) }}"
+                                class="btn-action btn-view" target="_blank">View</a>
+                            <a href="{{ url_for('admin_trainer.edit_trainer', slug=trainer.slug) }}"
+                                class="btn-action btn-edit">Edit</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

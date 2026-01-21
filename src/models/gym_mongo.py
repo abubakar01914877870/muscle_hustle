@@ -1,10 +1,20 @@
+import re
 from datetime import datetime
 from bson import ObjectId
 
+def slugify(text):
+    """Simple slugify implementation"""
+    text = text.lower()
+    text = re.sub(r'[^\w\s-]', '', text)
+    text = re.sub(r'[\s_-]+', '-', text)
+    text = re.sub(r'^-+|-+$', '', text)
+    return text
+
 class Gym:
-    def __init__(self, name, description, phone, google_map_link, address, admin_note=None, images=None, _id=None, created_at=None, updated_at=None):
+    def __init__(self, name, description, phone, google_map_link, address, admin_note=None, images=None, slug=None, _id=None, created_at=None, updated_at=None):
         self.id = _id if _id else ObjectId()
         self.name = name
+        self.slug = slug if slug else slugify(name)
         self.description = description
         self.phone = phone
         self.google_map_link = google_map_link
@@ -18,6 +28,7 @@ class Gym:
         return {
             '_id': self.id,
             'name': self.name,
+            'slug': self.slug,
             'description': self.description,
             'phone': self.phone,
             'google_map_link': self.google_map_link,
@@ -35,6 +46,7 @@ class Gym:
         return Gym(
             _id=data.get('_id'),
             name=data.get('name'),
+            slug=data.get('slug'),
             description=data.get('description'),
             phone=data.get('phone'),
             google_map_link=data.get('google_map_link'),
@@ -48,6 +60,9 @@ class Gym:
     @staticmethod
     def save(db, gym):
         gym.updated_at = datetime.utcnow()
+        # Regenerate slug if it's missing (for legacy data handling)
+        if not gym.slug:
+            gym.slug = slugify(gym.name)
         db.gyms.replace_one({'_id': gym.id}, gym.to_dict(), upsert=True)
         return gym
 
@@ -63,6 +78,11 @@ class Gym:
             return Gym.from_dict(gym_data)
         except:
             return None
+
+    @staticmethod
+    def find_by_slug(db, slug):
+        gym_data = db.gyms.find_one({'slug': slug})
+        return Gym.from_dict(gym_data)
 
     @staticmethod
     def delete(db, gym_id):

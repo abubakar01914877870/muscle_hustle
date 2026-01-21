@@ -5,6 +5,17 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from bson import ObjectId
 from flask_login import UserMixin
+import re
+
+def slugify(text):
+    """Simple slugify implementation"""
+    if not text:
+        return ""
+    text = text.lower()
+    text = re.sub(r'[^\w\s-]', '', text)
+    text = re.sub(r'[\s_-]+', '-', text)
+    text = re.sub(r'^-+|-+$', '', text)
+    return text
 
 class User(UserMixin):
     """User model for MongoDB"""
@@ -33,6 +44,11 @@ class User(UserMixin):
         self.workout_frequency = user_dict.get('workout_frequency')
         self.created_at = user_dict.get('created_at', datetime.utcnow())
         self.updated_at = user_dict.get('updated_at', datetime.utcnow())
+        
+        # Slug for trainers
+        self.slug = user_dict.get('slug')
+        if not self.slug and user_dict.get('is_trainer'):
+            self.slug = slugify(self.full_name or self.email.split('@')[0])
         
         # Trainer fields
         self.is_trainer = user_dict.get('is_trainer', False)
@@ -157,7 +173,8 @@ class User(UserMixin):
             'created_at': self.created_at,
             'updated_at': self.updated_at,
             'is_trainer': self.is_trainer,
-            'trainer_profile': self.trainer_profile
+            'trainer_profile': self.trainer_profile,
+            'slug': self.slug
         }
     
     @staticmethod
@@ -179,6 +196,14 @@ class User(UserMixin):
             pass
         return None
     
+    @staticmethod
+    def find_by_slug(db, slug):
+        """Find user by slug"""
+        user_dict = db.users.find_one({'slug': slug})
+        if user_dict:
+            return User(user_dict)
+        return None
+
     @staticmethod
     def find_all(db):
         """Find all users"""
@@ -204,6 +229,10 @@ class User(UserMixin):
     def save(self, db):
         """Save user to database"""
         self.updated_at = datetime.utcnow()
+        # Ensure slug exists for trainers
+        if self.is_trainer and not self.slug:
+            self.slug = slugify(self.full_name or self.email.split('@')[0])
+            
         user_dict = self.to_dict()
         db.users.update_one(
             {'_id': self._id},

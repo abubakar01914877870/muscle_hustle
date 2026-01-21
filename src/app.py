@@ -80,6 +80,8 @@ from .routes.gym import gym_bp
 app.register_blueprint(gym_bp)
 from .routes.trainer import trainer
 app.register_blueprint(trainer)
+from .routes.admin_trainer import admin_trainer
+app.register_blueprint(admin_trainer)
 
 from .routes.planner import planner_bp
 app.register_blueprint(planner_bp)
@@ -96,12 +98,14 @@ from .routes.api.api_workouts import bp as api_workouts_bp
 from .routes.api.api_exercises import bp as api_exercises_bp
 from .routes.api.api_progress import bp as api_progress_bp
 from .routes.api.api_diet import bp as api_diet_bp
+from .routes.api.api_plans import bp as api_plans_bp
 
 app.register_blueprint(api_auth_bp)
 app.register_blueprint(api_workouts_bp)
 app.register_blueprint(api_exercises_bp)
 app.register_blueprint(api_progress_bp)
 app.register_blueprint(api_diet_bp)
+app.register_blueprint(api_plans_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)

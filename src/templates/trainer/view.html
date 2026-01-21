@@ -1,79 +1,398 @@
 {% extends "base.html" %}
 
-{% block title %}{{ trainer.full_name or trainer.email }} - Trainer Profile{% endblock %}
+{% block title %}{{ trainer.full_name or trainer.email }} - Muscle Hustle{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --accent-orange: #FF6B35;
+        --accent-charcoal: #2D3748;
+        --text-secondary: #6B7280;
+        --radius-lg: 32px;
+        --radius-md: 16px;
+        --shadow-premium: 0 10px 40px rgba(0, 0, 0, 0.05);
+        --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .profile-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 24px;
+    }
+
+    /* Hero Section */
+    .trainer-hero {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 60px;
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 60px;
+        align-items: center;
+        box-shadow: var(--shadow-premium);
+        border: 1px solid var(--border-color);
+        margin-bottom: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .trainer-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255, 107, 53, 0.05) 0%, transparent 70%);
+        z-index: 0;
+    }
+
+    .profile-image-large {
+        width: 280px;
+        height: 280px;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 8px solid var(--bg-secondary);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+        background: var(--bg-secondary);
+    }
+
+    .profile-image-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-image-large span {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        background: var(--bg-tertiary);
+    }
+
+    .hero-info {
+        z-index: 1;
+    }
+
+    .trainer-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 107, 53, 0.1);
+        color: var(--accent-orange);
+        padding: 6px 16px;
+        border-radius: 99px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+    }
+
+    .hero-info h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-tagline {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+        line-height: 1.4;
+    }
+
+    .hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .badge {
+        padding: 8px 16px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 99px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--accent-charcoal);
+    }
+
+    /* Grid Layout */
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 60px;
+    }
+
+    /* Main Sections */
+    .content-section {
+        margin-bottom: 60px;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-title::before {
+        content: '';
+        width: 4px;
+        height: 24px;
+        background: var(--accent-orange);
+        border-radius: 2px;
+    }
+
+    .bio-text {
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: var(--text-secondary);
+    }
+
+    .certifications-list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .cert-item {
+        background: white;
+        padding: 24px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: var(--transition);
+    }
+
+    .cert-item:hover {
+        border-color: var(--accent-orange);
+        transform: translateX(8px);
+    }
+
+    .cert-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 107, 53, 0.05);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-orange);
+        font-size: 1.5rem;
+    }
+
+    /* Sidebar Cards */
+    .sidebar-card {
+        background: white;
+        padding: 40px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-premium);
+        margin-bottom: 30px;
+        position: sticky;
+        top: 24px;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: var(--accent-charcoal);
+    }
+
+    .stat-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-item {
+        background: var(--bg-secondary);
+        padding: 20px;
+        border-radius: 16px;
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--accent-orange);
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .price-block {
+        text-align: center;
+        padding-top: 30px;
+        border-top: 1px dashed var(--border-color);
+    }
+
+    .price-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--accent-charcoal);
+    }
+
+    .price-label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .social-links {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .social-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        background: var(--bg-tertiary);
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--accent-charcoal);
+        font-weight: 700;
+        transition: var(--transition);
+        border: 1px solid transparent;
+    }
+
+    .social-btn:hover {
+        background: white;
+        border-color: var(--accent-orange);
+        color: var(--accent-orange);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .trainer-hero {
+            grid-template-columns: 1fr;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .profile-image-large {
+            margin: 0 auto;
+        }
+
+        .profile-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar-card {
+            position: static;
+        }
+
+        .certifications-list {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .hero-info h1 {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 1200px;">
-
-    <!-- Trainer Hero Section -->
-    <section class="trainer-hero">
-        <div class="trainer-hero-content">
-            <div class="trainer-profile-image-large">
-                {% if trainer.profile_picture %}
-                <img src="{{ trainer.get_profile_picture_url() }}" alt="{{ trainer.full_name or trainer.email }}">
-                {% elif trainer.full_name %}
-                <span>{{ trainer.full_name.split()[0][0] }}{{ trainer.full_name.split()[-1][0] if
-                    trainer.full_name.split()|length > 1 else '' }}</span>
-                {% else %}
-                <span>{{ trainer.email[0]|upper }}</span>
-                {% endif %}
-            </div>
-
-            <div class="trainer-hero-info">
-                <h1>{{ trainer.full_name or trainer.email }}</h1>
-
-                {% if trainer.trainer_profile.get('tagline') %}
-                <p class="trainer-tagline">{{ trainer.trainer_profile.get('tagline') }}</p>
-                {% endif %}
-
-                {% if trainer.get_trainer_specializations() %}
-                <div class="trainer-specializations">
-                    {% for spec in trainer.get_trainer_specializations() %}
-                    <span class="specialization-badge">{{ spec }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
-                {% if current_user.is_authenticated and current_user.id == trainer.id %}
-                <div class="trainer-actions">
-                    <a href="{{ url_for('trainer.edit_profile') }}" class="btn btn-primary">✏️ Edit Profile</a>
-                </div>
-                {% endif %}
-            </div>
+<div class="profile-container">
+    <!-- Hero Section -->
+    <header class="trainer-hero">
+        <div class="profile-image-large">
+            {% if trainer.profile_picture %}
+            <img src="{{ trainer.get_profile_picture_url() }}" alt="{{ trainer.full_name or trainer.email }}">
+            {% elif trainer.full_name %}
+            <span>{{ trainer.full_name.split()[0][0] or '' }}{{ trainer.full_name.split()[-1][0] if
+                trainer.full_name.split()|length > 1 else '' }}</span>
+            {% else %}
+            <span>{{ trainer.email[0]|upper }}</span>
+            {% endif %}
         </div>
-    </section>
 
-    <div class="trainer-layout">
-        <!-- Main Content -->
-        <div class="trainer-main">
+        <div class="hero-info">
+            <div class="trainer-tag">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+                Elite Certified Trainer
+            </div>
+            <h1>{{ trainer.full_name or trainer.email.split('@')[0] }}</h1>
 
+            {% if trainer.trainer_profile.get('tagline') %}
+            <p class="hero-tagline">{{ trainer.trainer_profile.get('tagline') }}</p>
+            {% else %}
+            <p class="hero-tagline">Transforming lives through personalized fitness and nutrition guidance.</p>
+            {% endif %}
+
+            {% if trainer.get_trainer_specializations() %}
+            <div class="hero-badges">
+                {% for spec in trainer.get_trainer_specializations() %}
+                <span class="badge">{{ spec }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if current_user.is_authenticated and current_user.id == trainer.id %}
+            <div style="margin-top: 30px;">
+                <a href="{{ url_for('admin_trainer.edit_trainer', slug=trainer.slug) }}" class="social-btn"
+                    style="background: var(--accent-orange); color: white; display: inline-flex; border: none;">
+                    ✏️ Edit Trainer Profile
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Content Layout -->
+    <div class="profile-layout">
+        <div class="profile-main">
             <!-- About Section -->
             {% if trainer.trainer_profile.get('bio') %}
-            <section class="trainer-section">
-                <h2>📖 About Me</h2>
-                <p class="trainer-bio">{{ trainer.trainer_profile.get('bio') }}</p>
+            <section class="content-section">
+                <h2 class="section-title">Professional Bio</h2>
+                <div class="bio-text">
+                    {{ trainer.trainer_profile.get('bio') }}
+                </div>
             </section>
             {% endif %}
 
             <!-- Certifications Section -->
             {% if trainer.get_trainer_certifications() %}
-            <section class="trainer-section">
-                <h2>🎓 Certifications</h2>
-                <ul class="certifications-list">
+            <section class="content-section">
+                <h2 class="section-title">Certifications</h2>
+                <div class="certifications-list">
                     {% for cert in trainer.get_trainer_certifications() %}
-                    <li>{{ cert }}</li>
-                    {% endfor %}
-                </ul>
-            </section>
-            {% endif %}
-
-            <!-- Specializations Section -->
-            {% if trainer.get_trainer_specializations() %}
-            <section class="trainer-section">
-                <h2>💪 Specializations</h2>
-                <div class="specializations-grid">
-                    {% for spec in trainer.get_trainer_specializations() %}
-                    <div class="specialization-card">{{ spec }}</div>
+                    <div class="cert-item">
+                        <div class="cert-icon">📜</div>
+                        <div style="font-weight: 700; color: var(--accent-charcoal);">{{ cert }}</div>
+                    </div>
                     {% endfor %}
                 </div>
             </section>
@@ -81,58 +400,44 @@
         </div>
 
         <!-- Sidebar -->
-        <div class="trainer-sidebar">
+        <aside class="profile-sidebar">
+            <div class="sidebar-card">
+                <h3 class="card-title">Professional Summary</h3>
 
-            <!-- Stats Card -->
-            {% if trainer.trainer_profile.get('years_of_experience') %}
-            <div class="trainer-stats-card">
-                <h3>📊 Experience</h3>
-                <div class="stat-item">
-                    <div class="stat-value">{{ trainer.trainer_profile.get('years_of_experience') }}+</div>
-                    <div class="stat-label">Years of Experience</div>
+                <div class="stat-row">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ trainer.trainer_profile.get('years_of_experience', 1) }}+</div>
+                        <div class="stat-label">Years Exp.</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">50+</div>
+                        <div class="stat-label">Clients</div>
+                    </div>
                 </div>
-            </div>
-            {% endif %}
 
-            <!-- Pricing Card -->
-            {% if trainer.trainer_profile.get('hourly_rate') %}
-            <div class="trainer-pricing-card">
-                <h3>💰 Pricing</h3>
-                <div class="pricing-item">
-                    <div class="price">${{ "%.2f"|format(trainer.trainer_profile.get('hourly_rate')) }}</div>
-                    <div class="price-label">per hour</div>
+                {% if trainer.trainer_profile.get('hourly_rate') %}
+                <div class="price-block">
+                    <div class="price-value">${{ "%.0f"|format(trainer.trainer_profile.get('hourly_rate')) }}</div>
+                    <div class="price-label">Per Training Hour</div>
                 </div>
-            </div>
-            {% endif %}
+                {% endif %}
 
-            <!-- Contact Card -->
-            {% set social_links = trainer.trainer_profile.get('social_links', {}) %}
-            {% if social_links.get('instagram') or social_links.get('facebook') or social_links.get('linkedin') %}
-            <div class="trainer-contact-card">
-                <h3>🔗 Connect</h3>
                 <div class="social-links">
-                    {% if social_links.get('instagram') %}
-                    <a href="{{ social_links.get('instagram') }}" target="_blank" rel="noopener noreferrer"
-                        class="social-link">
-                        <span>📷</span> Instagram
-                    </a>
+                    <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-charcoal); margin: 10px 0;">
+                        Connect Online</h4>
+                    {% set social = trainer.trainer_profile.get('social_links', {}) %}
+                    {% if social.get('instagram') %}
+                    <a href="{{ social.get('instagram') }}" target="_blank" class="social-btn">📸 Instagram</a>
                     {% endif %}
-                    {% if social_links.get('facebook') %}
-                    <a href="{{ social_links.get('facebook') }}" target="_blank" rel="noopener noreferrer"
-                        class="social-link">
-                        <span>📘</span> Facebook
-                    </a>
+                    {% if social.get('linkedin') %}
+                    <a href="{{ social.get('linkedin') }}" target="_blank" class="social-btn">💼 LinkedIn</a>
                     {% endif %}
-                    {% if social_links.get('linkedin') %}
-                    <a href="{{ social_links.get('linkedin') }}" target="_blank" rel="noopener noreferrer"
-                        class="social-link">
-                        <span>💼</span> LinkedIn
-                    </a>
+                    {% if social.get('facebook') %}
+                    <a href="{{ social.get('facebook') }}" target="_blank" class="social-btn">📘 Facebook</a>
                     {% endif %}
                 </div>
             </div>
-            {% endif %}
-        </div>
+        </aside>
     </div>
 </div>
 {% endblock %}

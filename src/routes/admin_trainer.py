@@ -1,34 +1,69 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from functools import wraps
-from ..models.user_mongo import User
+from ..models.user_mongo import User, slugify
 from ..database import get_db
+from .admin import admin_required
 
-trainer = Blueprint('trainer', __name__, url_prefix='/trainer')
+admin_trainer = Blueprint('admin_trainer', __name__, url_prefix='/admin/trainers')
 
-def trainer_required(f):
+def trainer_or_admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or not current_user.is_trainer:
-            flash('You need trainer privileges to access this page', 'error')
+        if not current_user.is_authenticated:
+            return redirect(url_for('auth.login'))
+        if not (current_user.is_admin or current_user.is_trainer):
+            flash('Access denied.', 'error')
             return redirect(url_for('main.home'))
         return f(*args, **kwargs)
     return decorated_function
 
-@trainer.route('/profile/edit', methods=['GET', 'POST'])
+@admin_trainer.route('/')
 @login_required
-@trainer_required
-def edit_profile():
-    """Edit trainer profile"""
+@trainer_or_admin_required
+def list_trainers():
+    """List trainers for management"""
     db = get_db()
     
+    # If not admin, redirect to their own view page
+    if not current_user.is_admin:
+        return redirect(url_for('trainer.view_profile', slug=current_user.slug))
+        
+    trainers = User.find_all_trainers(db, published_only=False)
+    return render_template('admin/trainers/list.html', trainers=trainers)
+
+@admin_trainer.route('/<slug>/edit', methods=['GET', 'POST'])
+@login_required
+@trainer_or_admin_required
+def edit_trainer(slug):
+    """Edit trainer profile"""
+    db = get_db()
+    trainer_user = User.find_by_slug(db, slug)
+    
+    if not trainer_user:
+        flash('Trainer not found', 'error')
+        return redirect(url_for('admin_trainer.list_trainers'))
+        
+    # Security check: Trainers can only edit themselves, Admins can edit anyone
+    if not current_user.is_admin and str(current_user.id) != str(trainer_user.id):
+        flash('Permission denied.', 'error')
+        return redirect(url_for('admin_trainer.list_trainers'))
+        
     if request.method == 'POST':
         # Get form data
+        full_name = request.form.get('full_name', '').strip()
         bio = request.form.get('bio', '').strip()
         tagline = request.form.get('tagline', '').strip()
         years_of_experience = request.form.get('years_of_experience', '').strip()
         hourly_rate = request.form.get('hourly_rate', '').strip()
-        
+
+        # Update full name if provided
+        if full_name:
+            trainer_user.full_name = full_name
+            # We are NOT updating the slug automatically to prevent breaking existing links
+            # If slug update is needed, we would do it here:
+            # trainer_user.slug = slugify(full_name)
+            
         # Get certifications (dynamic list)
         certifications = []
         cert_index = 0
@@ -77,41 +112,13 @@ def edit_profile():
                 pass
         
         # Update trainer profile
-        if current_user.update_trainer_profile(db, trainer_profile):
+        trainer_user.save(db) # Save full_name update
+        if trainer_user.update_trainer_profile(db, trainer_profile):
             flash('Trainer profile updated successfully!', 'success')
-            return redirect(url_for('trainer.edit_profile'))
+            if current_user.is_admin:
+                return redirect(url_for('admin_trainer.list_trainers'))
+            return redirect(url_for('admin_trainer.edit_trainer', slug=trainer_user.slug))
         else:
             flash('Error updating trainer profile', 'error')
     
-    return render_template('trainer/edit.html', user=current_user)
-
-@trainer.route('/<slug>')
-def view_profile(slug):
-    """View public trainer profile"""
-    db = get_db()
-    trainer_user = User.find_by_slug(db, slug)
-    
-    if not trainer_user:
-        # Fallback to ID for backward compatibility
-        trainer_user = User.find_by_id(db, slug)
-    
-    if not trainer_user or not trainer_user.is_trainer:
-        flash('Trainer not found', 'error')
-        return redirect(url_for('trainer.list_trainers'))
-    
-    # Check if profile is published (unless viewing own profile)
-    if current_user.is_authenticated and str(current_user.id) == str(trainer_user.id):
-        # Allow trainers to view their own unpublished profile
-        pass
-    elif not trainer_user.is_trainer_profile_published():
-        flash('This trainer profile is not available', 'error')
-        return redirect(url_for('trainer.list_trainers'))
-    
-    return render_template('trainer/view.html', trainer=trainer_user)
-
-@trainer.route('/trainers')
-def list_trainers():
-    """List all published trainers"""
-    db = get_db()
-    trainers = User.find_all_trainers(db, published_only=True)
-    return render_template('trainer/list.html', trainers=trainers)
+    return render_template('admin/trainers/edit.html', trainer=trainer_user)

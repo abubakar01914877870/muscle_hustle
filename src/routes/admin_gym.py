@@ -102,3 +102,16 @@ def delete_gym(gym_id):
     Gym.delete(db, gym_id)
     flash('Gym deleted successfully', 'success')
     return redirect(url_for('admin_gym.list_gyms'))
+
+@admin_gym.route('/migrate-slugs')
+@login_required
+@admin_required
+def migrate_slugs():
+    """Temporary route to migrate existing gyms to have slugs"""
+    db = get_db()
+    gyms = Gym.find_all(db)
+    count = 0
+    for gym in gyms:
+        Gym.save(db, gym)  # save() now auto-generates slug if missing
+        count += 1
+    return f"Migrated {count} gyms successfully!"

@@ -8,13 +8,6 @@ import uuid
 
 planner_bp = Blueprint('planner', __name__, url_prefix='/planner')
 
-@planner_bp.route('/')
-@login_required
-def dashboard():
-    """Main Planner Dashboard"""
-    today_date = datetime.now().strftime('%Y-%m-%d')
-    return render_template('planner/dashboard.html', today_date=today_date)
-
 @planner_bp.route('/groups')
 @login_required
 def groups_list():
@@ -76,6 +69,27 @@ def edit_group(group_id):
     # GET: Show form with all exercises from MongoDB
     all_exercises = Exercise.find_all(db)
     return render_template('planner/group_form.html', group=group, exercises=all_exercises)
+
+@planner_bp.route('/groups/<group_id>')
+@login_required
+def view_group(group_id):
+    """View details of an Exercise Group"""
+    db = get_db()
+    group = ExerciseGroup.find_by_id(db, group_id)
+    
+    if not group or str(group.user_id) != current_user.id:
+        flash('Workout not found', 'error')
+        return redirect(url_for('planner.groups_list'))
+        
+    # Fetch full exercise details
+    exercises = []
+    if group.exercise_ids:
+        for eid in group.exercise_ids:
+            ex = Exercise.find_by_id(db, str(eid))
+            if ex:
+                exercises.append(ex)
+                
+    return render_template('planner/group_detail.html', group=group, exercises=exercises)
 
 @planner_bp.route('/groups/<group_id>/delete', methods=['POST'])
 @login_required

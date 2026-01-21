@@ -1,51 +1,506 @@
 {% extends "base.html" %}
 
-{% block title %}User Management{% endblock %}
+{% block title %}User Management - Muscle Hustle Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Admin Page Styles */
+    .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .header-content h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .subtitle {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        margin: 4px 0 0 0;
+    }
+
+    /* Search Box */
+    .search-box {
+        position: relative;
+        min-width: 280px;
+    }
+
+    .search-box svg {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-tertiary);
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 16px 10px 40px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: white;
+        transition: all 0.2s;
+        outline: none;
+    }
+
+    .search-box input:focus {
+        border-color: var(--accent-orange);
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+
+    /* Desktop View: Card & Table */
+    .users-card {
+        background: var(--bg-primary);
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .modern-table th {
+        background: var(--bg-secondary);
+        padding: 16px 24px;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .modern-table td {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+    }
+
+    .modern-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .modern-table tr:hover {
+        background-color: rgba(0, 0, 0, 0.01);
+    }
+
+    /* User Info in Table */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        background: var(--bg-tertiary);
+        color: var(--accent-charcoal);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .user-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .user-id {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+    }
+
+    .text-secondary {
+        color: var(--text-secondary);
+    }
+
+    /* Role Badges */
+    .role-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .role-admin {
+        background: rgba(255, 107, 53, 0.1);
+        color: #d14917;
+        /* Darker shade of orange for text legibility */
+    }
+
+    .role-trainer {
+        background: rgba(74, 85, 104, 0.1);
+        color: var(--accent-blue);
+    }
+
+    .role-user {
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        color: var(--text-secondary);
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .btn-edit:hover {
+        background: var(--bg-secondary);
+        color: var(--accent-blue);
+    }
+
+    .btn-delete:hover {
+        background: #FEE2E2;
+        color: #EF4444;
+    }
+
+    /* Mobile Views */
+    .mobile-view {
+        display: none;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .mobile-user-card {
+        background: var(--bg-primary);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+    }
+
+    .mobile-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+
+    .mobile-actions {
+        position: relative;
+    }
+
+    .btn-icon-more {
+        background: transparent;
+        border: none;
+        color: var(--text-tertiary);
+        padding: 4px;
+        cursor: pointer;
+    }
+
+    .mobile-menu-dropdown {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background: white;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+        border-radius: 8px;
+        width: 140px;
+        z-index: 10;
+        overflow: hidden;
+    }
+
+    .mobile-menu-item {
+        display: block;
+        padding: 10px 16px;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: background 0.1s;
+        width: 100%;
+        text-align: left;
+        border: none;
+        background: none;
+        cursor: pointer;
+    }
+
+    .mobile-menu-item:hover {
+        background: var(--bg-secondary);
+    }
+
+    .delete-item {
+        color: #EF4444;
+    }
+
+    .delete-item:hover {
+        background: #FEE2E2;
+    }
+
+    .mobile-card-body {
+        border-top: 1px solid var(--border-color);
+        padding-top: 12px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+    }
+
+    .info-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .info-row .label {
+        color: var(--text-tertiary);
+    }
+
+    .info-row .value {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 768px) {
+        .users-card.desktop-view {
+            display: none;
+        }
+
+        .mobile-view {
+            display: flex;
+        }
+
+        .search-box {
+            width: 100%;
+            min-width: auto;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>User Management</h2>
-    <p>Total Users: {{ users|length }}</p>
+<div class="admin-container">
+    <div class="page-header">
+        <div class="header-content">
+            <h2>User Management</h2>
+            <p class="subtitle">Total Users: {{ users|length }}</p>
+        </div>
+        <div class="header-actions">
+            <!-- Search placeholder -->
+            <div class="search-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" placeholder="Search users...">
+            </div>
+            <!-- Add User Button placeholder (optional future feature) -->
+            <!-- <button class="btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Add User
+            </button> -->
+        </div>
+    </div>
 
-    <table class="user-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>
-                    {% if user.is_admin %}
-                    <span class="badge badge-admin">Admin</span>
-                    {% endif %}
-                    {% if user.is_trainer %}
-                    <span class="badge badge-trainer">Trainer</span>
-                    {% endif %}
-                    {% if not user.is_admin and not user.is_trainer %}
-                    <span class="badge badge-user">User</span>
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-edit">Edit Account</a>
-                    {% if user.id != current_user.id %}
-                    <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}"
-                        style="display: inline;"
-                        onsubmit="return confirm('Are you sure you want to delete this user?');">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                        <button type="submit" class="btn btn-delete">Delete</button>
-                    </form>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Desktop View: Table -->
+    <div class="users-card desktop-view">
+        <div class="table-responsive">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th style="width: 35%;">User Info</th>
+                        <th style="width: 15%;">Role</th>
+                        <th style="width: 25%;">Email</th>
+                        <th style="width: 25%; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="avatar-circle">
+                                    {% if user.full_name %}{{ user.full_name[:2].upper() }}{% else %}{{
+                                    user.email[:2].upper() }}{% endif %}
+                                </div>
+                                <div class="user-details">
+                                    <span class="user-name">{% if user.full_name %}{{ user.full_name }}{% else %}User {{
+                                        user.id }}{% endif %}</span>
+                                    <span class="user-id">ID: #{{ user.id }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if user.is_admin %}
+                            <span class="role-badge role-admin">Admin</span>
+                            {% elif user.is_trainer %}
+                            <span class="role-badge role-trainer">Trainer</span>
+                            {% else %}
+                            <span class="role-badge role-user">User</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-secondary">{{ user.email }}</td>
+                        <td style="text-align: right;">
+                            <div class="action-buttons">
+                                <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn-icon btn-edit"
+                                    title="Edit">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </a>
+                                {% if user.id != current_user.id %}
+                                <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                                    style="display: inline;"
+                                    onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                    <button type="submit" class="btn-icon btn-delete" title="Delete">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path
+                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Mobile View: Cards -->
+    <div class="mobile-view">
+        {% for user in users %}
+        <div class="mobile-user-card">
+            <div class="mobile-card-header">
+                <div class="user-info">
+                    <div class="avatar-circle">
+                        {% if user.full_name %}{{ user.full_name[:2].upper() }}{% else %}{{ user.email[:2].upper() }}{%
+                        endif %}
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name">{% if user.full_name %}{{ user.full_name }}{% else %}User {{ user.id
+                            }}{% endif %}</span>
+                        <!-- <span class="user-email">{{ user.email }}</span> -->
+                        {% if user.is_admin %}
+                        <span class="role-badge role-admin">Admin</span>
+                        {% elif user.is_trainer %}
+                        <span class="role-badge role-trainer">Trainer</span>
+                        {% else %}
+                        <span class="role-badge role-user">User</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mobile-actions">
+                    <button class="btn-icon-more" onclick="toggleMobileMenu('menu-{{ user.id }}')">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="12" cy="5" r="1"></circle>
+                            <circle cx="12" cy="19" r="1"></circle>
+                        </svg>
+                    </button>
+                    <div id="menu-{{ user.id }}" class="mobile-menu-dropdown" style="display: none;">
+                        <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="mobile-menu-item">
+                            Edit Account
+                        </a>
+                        {% if user.id != current_user.id %}
+                        <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                            onsubmit="return confirm('Are you sure you want to delete this user?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                            <button type="submit" class="mobile-menu-item delete-item">Delete User</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="mobile-card-body">
+                <div class="info-row">
+                    <span class="label">Email</span>
+                    <span class="value">{{ user.email }}</span>
+                </div>
+                <!-- <div class="info-row">
+                    <span class="label">ID</span>
+                    <span class="value">#{{ user.id }}</span>
+                </div> -->
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+
+<script>
+    function toggleMobileMenu(id) {
+        const menu = document.getElementById(id);
+        const allMenus = document.querySelectorAll('.mobile-menu-dropdown');
+
+        // Close others
+        allMenus.forEach(m => {
+            if (m.id !== id) m.style.display = 'none';
+        });
+
+        // Toggle current
+        if (menu.style.display === 'none') {
+            menu.style.display = 'block';
+        } else {
+            menu.style.display = 'none';
+        }
+    }
+
+    // Close menus when clicking outside
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('.mobile-actions')) {
+            document.querySelectorAll('.mobile-menu-dropdown').forEach(m => {
+                m.style.display = 'none';
+            });
+        }
+    });
+</script>
+
 {% endblock %}

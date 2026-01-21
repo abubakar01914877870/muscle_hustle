@@ -561,44 +561,54 @@
             </div>
 
             <nav class="sidebar-nav">
+
+                {% if current_user.is_authenticated %}
+                <div class="nav-section">
+                    <a href="{{ url_for('main.home') }}" class="nav-link active">Dashboard</a>
+                </div>
+
+                <div class="nav-divider"></div>
+                <div class="nav-section-title">My Training</div>
+                <div class="nav-section">
+                    <a href="{{ url_for('planner.calendar_view') }}" class="nav-link">Schedule</a>
+                    <a href="{{ url_for('planner.groups_list') }}" class="nav-link">My Workouts</a>
+                    <a href="{{ url_for('progress.index') }}" class="nav-link">Progress</a>
+                    <a href="{{ url_for('planner.tracker_view') }}" class="nav-link">Log Workout</a>
+                </div>
+                {% else %}
                 <div class="nav-section">
                     <a href="{{ url_for('main.home') }}" class="nav-link active">Home</a>
-                    <a href="{{ url_for('blog.blog_list') }}" class="nav-link">Blog</a>
-                    <a href="{{ url_for('exercises.index') }}" class="nav-link">All Exercises</a>
-                    <a href="{{ url_for('gym.list_gyms') }}" class="nav-link">Gyms</a>
+                    <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
+                    <a href="{{ url_for('auth.signup') }}" class="nav-link">Sign Up</a>
+                </div>
+                {% endif %}
+
+                <div class="nav-divider"></div>
+                <div class="nav-section-title">Discover</div>
+                <div class="nav-section">
+                    <a href="{{ url_for('exercises.index') }}" class="nav-link">Exercises</a>
                     <a href="{{ url_for('trainer.list_trainers') }}" class="nav-link">Trainers</a>
+                    <a href="{{ url_for('gym.list_gyms') }}" class="nav-link">Gyms</a>
+                    <a href="{{ url_for('blog.blog_list') }}" class="nav-link">Community</a>
                 </div>
 
                 {% if current_user.is_authenticated %}
                 <div class="nav-divider"></div>
+                <div class="nav-section-title">Account</div>
                 <div class="nav-section">
-                    <a href="{{ url_for('mobile.week_view') }}" class="nav-link">Weekly Plan</a>
-                    <a href="{{ url_for('progress.index') }}" class="nav-link">Progress Tracker</a>
                     <a href="{{ url_for('profile.view_profile') }}" class="nav-link">Profile</a>
+                    {% if current_user.is_trainer %}
+                    <a href="{{ url_for('trainer.edit_profile') }}" class="nav-link">Trainer Dashboard</a>
+                    {% endif %}
                 </div>
-
-                <div class="nav-divider"></div>
-                <div class="nav-section-title">Planner</div>
-                <div class="nav-section">
-                    <a href="{{ url_for('planner.calendar_view') }}" class="nav-link">📅 Calendar</a>
-                    <a href="{{ url_for('planner.groups_list') }}" class="nav-link">💪 Exercise Groups</a>
-                    <a href="{{ url_for('planner.tracker_view') }}" class="nav-link">✅ Daily Tracker</a>
-                </div>
-
-                {% if current_user.is_trainer %}
-                <div class="nav-divider"></div>
-                <div class="nav-section">
-                    <a href="{{ url_for('trainer.edit_profile') }}" class="nav-link">Edit Trainer Profile</a>
-                </div>
-                {% endif %}
 
                 {% if current_user.is_admin %}
                 <div class="nav-divider"></div>
                 <div class="nav-section-title">Admin</div>
                 <div class="nav-section">
-                    <a href="{{ url_for('admin.user_list') }}" class="nav-link">User Management</a>
-                    <a href="{{ url_for('admin_blog.blog_dashboard') }}" class="nav-link">Blog Management</a>
-                    <a href="{{ url_for('admin_gym.list_gyms') }}" class="nav-link">Gym Management</a>
+                    <a href="{{ url_for('admin.user_list') }}" class="nav-link">Users</a>
+                    <a href="{{ url_for('admin_blog.blog_dashboard') }}" class="nav-link">Blog</a>
+                    <a href="{{ url_for('admin_gym.list_gyms') }}" class="nav-link">Gyms</a>
                     <a href="{{ url_for('admin_import.browse') }}" class="nav-link">Import Exercises</a>
                 </div>
                 {% endif %}
@@ -606,12 +616,6 @@
                 <div class="nav-divider"></div>
                 <div class="nav-section">
                     <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
-                </div>
-                {% else %}
-                <div class="nav-divider"></div>
-                <div class="nav-section">
-                    <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
-                    <a href="{{ url_for('auth.signup') }}" class="nav-link">Sign Up</a>
                 </div>
                 {% endif %}
             </nav>

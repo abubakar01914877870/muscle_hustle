@@ -11,6 +11,9 @@ class ExerciseGroup:
         self._id = group_dict.get('_id')
         self.user_id = group_dict.get('user_id')
         self.name = group_dict.get('name')
+        self.description = group_dict.get('description')
+        self.duration = group_dict.get('duration', 0) # in minutes
+        self.difficulty = group_dict.get('difficulty', 'Intermediate')
         self.exercise_ids = group_dict.get('exercise_ids', [])
         self.created_at = group_dict.get('created_at', datetime.utcnow())
         
@@ -20,15 +23,18 @@ class ExerciseGroup:
         
     def to_dict(self):
         return {
-            '_id': self._id,
-            'user_id': self.user_id,
+            'id': str(self._id),
+            'user_id': str(self.user_id),
             'name': self.name,
-            'exercise_ids': self.exercise_ids,
-            'created_at': self.created_at
+            'description': self.description,
+            'duration': self.duration,
+            'difficulty': self.difficulty,
+            'exercise_ids': [str(eid) for eid in self.exercise_ids],
+            'created_at': self.created_at.isoformat()
         }
         
     @staticmethod
-    def create(db, user_id, name, exercise_ids):
+    def create(db, user_id, name, exercise_ids, description=None, duration=0, difficulty='Intermediate'):
         # Validation
         if not name or not name.strip():
             raise ValueError("Group name cannot be empty")
@@ -39,6 +45,9 @@ class ExerciseGroup:
         group_dict = {
             'user_id': ObjectId(user_id),
             'name': name.strip(),
+            'description': description,
+            'duration': duration,
+            'difficulty': difficulty,
             'exercise_ids': [ObjectId(eid) for eid in exercise_ids],
             'created_at': datetime.utcnow()
         }
@@ -63,13 +72,26 @@ class ExerciseGroup:
             pass
         return None
 
-    def update(self, db, name=None, exercise_ids=None):
+    def update(self, db, name=None, exercise_ids=None, description=None, duration=None, difficulty=None):
         update_data = {}
         if name is not None:
             if not name.strip():
                 raise ValueError("Group name cannot be empty")
             self.name = name.strip()
             update_data['name'] = self.name
+            
+        if description is not None:
+            self.description = description
+            update_data['description'] = description
+            
+        if duration is not None:
+            self.duration = duration
+            update_data['duration'] = duration
+            
+        if difficulty is not None:
+            self.difficulty = difficulty
+            update_data['difficulty'] = difficulty
+            
         if exercise_ids is not None:
             if len(exercise_ids) == 0:
                 raise ValueError("At least one exercise must be selected")
