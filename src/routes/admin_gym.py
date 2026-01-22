@@ -1,10 +1,46 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify
 from flask_login import login_required, current_user
 from ..models.gym_mongo import Gym
 from ..database import get_db
 from .admin import admin_required
 
 admin_gym = Blueprint('admin_gym', __name__, url_prefix='/admin/gyms')
+
+@admin_gym.route('/upload-image', methods=['POST'])
+@login_required
+@admin_required
+def upload_image():
+    """Upload image to Cloudinary"""
+    try:
+        import cloudinary.uploader
+        
+        if 'image' not in request.files:
+            return jsonify({'error': 'No image file provided'}), 400
+        
+        file = request.files['image']
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+        
+        # Upload to Cloudinary
+        result = cloudinary.uploader.upload(
+            file,
+            folder='muscle_hustle/gyms',  # Organize in folders
+            transformation=[
+                {'width': 1920, 'height': 1080, 'crop': 'limit'},  # Max size
+                {'quality': 'auto'},  # Auto quality
+                {'fetch_format': 'auto'}  # Auto format (WebP when supported)
+            ]
+        )
+        
+        return jsonify({
+            'success': True,
+            'url': result['secure_url'],
+            'public_id': result['public_id']
+        }), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Error uploading to Cloudinary: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @admin_gym.route('/')
 @login_required

@@ -3,6 +3,7 @@ from flask import Flask, request
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
+from flasgger import Swagger
 from .database import init_db, get_db
 from .models.user_mongo import User
 from .routes.auth import auth
@@ -21,6 +22,15 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-secret-key-chang
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI') or "mongodb+srv://admin:1234qa@muscle-hustle-developme.ekctotl.mongodb.net/?appName=muscle-hustle-development"
 app.config['MONGO_DBNAME'] = "muscle_hustle"
 
+# Cloudinary Configuration
+import cloudinary
+import cloudinary.uploader
+cloudinary.config(
+    cloud_name = "drnazfmuj",
+    api_key = "746688993683754",
+    api_secret = "2ZNHKDjqcAwRmMb4PRADoUIYgfI"
+)
+
 # Custom Filters
 from markupsafe import Markup, escape
 
@@ -31,8 +41,91 @@ def nl2br_filter(s):
     return Markup(str(escape(s)).replace('\n', '<br>\n'))
 
 # CSRF Protection
+# CSRF Protection
 app.config['WTF_CSRF_CHECK_DEFAULT'] = False  # Disable CSRF by default
 csrf = CSRFProtect(app)
+
+# Swagger Configuration
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": 'apispec_1',
+            "route": '/apispec_1.json',
+            "rule_filter": lambda rule: True,  # all in
+            "model_filter": lambda tag: True,  # all in
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    "swagger_ui": True,
+    "specs_route": "/apidocs/"
+}
+
+template = {
+    "swagger": "2.0",
+    "info": {
+        "title": "Muscle Hustle API",
+        "description": "API Documentation for Muscle Hustle Mobile App",
+        "version": "1.0.0"
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+        }
+    },
+    "definitions": {
+        "Trainer": {
+            "type": "object",
+            "properties": {
+                "_id": {"type": "string"},
+                "full_name": {"type": "string"},
+                "email": {"type": "string"},
+                "profile_picture": {"type": "string"},
+                "trainer_profile": {
+                    "type": "object",
+                    "properties": {
+                        "bio": {"type": "string"},
+                        "specializations": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "experience": {"type": "string"},
+                        "rating": {"type": "number"}
+                    }
+                }
+            }
+        },
+        "Gym": {
+            "type": "object",
+            "properties": {
+                "_id": {"type": "string"},
+                "name": {"type": "string"},
+                "address": {"type": "string"},
+                "description": {"type": "string"},
+                "images": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                }
+            }
+        },
+        "BlogPost": {
+            "type": "object",
+            "properties": {
+                "_id": {"type": "string"},
+                "title": {"type": "string"},
+                "content": {"type": "string"},
+                "author": {"type": "string"},
+                "created_at": {"type": "string"},
+                "published": {"type": "boolean"}
+            }
+        }
+    }
+}
+
+swagger = Swagger(app, config=swagger_config, template=template)
 
 # Enable CSRF only for non-API routes
 @app.before_request
@@ -99,6 +192,9 @@ from .routes.api.api_exercises import bp as api_exercises_bp
 from .routes.api.api_progress import bp as api_progress_bp
 from .routes.api.api_diet import bp as api_diet_bp
 from .routes.api.api_plans import bp as api_plans_bp
+from .routes.api.api_blog import api_blog as api_blog_bp
+from .routes.api.api_community import api_community as api_community_bp
+from .routes.api.api_planner import api_planner as api_planner_bp
 
 app.register_blueprint(api_auth_bp)
 app.register_blueprint(api_workouts_bp)
@@ -106,6 +202,9 @@ app.register_blueprint(api_exercises_bp)
 app.register_blueprint(api_progress_bp)
 app.register_blueprint(api_diet_bp)
 app.register_blueprint(api_plans_bp)
+app.register_blueprint(api_blog_bp, url_prefix='/api/v1/blog')
+app.register_blueprint(api_community_bp, url_prefix='/api/v1/community')
+app.register_blueprint(api_planner_bp, url_prefix='/api/v1/planner')
 
 if __name__ == '__main__':
     app.run(debug=True)

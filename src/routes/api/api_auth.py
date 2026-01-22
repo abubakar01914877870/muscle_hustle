@@ -34,9 +34,45 @@ def user_to_dict(user):
 
 @bp.route('/register', methods=['POST'])
 def register():
-    """Register new user"""
+    """
+    Register new user
+    ---
+    tags:
+      - Auth
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - email
+            - password
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+            full_name:
+              type: string
+    responses:
+      201:
+        description: User registered successfully
+        schema:
+          type: object
+          properties:
+            user:
+              type: object
+            access_token:
+              type: string
+            refresh_token:
+              type: string
+      400:
+        description: Invalid input
+    """
     try:
         data = request.get_json()
+        print(data)
         
         # Validate required fields
         if not data or not data.get('email') or not data.get('password'):
@@ -93,7 +129,40 @@ def register():
 
 @bp.route('/login', methods=['POST'])
 def login():
-    """Login user"""
+    """
+    Login user
+    ---
+    tags:
+      - Auth
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - email
+            - password
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+    responses:
+      200:
+        description: Login successful
+        schema:
+          type: object
+          properties:
+            user:
+              type: object
+            access_token:
+              type: string
+            refresh_token:
+              type: string
+      401:
+        description: Invalid credentials
+    """
     try:
         data = request.get_json()
         

@@ -26,7 +26,7 @@ class Gym:
 
     def to_dict(self):
         return {
-            '_id': self.id,
+            '_id': str(self.id),
             'name': self.name,
             'slug': self.slug,
             'description': self.description,
@@ -63,7 +63,13 @@ class Gym:
         # Regenerate slug if it's missing (for legacy data handling)
         if not gym.slug:
             gym.slug = slugify(gym.name)
-        db.gyms.replace_one({'_id': gym.id}, gym.to_dict(), upsert=True)
+        
+        data = gym.to_dict()
+        # Ensure _id is ObjectId for storage
+        if '_id' in data and isinstance(data['_id'], str):
+            data['_id'] = ObjectId(data['_id'])
+            
+        db.gyms.replace_one({'_id': gym.id}, data, upsert=True)
         return gym
 
     @staticmethod

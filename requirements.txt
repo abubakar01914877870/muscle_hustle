@@ -16,3 +16,4 @@ google-api-core<2.16.0
 hypothesis
 pytest
 bleach
+flasgger==0.9.7.1

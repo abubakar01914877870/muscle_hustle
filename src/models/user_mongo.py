@@ -150,14 +150,14 @@ class User(UserMixin):
     def to_dict(self):
         """Convert user to dictionary"""
         return {
-            '_id': self._id,
+            '_id': str(self._id) if self._id else None,
             'email': self.email,
             'password_hash': self.password_hash,
             'is_admin': self.is_admin,
             'profile_picture': self.profile_picture,
             'profile_picture_type': self.profile_picture_type,
             'full_name': self.full_name,
-            'date_of_birth': self.date_of_birth,
+            'date_of_birth': self.date_of_birth.isoformat() if isinstance(self.date_of_birth, datetime) else self.date_of_birth,
             'gender': self.gender,
             'phone': self.phone,
             'height': self.height,
@@ -170,8 +170,8 @@ class User(UserMixin):
             'dietary_restrictions': self.dietary_restrictions,
             'preferred_workout_time': self.preferred_workout_time,
             'workout_frequency': self.workout_frequency,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
+            'created_at': self.created_at.isoformat() if isinstance(self.created_at, datetime) else self.created_at,
+            'updated_at': self.updated_at.isoformat() if isinstance(self.updated_at, datetime) else self.updated_at,
             'is_trainer': self.is_trainer,
             'trainer_profile': self.trainer_profile,
             'slug': self.slug
