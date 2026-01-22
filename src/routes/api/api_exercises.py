@@ -144,3 +144,128 @@ def sync_exercises(current_user):
             'code': 'SERVER_ERROR',
             'details': str(e)
         }), 500
+
+
+@bp.route('/public', methods=['GET'])
+def list_exercises_public():
+    """List exercises publicly without authentication
+    ---
+    tags:
+      - Exercises
+    parameters:
+      - name: page
+        in: query
+        type: integer
+        required: false
+        default: 1
+        description: Page number for pagination
+      - name: limit
+        in: query
+        type: integer
+        required: false
+        default: 20
+        description: Number of exercises per page (max 100)
+      - name: category
+        in: query
+        type: string
+        required: false
+        description: Filter by exercise category/type
+      - name: muscle_group
+        in: query
+        type: string
+        required: false
+        description: Filter by muscle group
+      - name: search
+        in: query
+        type: string
+        required: false
+        description: Search exercises by name
+    responses:
+      200:
+        description: List of exercises
+        schema:
+          type: object
+          properties:
+            exercises:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  category:
+                    type: string
+                  muscle_group:
+                    type: string
+                  equipment:
+                    type: string
+                  instructions:
+                    type: string
+                  image_url:
+                    type: string
+                  video_url:
+                    type: string
+                  is_custom:
+                    type: boolean
+                  created_at:
+                    type: string
+            total:
+              type: integer
+            page:
+              type: integer
+            pages:
+              type: integer
+      500:
+        description: Server error
+    """
+    try:
+        db = get_db()
+        
+        # Query parameters
+        page = int(request.args.get('page', 1))
+        limit = min(int(request.args.get('limit', 20)), 100)  # Max 100 per page
+        category = request.args.get('category')
+        muscle_group = request.args.get('muscle_group')
+        search = request.args.get('search')
+        
+        # Build query
+        query = {}
+        
+        if category:
+            query['type'] = category
+        
+        if muscle_group and muscle_group != 'All':
+            query['muscle'] = muscle_group
+        
+        if search:
+            query['name'] = {'$regex': search, '$options': 'i'}
+        
+        # Get total count
+        total = db.exercises.count_documents(query)
+        
+        # Get paginated results
+        skip = (page - 1) * limit
+        cursor = db.exercises.find(query).skip(skip).limit(limit)
+        
+        exercises = []
+        for doc in cursor:
+            ex = Exercise(doc)
+            exercises.append(exercise_to_dict(ex))
+        
+        return jsonify({
+            'exercises': exercises,
+            'total': total,
+            'page': page,
+            'pages': (total + limit - 1) // limit
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': 'Failed to fetch exercises',
+            'code': 'SERVER_ERROR',
+            'details': str(e)
+        }), 500
